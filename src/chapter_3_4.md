@@ -114,6 +114,7 @@ Luckily, there is a convenient crate that provides binding to the lib: [rust-sdl
 
 ```toml
 # ...
+
 [dependencies]
 lazy_static = "1.4.0"
 bitflags = "1.2.1"
