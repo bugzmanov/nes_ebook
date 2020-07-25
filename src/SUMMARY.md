@@ -9,3 +9,4 @@
     - [Running our first game](./chapter_3_4.md)
 - [Emulating BUS](./chapter_4.md)
 - [Cartridges](./chapter_5.md)
+    - [Test ROM](./chapter_5_1.md)
