@@ -2,7 +2,7 @@
 PPU has its own memory map, that consists of RAM, CHR ROM address space, and address space mirrors.
 PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to **[0x2000 - 0x2007]** CPU memory map (and mirrored every 8 bytes in the region **[0x2008 .. 0x3FFF])
 
- <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="80%"/></div>
 
 To be completely fair, PPU has its own bus that used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate that. 
 
@@ -21,17 +21,17 @@ One register reports current PPU status:
 
 The full spec of the registers can be found on [NES Dev wiki](http://wiki.nesdev.com/w/index.php/PPU_registers)
 
- <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="80%"/></div>
 
-2 communication channel exist between CPU and PPU:
+2 communication channels exist between CPU and PPU:
 * CPU is driving communication through IO registers
 * PPU sends interrupt signal to CPU upon entering V-BLANK period
 
-> PPU execution lifecycle is tightly coupled with the electron beam of the TV screen. 
+> PPU execution lifecycle was tightly coupled with the electron beam of the TV screen. 
 >
 > The PPU renders 262 scanlines per frame. 
 > Each scanline lasts for 341 PPU clock cycles.  with each clock cycle producing one pixel.
-> The NES screen resolution is 320x240, scanlines 241 - 262 are not visible. 
+> The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible. 
 >
 > Upon entering the 241 scanline, PPU triggers VBlank NMI on the CPU. PPU makes no memory accesses during 241-262 scanlines, so PPU memory can be freely accessed by the program. Majority of games play it safe and update the screen state only during these period, essentially preparing the view state for the next frame. 
 
