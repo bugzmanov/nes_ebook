@@ -10,3 +10,4 @@
 - [Emulating BUS](./chapter_4.md)
 - [Cartridges](./chapter_5.md)
     - [Test ROM](./chapter_5_1.md)
+- [Emulating PPU](./chapter_6.md)

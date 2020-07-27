@@ -202,16 +202,6 @@ pub mod test {
         assert_eq!(ppu.vram[0x0305], 0x66);
     }
 
-    // todo:figure out why it's writing to rom
-    // #[test]
-    // #[should_panic]
-    // fn test_ppu_writing_to_chr_rom_is_prohibited() {
-    //     let mut ppu = NesPPU::new_empty_rom();
-    //     ppu.write_to_ppu_addr(0x03);
-    //     ppu.write_to_ppu_addr(0x05);
-    //     ppu.write_to_data(0x66);
-    // }
-
     #[test]
     fn test_ppu_vram_reads() {
         let mut ppu = NesPPU::new_empty_rom();
