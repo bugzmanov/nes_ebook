@@ -4,6 +4,9 @@ Interrupts are the mechanism for the CPU to break the sequential execution flow 
 
 We've already implemented one of the supported interrupts - RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and CPU needs to execute the reset subroutine.
 
+ <div style="text-align:center"><img src="./images/ch6.2/image_4_broadcast_interrupted.png" width="30%"/></div>
+
+
 PPU communicates that it's entering the VBLANK phase for the frame via another interrupt signal - NMI (Non-Maskable Interrupt). 
 From a high-level perspective, this means two things:
 - PPU is done rendering current frame
@@ -179,6 +182,9 @@ Upon receiving the interrupt CPU:
 3) Disables Interrupts by setting **Disable Interrupt** flag in status register
 4) Loads the Address of Interrupt handler routine from 0xFFFA
 5) Sets **Program Counter** register pointing to that address
+
+ <div style="text-align:center"><img src="./images/ch6.2/image_3_interrupt_mem.png" width="40%"/></div>
+
 
 Interrupt handler would call RTI operation at the end, that would restore Status Flag from stack, and jump back to the saved Program Counter position. Effectively restoring the execution flow of the CPU from where it was left off. 
 
