@@ -33,6 +33,7 @@ The full spec of the registers can be found on [NES Dev wiki](http://wiki.nesdev
 > Each scanline lasts for 341 PPU clock cycles.  with each clock cycle producing one pixel.
 > The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible. 
 >
+> <div style="text-align:center"><img src="./images/ch6.1/image_7_scanlines_with_viewer.png" width="30%"/></div>
 > Upon entering the 241 scanline, PPU triggers VBlank NMI on the CPU. PPU makes no memory accesses during 241-262 scanlines, so PPU memory can be freely accessed by the program. Majority of games play it safe and update the screen state only during these period, essentially preparing the view state for the next frame. 
 
 ## PPU sketch
