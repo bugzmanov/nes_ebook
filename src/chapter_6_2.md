@@ -203,3 +203,5 @@ Interrupt handler would call RTI operation at the end, that would restore Status
        self.program_counter = self.mem_read_u16(0xfffA);
    }
 ```
+
+//TODO: interrupt after updating control!

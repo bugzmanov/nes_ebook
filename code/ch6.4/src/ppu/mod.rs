@@ -23,7 +23,7 @@ pub struct NesPPU {
   
     internal_data_buf: u8,
 
-    scanline: u16,
+    pub scanline: u16,
     cycles: usize,
     pub nmi_interrupt: Option<u8>,
 
@@ -111,7 +111,6 @@ impl NesPPU {
             if self.scanline >= 262 {
                 self.scanline = 0;
                 self.nmi_interrupt = None;
-                // self.status.
                 self.status.set_sprite_zero_hit(false);
                 self.status.reset_vblank_status();
                 return true;
@@ -120,7 +119,7 @@ impl NesPPU {
         return false;
     }
 
-    fn poll_nmi_interrupt(&mut self) -> Option<u8> {
+    pub fn poll_nmi_interrupt(&mut self) -> Option<u8> {
         self.nmi_interrupt.take()
     }
 
