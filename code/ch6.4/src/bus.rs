@@ -157,7 +157,7 @@ impl Mem for Bus<'_> {
             0x2007 => {
                 self.ppu.write_to_data(data);
             }
-            0x4000..=0x4015 => {
+            0x4000..=0x4013 | 0x4015 => {
                 //ignore APU 
             }
 
@@ -169,6 +169,20 @@ impl Mem for Bus<'_> {
                 // ignore joypad 2
             }
 
+            // https://wiki.nesdev.com/w/index.php/PPU_programmer_reference#OAM_DMA_.28.244014.29_.3E_write
+            0x4014 => {
+                let mut buffer: [u8; 256] = [0; 256];
+                let hi: u16 = (data as u16) << 8;
+                for i in 0..256u16 {
+                    buffer[i as usize] = self.mem_read(hi + i);
+                }
+
+                self.ppu.write_oam_dma(&buffer);
+
+                // todo: handle this eventually
+                // let add_cycles: u16 = if self.cycles % 2 == 1 { 514 } else { 513 };
+                // self.tick(add_cycles); //todo this will cause weird effects as PPU will have 513/514 * 3 ticks
+            }
 
             0x2008..=PPU_REGISTERS_MIRRORS_END => {
                 let mirror_down_addr = addr & 0b00100000_00000111;
