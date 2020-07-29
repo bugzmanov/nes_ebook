@@ -13,3 +13,4 @@
 - [Emulating PPU](./chapter_6.md)
     - [Emulating PPU Registers](./chapter_6_1.md)
     - [Emulating NMI Interrupt](./chapter_6_2.md)
+    - [Rendering CHR Rom Tiles](./chapter_6_3.md)
