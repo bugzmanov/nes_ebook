@@ -180,12 +180,12 @@ fn main() {
 }
 ```
 
-It's working! Beautiful. Now let's fix the colors.
+It's working!
 
 
 <div style="text-align:center"><img src="./images/ch6.4/image_4_pacman_result.png" width="30%"/></div>
 
-
+ Beautiful. Now let's fix the colors.
 
 ## Working with Colors
 
