@@ -78,6 +78,7 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
         };
         let pallette_idx = ppu.oam_data[i + 2] & 0b11;
         let sprite_palette = sprite_palette(ppu, pallette_idx);
+        
         let bank: u16 = ppu.ctrl.sprt_pattern_addr();
 
         let tile = &ppu.chr_rom[(bank + tile_idx * 16) as usize..=(bank + tile_idx * 16 + 15) as usize];
