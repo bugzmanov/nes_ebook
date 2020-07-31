@@ -15,3 +15,4 @@
     - [Emulating NMI Interrupt](./chapter_6_2.md)
     - [Rendering CHR Rom Tiles](./chapter_6_3.md)
     - [Rendering Static Screen](./chapter_6_4.md)
+- [Emulating Joypads](./chapter_7.md)
