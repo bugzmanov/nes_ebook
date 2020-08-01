@@ -188,6 +188,11 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
     }
 
 
+    for y in 250 .. 250 + 240 {
+        for x in 0 .. 255 {
+            frame.set_pixel(x, y, (0,0,0));
+        }
+    }
 
     for i in (0..ppu.oam_data.len()).step_by(4).rev() {
         let tile_idx = ppu.oam_data[i + 1] as u16;
