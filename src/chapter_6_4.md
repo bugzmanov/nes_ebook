@@ -91,6 +91,8 @@ Note: that we are still using random colors from a system palette for color inde
 One last point: we need to define when we should intercept the program execution and read the screen state. 
 On the real console, PPU is drawing one pixel each PPU clock cycle. However we don't need to do that, we can wait for the whole frame to be ready and draw it in one go. 
 
+> **TODO: bad appraoch!!! Scrolls would be ZERO!!!**
+
 In reality, PPU was actively drawing screen state on a TV screen during 0 - 240 scanlines, then during scanlines 241 - 262 the CPU was updating state of PPU for the next frame, then the cycle repeated.
 
 So it looks like the easiest would be to intercept PPU before it moves to from scanline 262 to 0.
