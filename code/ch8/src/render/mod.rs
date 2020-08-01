@@ -72,12 +72,12 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
                 let mut visible = false;
 
                 if ppu.ctrl.nametable_addr() == 0x2000 && pixel_x >= scroll_x {
-                    frame.set_pixel(123 + pixel_x - scroll_x, pixel_y + 250, rgb);
+                    frame.set_pixel(255 + pixel_x - scroll_x, pixel_y + 250, rgb);
                     visible = true;
                 }
 
                 if ppu.ctrl.nametable_addr() == 0x2400 && pixel_x  < scroll_x {
-                    frame.set_pixel(123 + 256 - (scroll_x - pixel_x), pixel_y + 250, rgb);
+                    frame.set_pixel(255 + 256 - (scroll_x - pixel_x), pixel_y + 250, rgb);
                     visible = true;
                 }
 
@@ -126,11 +126,11 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
                 if ppu.ctrl.nametable_addr() == 0x2000 && (pixel_x - 256) < scroll_x {
                     visible = true;
-                    frame.set_pixel(123 + pixel_x - scroll_x, pixel_y + 250, rgb);
+                    frame.set_pixel(255 + pixel_x - scroll_x, pixel_y + 250, rgb);
                 }
                 if ppu.ctrl.nametable_addr() == 0x2400 && pixel_x - 256  >= scroll_x {
                     visible = true;
-                    frame.set_pixel(123 + pixel_x - 256 - scroll_x, pixel_y + 250, rgb);
+                    frame.set_pixel(255 + pixel_x - 256 - scroll_x, pixel_y + 250, rgb);
                 }
 
                 if visible {
@@ -189,49 +189,61 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
 
 
-    // for i in (0..ppu.oam_data.len()).step_by(4).rev() {
-    //     let tile_idx = ppu.oam_data[i + 1] as u16;
-    //     let tile_x = ppu.oam_data[i + 3] as usize;
-    //     let tile_y = ppu.oam_data[i] as usize;
+    for i in (0..ppu.oam_data.len()).step_by(4).rev() {
+        let tile_idx = ppu.oam_data[i + 1] as u16;
+        let tile_x = ppu.oam_data[i + 3] as usize;
+        let tile_y = ppu.oam_data[i] as usize;
 
-    //     let flip_vertical = if ppu.oam_data[i + 2] >> 7 & 1 == 1 {
-    //         true
-    //     } else {
-    //         false
-    //     };
-    //     let flip_horizontal = if ppu.oam_data[i + 2] >> 6 & 1 == 1 {
-    //         true
-    //     } else {
-    //         false
-    //     };
-    //     let pallette_idx = ppu.oam_data[i + 2] & 0b11;
-    //     let sprite_palette = sprite_palette(ppu, pallette_idx);
-    //     let bank: u16 = ppu.ctrl.sprt_pattern_addr();
+        let flip_vertical = if ppu.oam_data[i + 2] >> 7 & 1 == 1 {
+            true
+        } else {
+            false
+        };
+        let flip_horizontal = if ppu.oam_data[i + 2] >> 6 & 1 == 1 {
+            true
+        } else {
+            false
+        };
+        let pallette_idx = ppu.oam_data[i + 2] & 0b11;
+        let sprite_palette = sprite_palette(ppu, pallette_idx);
+        let bank: u16 = ppu.ctrl.sprt_pattern_addr();
 
-    //     let tile =
-    //         &ppu.chr_rom[(bank + tile_idx * 16) as usize..=(bank + tile_idx * 16 + 15) as usize];
+        let tile =
+            &ppu.chr_rom[(bank + tile_idx * 16) as usize..=(bank + tile_idx * 16 + 15) as usize];
 
-    //     for y in 0..=7 {
-    //         let mut upper = tile[y];
-    //         let mut lower = tile[y + 8];
-    //         'ololo: for x in (0..=7).rev() {
-    //             let value = (1 & lower) << 1 | (1 & upper);
-    //             upper = upper >> 1;
-    //             lower = lower >> 1;
-    //             let rgb = match value {
-    //                 0 => continue 'ololo, // skip coloring the pixel
-    //                 1 => palette::SYSTEM_PALLETE[sprite_palette[1] as usize],
-    //                 2 => palette::SYSTEM_PALLETE[sprite_palette[2] as usize],
-    //                 3 => palette::SYSTEM_PALLETE[sprite_palette[3] as usize],
-    //                 _ => panic!("can't be"),
-    //             };
-    //             match (flip_horizontal, flip_vertical) {
-    //                 (false, false) => frame.set_pixel(tile_x + x, tile_y + y, rgb),
-    //                 (true, false) => frame.set_pixel(tile_x + 7 - x, tile_y + y, rgb),
-    //                 (false, true) => frame.set_pixel(tile_x + x, tile_y + 7 - y, rgb),
-    //                 (true, true) => frame.set_pixel(tile_x + 7 - x, tile_y + 7 - y, rgb),
-    //             }
-    //         }
-    //     }
-    // }
+        for y in 0..=7 {
+            let mut upper = tile[y];
+            let mut lower = tile[y + 8];
+            'ololo: for x in (0..=7).rev() {
+                let value = (1 & lower) << 1 | (1 & upper);
+                upper = upper >> 1;
+                lower = lower >> 1;
+                let rgb = match value {
+                    0 => continue 'ololo, // skip coloring the pixel
+                    1 => palette::SYSTEM_PALLETE[sprite_palette[1] as usize],
+                    2 => palette::SYSTEM_PALLETE[sprite_palette[2] as usize],
+                    3 => palette::SYSTEM_PALLETE[sprite_palette[3] as usize],
+                    _ => panic!("can't be"),
+                };
+                match (flip_horizontal, flip_vertical) {
+                    (false, false) => {
+                        frame.set_pixel(tile_x + x +255 , tile_y + y + 250, rgb);
+                        frame.set_pixel(tile_x + x, tile_y + y +250, rgb);
+                    },
+                    (true, false) => {
+                        frame.set_pixel(tile_x + 7 - x +255, tile_y + y + 250, rgb);
+                        frame.set_pixel(tile_x + 7 - x , tile_y + y + 250, rgb);
+                    }
+                    (false, true) => {
+                        frame.set_pixel(tile_x + x +255 , tile_y + 7 - y +250, rgb);
+                        frame.set_pixel(tile_x + x, tile_y + 7 - y + 250, rgb);
+                    }
+                    (true, true) => {
+                        frame.set_pixel(tile_x + 7 - x + 255, tile_y + 7 - y +250, rgb);
+                        frame.set_pixel(tile_x + 7 - x, tile_y + 7 - y+250, rgb);
+                    }
+                }
+            }
+        }
+    }
 }
