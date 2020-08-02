@@ -35,22 +35,23 @@ fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem
-        .window("Tile viewer", (256.0 * 4.0) as u32, (240.0 * 3.3) as u32)
+        .window("Tile viewer", (256.0 * 4.0) as u32, (240.0 * 2.0) as u32)
         .position_centered()
         .build()
         .unwrap();
 
     let mut canvas = window.into_canvas().present_vsync().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
-    canvas.set_scale(1.0, 1.0).unwrap();
+    canvas.set_scale(2.0, 2.0).unwrap();
 
     let creator = canvas.texture_creator();
     let mut texture = creator
-        .create_texture_target(PixelFormatEnum::RGB24, 256 * 2, 240 * 2)
+        .create_texture_target(PixelFormatEnum::RGB24, 256 * 2, 240)
         .unwrap();
 
     //load the game
-    let bytes: Vec<u8> = std::fs::read("super.nes").unwrap();
+    // let bytes: Vec<u8> = std::fs::read("super.nes").unwrap();
+    let bytes: Vec<u8> = std::fs::read("ice_climber.nes").unwrap();
     let rom = Rom::new(&bytes).unwrap();
 
     let mut frame = Frame::new();

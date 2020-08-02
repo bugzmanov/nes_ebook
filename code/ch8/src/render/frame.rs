@@ -4,7 +4,7 @@ pub struct Frame {
 
 impl Frame {
     const WIDTH: usize = 256 * 2;
-    const HIGHT: usize = 240 * 2 + 10;
+    const HIGHT: usize = 240 ;
 
     pub fn new() -> Self {
         Frame {
