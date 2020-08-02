@@ -50,8 +50,8 @@ fn main() {
         .unwrap();
 
     //load the game
-    // let bytes: Vec<u8> = std::fs::read("super.nes").unwrap();
-    let bytes: Vec<u8> = std::fs::read("ice_climber.nes").unwrap();
+    let bytes: Vec<u8> = std::fs::read("super.nes").unwrap();
+    // let bytes: Vec<u8> = std::fs::read("pacman.nes").unwrap();
     let rom = Rom::new(&bytes).unwrap();
 
     let mut frame = Frame::new();
