@@ -6,22 +6,22 @@ They cover pretty much every aspect, including quirks and famous bugs that were 
 
  <div style="text-align:center"><img src="./images/ch5.1/image_1_i_am_error.png" width="40%"/></div>
 
-We will start with the most basic test that covers main CPU features: instruction set, memory access and CPU cycles. 
+We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles. 
 
 The iNES file of the test is located here: [nestest.nes](http://nickmass.com/images/nestest.nes)
-The test is also accompanied with an execution log, that show how our platform should behave executing this test: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
+An execution log accompanies the test, and shows how the CPU platform should behave executing this test: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
 
 The challenge is to create an execution log feature for our platform. 
 
  <div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
 
 
-For now we can ignore the last column and focus on the first 5. 
+For now, we can ignore the last column and focus on the first 5. 
 
 The fourth column ```@ 80 = 0200 = 00``` is somewhat interesting. 
-* The first number is the actual mem reference that we get if we apply an offset to the requesting address. E1 is using "Indirect X" addressing mode, thus our offset is defined by register X 
-* The second number is a 2 byte  target address that was fetched from [0x80 .. 0x81]
-* The third number is a content of address cell 0x0200
+* The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode. Thus the offset is defined by register X 
+* The second number is a 2-byte target address that was fetched from [0x80 .. 0x81]
+* The third number is content of address cell 0x0200
 
 We already have a place to intercept CPU execution: 
 
@@ -56,7 +56,7 @@ fn main() {
 
 ```
 
-It's important to get the execution log format exactly as the one that was used in the provided log.
+It's vital to get the execution log format precisely like the one used in the provided log.
 
 Following tests can help you to get it right:
 
@@ -146,7 +146,7 @@ diff -y mynes.log nestest.log
 > ```
 
 
-If everything is fine, the first mismatch should look like this:
+If everything is OK, the first mismatch should look like this:
 
 ```
 C6B3  A9 AA     LDA #$AA                        A:FF X:97 Y:4   C6B3  A9 AA     LDA #$AA                        A:FF X:97 Y:4
@@ -155,18 +155,18 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
                                                               > C6BD  04 A9    *NOP $A9 = 00                    A:AA X:97 Y:4
 ```
 
-I.e. everything that our emulator has produced should exactly match the golden standard. If anything is off before reaching line **0xC6BC**, that means we made a mistake in our CPU implementation. And this needs to be fixed.
+I.e., everything that our emulator has produced should exactly match the golden standard. If anything is off before reaching line **0xC6BC**, we made a mistake in our CPU implementation. And this needs to be fixed.
 
-But that doesn't explain why our program terminated and why we didn't get the perfect match. 
+But that doesn't explain why our program terminated and why we didn't get the perfect match after the line 0xC6BC. 
 
 If you look close enough, our program has failed at 
 ```bash 
 C6BD  04 A9    *NOP $A9 = 00
 ```
 
-So it looks like our CPU doesn't know that opcode instruction 0x04. 
+So it looks like our CPU doesn't know how to interpret opcode 0x04. 
 
-So here is the bad news: there are about 110 unofficial CPU instructions. And most of the real NES games do use them a lot. In order for us to move on, we would need to implement those. 
+So here is the bad news: there are about 110 unofficial CPU instructions. And most of the real NES games do use them a lot. For us to move on, we would need to implement those. 
 
 The specs can be found here:
 * http://nesdev.com/undocumented_opcodes.txt,
@@ -177,9 +177,9 @@ The specs can be found here:
 
 Remember how to draw an owl? ) 
 
-The testing ROM should drive your progress. At the end, the CPU would support 256 instructions. Given that CPU instructions reserve only 1 byte for the operation code, we've exhausted all possible values. 
+The testing ROM should drive your progress. In the end, the CPU would support 256 instructions. Given that CPU instructions reserve only 1 byte for the operation code, we've exhausted all possible values. 
 
-At the end, the first mismatch should happen on this line:
+Finally, the first mismatch should happen on this line:
 ```bash
 C68B  8D 15 40  STA $4015 = FF                  A:02 X:FF Y:15 P:25 SP:FB
 ```

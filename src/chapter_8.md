@@ -1,15 +1,15 @@
 # PPU Scrolling
 
-Scroll is one of the main mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against static background to create illusion of movement through space.
+The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.
 
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 
-Scroll is implemented on PPU level and affects only rendering of background tiles (those that are stored in nametables). Sprites (OAM data) is not affected by this.  
+The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.  
 
-PPU can keep two screens in memory simultaneously (remember one name table - 1 KiB, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to make the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
-That also means that for the majority of time the gamer sees parts of both nametables rendered. 
+PPU can keep two screens in memory simultaneously (remember one name table - 1 KiB, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
+That also means that most of the time, the PPU is rendering parts of both nametables. 
 
-Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Early games were settled on the type of scrolling for the whole game. 
+Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game. 
 Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can "move" in all 4 directions. 
 
 <div style="text-align:center;"><img src="./images/ch8/image_2_scroll_mirroring.png" width="60%"/></div>
@@ -17,32 +17,32 @@ Games that came later on had a mechanism to alternate scrolling between stages. 
 
 Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level. 
 
-For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll) the mechanism is fully defined by:
-- Mirroring type (defined on a cartridge ROM level)
+For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:
+- Mirroring type (set on a cartridge ROM level)
 - Base Nametable address (value in PPU Control register)
 - Status of PPU Scroll Register (X and Y shift values of the viewport, in pixels)
 - Content of Nametables
 
-Remember, a background screen is defined by 960 tiles, each tile being 8x8 pixels, because PPU Scroll Register defines shifts in pixels, that means that on edges of the viewport we can see parts of a tile
+Remember, a background screen is defined by 960 tiles, each tile being 8x8 pixels, because PPU Scroll Register defines shifts in pixels, which means that on edges of the viewport, we can see parts of a tile.
 
 
 <div style="text-align:center;"><img src="./images/ch8/image_3_scroll_controll.png" width="70%"/></div>
 
 
-Updating PPU memory is relatively expensive and the CPU can do this only durgin 241 - 262 scanlines. Because of these constraints the CPU can update a relatively thin part (2x30 tiles wide area) of a screen per frame. 
-If we render parts of the nametables that are not yet visible, we can see how the state of the world comes into existence a couple frames before entering the view port. 
+Updating PPU memory is relatively expensive, and the CPU can do this only during 241 - 262 scanlines. Because of these constraints, the CPU can update a relatively thin part (2x30 tiles wide area) of a screen per frame. 
+If we render parts of the nametables that are not yet visible, we can see how the state of the world comes into existence a couple frames before entering the viewport. 
 
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 
 2 last notes before jumping into implementation:
 * The palette of a tile is defined by the nametable the tile belongs to. 
-* In case of horizontal scrolling content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)
+* For horizontal scrolling the content of the base nametable goes to the left part of the viewport (or top part in case of vertical scrolling)
 
 
 <div style="text-align:center;"><img src="./images/ch8/image_5_scroll_caveats.png" width="80%"/></div>
 
-Implementing scroll rendering is not hard but requires attention to multiple details. The most convenient mental model I could come up with is the following:
-* For each frame we would scan through both nametables.
+Implementing scroll rendering is not hard but requires attention to many details. The most convenient mental model I could come up with is the following:
+* For each frame, we would scan through both nametables.
 * For each nametable we would specify visible part of the nametable:
 
 ```rust
@@ -155,10 +155,10 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
 ```
 
-Implementing vertical scroll is pretty similar, we would reuse the same `render_name_table` helper function without changes. Just need to figure out proper *addressing*, *shifts* and *view_port* parameters.
+Implementing vertical scroll is similar, we would reuse the same `render_name_table` helper function without changes. Just need to figure out proper *addressing*, *shifts*, and *view_port* parameters.
 
 The fully defined code for scrolling can be found [here]
 
 Support for scrolling means that now we can play platformers like Super Mario Bros and Ice Climber.
 
-The final missing peace is APU. 
+The final missing piece is APU. 

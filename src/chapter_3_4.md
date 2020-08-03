@@ -3,9 +3,9 @@
  <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 
 Great, you've made it this far. What we are going to do next is a bit of a detour. 
-The snake game was introduced in this article: [Easy 6502](https://skilldrick.github.io/easy6502/#snake). In fact is not a truly NES game. It is built on top of a 6502 instructions set, but uses quate different memory mappings.
+The snake game was introduced in this article: [Easy 6502](https://skilldrick.github.io/easy6502/#snake). In fact, it is not a truly NES game. It is built on top of 6502 instructions set but uses quate different memory mappings.
 
-However, it's a fun way to validate that our CPU is truly functional and it's fun to play our first game. 
+However, it's a fun way to validate that our CPU is truly functional, and it's fun to play our first game. 
 
 The majority of logic we are to implement now would be reused some way or another when we will be implementing PPU rendering capabilities. So nothing is a wasted effort. I promise. 
 
@@ -46,13 +46,13 @@ The memory mapping that the game uses:
 | **0xFF** | Input | A code of the last pressed Button|
 | **[0x0200..0x0600]**  | Output |  Output screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> **0x0200** - the color of (0,0) pixel <br/> **0x0201** - (1,0) <br/> **0x0220** - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div> | 
 
-The game executes standart game loop:
-* read inputs from user
+The game executes standard game loop:
+* read inputs from a user
 * compute game state
 * render game state to screen
 * repeat
 
-We would need to intercept this cycle, in order to provide user input into the input mapping and also to render the state of the screen. Lets modify our CPU run cycle:
+We would need to intercept this cycle, get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:
 
 ```rust
 impl CPU {
@@ -79,7 +79,7 @@ impl CPU {
 }
 ```
 
-Now, a client code can provide callback that will be executed on every opcode interpretation cycle.
+Now, the client code can provide a callback that will be executed on every opcode interpretation cycle.
 
 The sketch of the main method:
 
@@ -105,7 +105,7 @@ fn main() {
 }
 ```
 
-For our input-output we would be using a cross platform library
+For our input-output, we would be using a cross-platform library
 that's popular in gamedev - [Simple DirectMedia Layer library](https://www.libsdl.org/).
 
 Luckily, there is a convenient crate that provides binding to the lib: [rust-sdl2](https://rust-sdl2.github.io/rust-sdl2/sdl2/)
@@ -149,12 +149,12 @@ fn main() {
 }
 ```
 
-Note: because our game screen is tiny (32x32 pixels), we are setting the scale factor to 10.
+Note: because our game screen is tiny (32x32 pixels), we set the scale factor to 10.
 
 > Using `.unwrap()` is justifiable because it's the outer layer of our application. 
 > There are no other layers that potentially can handle Err values and do something about it.
 
-Next we will create a texture that would be used for rendering:
+Next, we will create a texture that would be used for rendering:
 
 ```rust
 //...
@@ -222,10 +222,10 @@ Now we can transform CPU screen map into 3 bytes like this:
     let (b1, b2, b3) = color(color_idx).rgb();
 ```
 
-Another caveat is that we don't want to force update SDL canvas, if the screen state hasn't really changed. 
-Remember that the CPU would call our callback after each instruction, and most of the time those instructions have nothing to do with the screen. Meantime, updating canvas is a heavy operation.
+Another caveat is that we don't want to force updating the SDL canvas if the screen state hasn't changed. 
+Remember that the CPU would call our callback after each instruction, and most of the time, those instructions have nothing to do with the screen. Meantime, updating canvas is a heavy operation.
 
-We can keep track of the screen state by creating a temp buffer, which we will populate from screen state. And only in case of screen changes, we would update SDL canvas
+We can keep track of the screen state by creating a temp buffer that will be populated from the screen state. And only in case of screen changes, we would update SDL canvas.
 
 ```rust
 fn read_screen_state(cpu: &CPU, frame: &mut [u8; 32 * 3 * 32]) -> bool {
@@ -271,7 +271,7 @@ fn main() {
 }
 ```
 
-Last sleep statement was added just to slow down things a bit to have a playable pace. 
+The last sleep statement was added to slow down things a bit to have a playable pace. 
 
 And there you have it, the first game running on our emulator.
 

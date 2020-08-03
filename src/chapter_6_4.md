@@ -1,9 +1,9 @@
 # Rendering Static Screen
 
-At this point the CPU and PPU are fully functional and working in coordination with each other. 
-So if we load a game into our emulator, the game would be actually executing and most likely would run into demo mode.
+At this point, the CPU and PPU are fully functional and working in coordination with each other. 
+So if we load a game into our emulator, the game would be executing and most likely would run into demo mode.
  
-The problem is that we can't see what's going on inside. Remember how we had intercepted the execution of the snake game to read game screen state? And then had it rendered via SDL2 canvas? We will have to do something similar here. It's just the data format a frame used by NES is slightly more complicated.
+The problem is that we can't see what's going on inside. Remember how we had intercepted the execution of the snake game to read the game screen state? And then had it rendered via SDL2 canvas? We will have to do something similar here. It's just the data format a frame used by NES is slightly more complicated.
 
 PPU has to deal with 2 categories of objects:
 
@@ -12,7 +12,7 @@ PPU has to deal with 2 categories of objects:
 Both of those are constructed using CHR tiles, we've discussed in the last chapter. 
 In fact, the same tile can be used both for background and for sprites. 
 
-But NES uses different memory spaces to hold background and sprites. Also the set of possible transformations is different. 
+But NES uses different memory spaces to hold background and sprites. Also, the set of possible transformations is different. 
 
 
 ## Rending Background
@@ -21,31 +21,31 @@ But NES uses different memory spaces to hold background and sprites. Also the se
 
 Three main memory sections are responsible for the state of a background:
 - Pattern Table - 2 banks of tiles from CHR ROM on a cartridge
-- Nametable - state of a screen stored in VRAM
-- Palette table - the information about real colouring of pixels, stored in internal PPU memory
+- Nametable - the state of a screen stored in VRAM
+- Palette table - the information about the real coloring of pixels, stored in internal PPU memory
 
 NES Screen background screen is composed of 960 tiles (a tile being 8x8 pixels: `256 / 8 * 240 / 8  = 960`) 
-To hold that information NES allocate 960 bytes in VRAM in so called Nametable. Each byte in a Nametable holds an index of a tile to be used in current position. 
+To hold that information, NES allocates 960 bytes in VRAM in the so-called Nametable. Each byte in a Nametable contains an index of a tile to be used in the current position. 
 
 
 <div style="text-align:center"><img src="./images/ch6.4/image_2_nametable.png" width="100%"/></div>
 
-> The pattern table consists of 2 banks of tiles and each bank holds 256 tiles. One byte in a name table can address only 256 elements within a single bank. 
+> The pattern table consists of 2 banks of tiles, and each bank holds 256 tiles. One byte in a name table can address only 256 elements within a single bank. 
 > In addition, PPU relied on Control register that specified which bank should be used for background and sprites
 > <div style="text-align:left"><img src="./images/ch6.4/image_3_control_register_highlight.png" width="50%"/></div>
 
-In addition to 960 bytes for tiles a nametable holds 64 bytes that specify color palette, we will discuss later. For now, it's important to understand that a single frame is defined by 1024 bytes (960 + 64). The fact that PPU VRAM has 2048 bytes means that the PPU can simultaneously hold 2 nametables - state of 2 frames. 
-2 additional nametables that exist in the address space of the PPU, must be either mapped to existing tables or to additional RAM space on a cartridge. 
+In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. It's important to understand that a single frame is defined by 1024 bytes (960 + 64). The fact that PPU VRAM has 2048 bytes means that the PPU can simultaneously hold 2 nametables - state of 2 frames. 
+Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge. 
 More details: http://wiki.nesdev.com/w/index.php/Mirroring
 
-The good news is that nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). So in order for us to get a screen state we just need to read it from an appropriate nametable.  
+The good news is that nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). So for us to get a screen state, we just need to read it from an appropriate nametable.  
 
 The algorithm to draw current background tiles:
 1) Determine which nametable being used for the current screen (bit 0 and bit 1 or a Control register)
 2) Determine which CHR ROM bank is used for background tiles
-3) Read 960 bytes from the specified nametable and draw a 32x30 tile based screen by looking up each tile by index in the specified CHR ROM bank.
+3) Read 960 bytes from the specified nametable and draw a 32x30 tile-based screen by looking up each tile shape in the specified CHR ROM bank.
 
-Lets add ```render``` function to render module:
+Let's add ```render``` function to render module:
 
 ```rust
 pub mod frame;
@@ -86,14 +86,14 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
 ```
 
-Note: that we are still using random colors from a system palette for color index.
+Note: that we are still using random colors from a system palette for the color index.
 
-One last point: we need to define when we should intercept the program execution and read the screen state. 
-On the real console, PPU is drawing one pixel each PPU clock cycle. However we don't need to do that, we can wait for the whole frame to be ready and draw it in one go. 
+One more thing. We need to define when we should intercept the program execution and read the screen state. 
+On the real console, PPU is drawing one pixel each PPU clock cycle. However, we don't need to do that, we can wait for the whole frame to be ready and draw it in one go. 
 
-> **TODO: bad appraoch!!! Scrolls would be ZERO!!!**
+> **TODO: bad approach!!! Scrolls would be ZERO!!!**
 
-In reality, PPU was actively drawing screen state on a TV screen during 0 - 240 scanlines, then during scanlines 241 - 262 the CPU was updating state of PPU for the next frame, then the cycle repeated.
+In reality, PPU was actively drawing screen state on a TV screen during 0 - 240 scanlines, then during scanlines 241 - 262 the CPU was updating the state of PPU for the next frame, then the cycle repeated.
 
 So it looks like the easiest would be to intercept PPU before it moves to from scanline 262 to 0.
 
@@ -193,10 +193,10 @@ It's working!
 
 NES Console could generate 52 different colors on a TV screen. Those colors constitute the hardwired System Palette of the console. 
 
-However a single screen could use only 25 colors simultaneously: 13 background colors and 12 for sprites. 
+However, a single screen could use only 25 colors simultaneously: 13 background colors and 12 for sprites. 
 
-NES had internal memory RAM to store palette settings for a screen, in so called palette tables. 
-The space was divided in 8 palettes: 4 for background and 4 for sprites. Each palette contains 3 colors. 
+NES had internal memory RAM to store palette settings for a screen, in so-called palette tables. 
+Space is divided into 8 palettes: 4 for background and 4 for sprites. Each palette contains 3 colors. 
 Remember that a pixel in a tile was coded using 2 bits - that's 4 possible values. 
 
 > **0b00** for *background* tile means using Universal background color (at **0x3F00**). 
@@ -207,7 +207,7 @@ Remember that a pixel in a tile was coded using 2 bits - that's 4 possible value
 <div style="text-align:center"><img src="./images/ch6.4/image_5_palette_table.png" width="100%"/></div>
 
 A single tile can be drawn using only one palette from the palette table. 
-For background tiles, the last 64 bytes of each nametable are reserved for assigning a specific palette to a part of a background. This section is called an attribute table.
+For background tiles, the last 64 bytes of each nametable are reserved for assigning a specific palette to a part of the background. This section is called an attribute table.
 
 A byte in an attribute table controls palettes for 4 meta-tiles. (a meta tile is a space composed of 4x4 tiles)
 A byte is composed of four 2bits blocks. And each block is assigning a background palette for four neighboring tiles. 
@@ -274,15 +274,15 @@ That's it.
 ## Rendering sprites.
 
 Rendering sprites is somewhat similar, yet a bit easier. 
-NES had an internal RAM for storing states of all sprites in the frame, so called Object Attribute Memory (OAM).
+NES had an internal RAM for storing states of all sprites in the frame, so-called Object Attribute Memory (OAM).
 
-It had 256 bytes of RAM, and reserved 4 bytes for each. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object of a screen usually consists of 4 tiles).
+It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object of a screen usually consists of 4 tiles).
 
-In comparison to background tiles, a sprite tile can be shown anywhere in 256x240 screen, thus each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the last one specifies how the object would look like
+In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Thus each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the last one specifies how the object would look like
 
 NES Dev Wiki provides a pretty solid specification of each byte in the OAM record: http://wiki.nesdev.com/w/index.php/PPU_OAM
 
-So rendering all sprites we just need to scan through oam_data space and parse out every 4 bytes into sprite:
+So rendering all sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:
 
 ```rust
 
@@ -355,4 +355,4 @@ fn sprite_palette(ppu: &NesPPU, pallete_idx: u8) -> [u8; 4] {
 <div style="text-align:center"><img src="./images/ch6.4/image_7_pacman_chrs.png" width="30%"/></div>
 
 
-If you don't see characters in pacman specifically, most likely this means there is some issues in the way you've implemented memory mapping for OAM DMA register (0x4014) 
+If you don't see characters in Pacman, most likely this means there are some issues in the way you've implemented memory mapping for OAM DMA register (0x4014) 

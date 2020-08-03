@@ -1,10 +1,10 @@
-# Rendering CHR Rom Tiles
+# Rendering CHR ROM Tiles
 
 PPU has **[0x0 .. 0x2000]** address space reserved for CHR ROM - visual graphics data  on a cartridge. 
 
 That's *8 KiB* worth of data. And that's all there was in the first versions of NES cartridges. 
 
-Visual data was packed in so called tiles: an 8 pixels x 8 pixels image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors and 0b00 is used as an indication that are pixel should be transparent)
+Visual data was packed in so-called tiles: an 8 pixels x 8 pixels image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors, and 0b00 is used as an indication that a pixel should be transparent)
 
 ```bash
 8 * 8 * 2 (2 bits to codify color) = 128 bits  = 16 bytes to codify a single tile
@@ -19,20 +19,20 @@ Visual data was packed in so called tiles: an 8 pixels x 8 pixels image that cou
 
  <div style="text-align:center"><img src="./images/ch6.3/image_2_8bit_drawings.png" width="30%" ><br/> 8x8 pixel art by <a href="https://twitter.com/johanvinet">Johan Vinet</a> <br/><a href="https://twitter.com/PixelProspector/status/1097565152940044293">[Check it out]</a> </div>
 
-What makes the CHR format tricky is that tiles themselves don't have colour information. Each pixel in a tile is codified using 2 bits, essentially declaring colour index in a palette, not really a colour itself.
+What makes the CHR format tricky is that tiles themselves don't have color information. Each pixel in a tile is codified using 2 bits, essentially declaring color index in a palette, not really a color itself.
 
-> If NES were using popular RGB format for each pixel, a single tile would would occupy  8*8*24 = 192 bytes. And it would require 96 KiB of CHR ROM space to hold 512 tiles. 
+> If NES were using popular RGB format for each pixel, a single tile would occupy  8*8*24 = 192 bytes. And it would require 96 KiB of CHR ROM space to hold 512 tiles. 
 
-The real color of a pixel was decided during the rendering phase by using colour palette, that was assembled during program execution (more on this later)
+The real color of a pixel was decided during the rendering phase by using the color palette, that was assembled during program execution (more on this later)
 
-By reading just CHR ROM it is impossible to derive the color, only that the colour index of pixels are different. 
+By reading just CHR ROM, it is impossible to derive the color, only that the color index of pixels are different. 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_3_chr_content.png" width="30%"/></div>
 
 <div style="text-align:center"><img src="./images/ch6.3/image_4_color_code.png" width="50%"/></div>
 
-Surprisingly, 2 bits that describe the color index of a pixel are not codified in the same byte. Each Row in a tile is codified using 2 bytes that stands 8 bytes apart from each other. 
-So in order to figure out color index of the top-left pixel, we need to read 7th bit of byte 0x0000 and 7thbit of byte 0x0008, to get the next pixel in the same row we would need to read 6th bits in the same bytes, etc..
+Surprisingly, 2 bits that describe the color index of a pixel are not codified in the same byte. Each Row in a tile is encoded using 2 bytes that stands 8 bytes apart from each other. 
+To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same Row we would need to read 6th bits in the same bytes, etc..
 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_5_16bytes_of_a_tile.png" width="50%"/></div>
@@ -40,15 +40,15 @@ So in order to figure out color index of the top-left pixel, we need to read 7th
 
 ## Pallette 
 
-Before moving on to read our first CHR ROM, we need briefly discuss the colors that were available to the NES. 
-Different versions of the PPU chip had slightly different system level palettes of 64 hardwired color. 
+Before reading our first CHR ROM, we need to briefly discuss the colors available to the NES. 
+Different versions of the PPU chip had slightly different system-level palettes of 64 hardwired color. 
 
-As always all necessary details can be found on corresponding [nesdev wiki page](http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes).
+All necessary details can be found on corresponding [nesdev wiki page](http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes).
 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_6_system_palette.png" width="50%"/></div>
 
-There are multiple variations used in emulators. Some of them make the picture more visually appealing, while others keep it closer to the original picture NES generated on a TV. 
+There are multiple variations used in emulators. Some make the picture more visually appealing, while others keep it closer to the original picture NES generated on a TV. 
 
 It doesn't matter much which one we would choose, most of them get us good enough results.
 
@@ -77,17 +77,17 @@ pub static SYSTEM_PALLETE: [(u8,u8,u8); 64] = [
 
  ## Rendering CHR Rom 
 
- So our goal is to render tiles from a CHR Rom. In order to do that we need to get a NES Rom file of a game. 
-Google would help you find a lot of ROMs copied from the well known classics. However, downloading such ROMs if you don't have a cartridge would be illegal (wink-wink).
-On the other hand, there is a site that listed legit home-brew games that were recently developed. And some of them are pretty good and most of them are free.
+ So our goal is to render tiles from a CHR ROM. To do that, we need to get a NES ROM file of a game. 
+Google would help you find a lot of ROMs copied from the well-known classics. However, downloading such ROMs if you don't have a cartridge would be illegal (wink-wink).
+On the other hand, there is a site that listed legit homebrew games that were recently developed. And some of them are pretty good, and most of them are free.
 Check it out: [www.nesworld.com](http://www.nesworld.com/article.php?system=nes&data=neshomebrew)
 
-The caveat here, that our emulator supports only NES 1.0 format. And homebrew developed games tend to use NES 2.0. 
+The caveat here that our emulator supports only NES 1.0 format. And homebrew developed games tend to use NES 2.0. 
 Games like "Alter Ego" would do. 
 
-I would use Pacman, mostly because it's more recognizable and I happen to own a cartridge of this game. 
+I would use Pacman, mostly because it's more recognizable, and I happen to own a cartridge of this game. 
 
-First lets create an abstraction layer for a frame, so we wouldn't need to work with SDL directly all the time:
+First, let's create an abstraction layer for a frame, so we wouldn't need to work with SDL directly all the time:
 
 ```rust
 pub struct Frame {
@@ -150,7 +150,7 @@ fn show_tile(chr_rom: &Vec<u8>, bank: usize, tile_n: usize) ->Frame {
 }
 ```
 
-> **Note:** for now, we're interpreting color indices randomly. I've just picked a random colour from system palette for each separate index value. Just to see how it would look like.
+> **Note:** for now, we're interpreting color indices randomly. I've just picked a random color from the system palette for each separate index value. Just to see how it would look like.
 
 Tying it all together in a main loop:
 
@@ -196,7 +196,7 @@ We can adjust code just a little bit to draw all tiles from CHR ROM:
 <div style="text-align:center"><img src="./images/ch6.3/image_8_pacman_chr_rom.png" width="80%"/></div>
 
 
-Aha! Desipite colors being clearly off, the shapes are recognizable now. We can see parts of a ghost, some letters and numbers.
+Aha! Despite colors being clearly off, the shapes are recognizable now. We can see parts of a ghost, some letters, and numbers.
 I guess that's it. Moving on
 
 

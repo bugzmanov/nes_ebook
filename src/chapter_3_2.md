@@ -1,12 +1,12 @@
 # Memory addressing modes
 
-On our initial implementation CPU receives instructions as separate input stream. Which is not how the things actually work.
+In our initial implementation, the CPU receives instructions as a separate input stream, not how the things actually work.
 
-NES implements typical von Neumann architecture: computer memory stores both data and the instructions that needs to be executed by the machine. From CPU perspective execution code is data and any data can potentially be interpreted as and execution code. There is no way CPU can tell the difference between data that is code and data that is uhm… data. The only mechanism CPU has is a **program_counter** register that keeps track of a position in instructions stream.
+NES implements typical von Neumann architecture: computer memory stores both data and the instructions that need to be executed by the machine. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a **program_counter** register that keeps track of a position in the instructions stream.
 
  <div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
 
-Lets try to sketch this out in our CPU code:
+Let's try to sketch this out in our CPU code:
 
 ```rust
 
@@ -54,16 +54,16 @@ impl CPU {
 ```
 
 
-For now, we just created an array for the whole 64 KiB worth of address space. But as discusses in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, everything else is reserved for memory mapping. 
+For now, we just created an array for the whole 64 KiB worth of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. 
 
-We also load program code into memory from 0x8000 address. In reallity, this is were Cartridge ROM memory map starts, so we can assume that instructions stream would start somewhere in this space [0x8000 .. 0xFFFF] but not necessarily at exact 0x8000.
+We also load program code into memory from 0x8000 Address. In reality, this is were Cartridge ROM memory map starts, so we can assume that the instructions stream would start somewhere in this space [0x8000 .. 0xFFFF] but not necessarily at exact 0x8000.
 
-In fact, NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called "Reset interrrupt" that instructs CPU to:
-* reset all state (registers and flags)
+NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called "Reset interrupt" that instructs CPU to:
+* reset the state (registers and flags)
 * set **program_counter** to the 16bit address that is stored at 0xFFFC
 
-Before implementing that, I should briefly mention that NES Cpu can address 65536 memory cells, that mean that memory addresses can take 2 Bytes. NES CPU uses Little-Endian addressing rather than big-endian.
-That means that 8 liest significant bits of address will be stored before 8 most significant bit. 
+Before implementing that, I should briefly mention that NES Cpu can address 65536 memory cells, that means that memory addresses can take 2 Bytes. NES CPU uses Little-Endian addressing rather than big-endian.
+That means that 8 liest significant bits of Address will be stored before 8 most significant bit. 
 
 The difference can be illustrated like this:
 
@@ -71,8 +71,8 @@ The difference can be illustrated like this:
 | |  |
 |-|-:|
 | Real Address | **0x8000** |
-| Address packed in big endian | **80 00** |
-|Address packed in little endian | **00 80** |
+| Address packed in big-endian | **80 00** |
+|Address packed in little-endian | **00 80** |
 
 
 For example, instruction to read data from memory cell 0x8000 into A register would look like:
@@ -101,9 +101,9 @@ Let's implement this behaviour:
 ```
 
 
-Now we can try implement **reset** functionallity properly. We would also have to adjust load and load_and_run:
-* **load** method should load program into PRG Rom space and save the reference to the code into 0xFFFC memory cell
-* **reset** method should restore state of all registers, and initialize program_counter by the 2 byte value stored at 0xFFFC
+Now we can try implement **reset** functionality properly. We would also have to adjust load and load_and_run:
+* **load** method should load a program into PRG Rom space and save the reference to the code into 0xFFFC memory cell
+* **reset** method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC
 
 
 ```rust
@@ -130,7 +130,7 @@ Now we can try implement **reset** functionallity properly. We would also have t
 
 Don't forget to fix failing tests now **:trollface:**
 
-Alright that was the easy part. 
+Alright, that was the easy part. 
 
 Remember LDA  opscode we've implemented last chapter? That single mnemonic (LDA) actually can be traslated into 8 different machine instructions depending on a type of the parameter:
 
@@ -141,17 +141,17 @@ You can read about addressing modes:
 - [here](https://skilldrick.github.io/easy6502/#addressing)
 - and [here](www.obelisk.me.uk/6502/addressing.html)
 
-In short, the addressing mode is a property of an instruction that defines how CPU would interpret next 1 or 2 bytes in the instruction stream. 
+In short, the addressing mode is a property of an instruction that defines how CPU would interpret the next 1 or 2 bytes in the instruction stream. 
 
 It's important to note that different addressing modes have different instruction sizes. 
 For example, 
-- **Zero Page version** ($A5) has size of 2 bytes - one for opcode itself, and one for parameter. That's why zero page addressing can't reference memory above first 255 bytes.
-- **Absolute version** ($AD) has 3 bytes - that means that the address occopies 2 bytes, which makes it possible to reference all of 65536 memory cells, as we've discussed.
+- **Zero Page version** ($A5) has a size of 2 bytes - one for opcode itself, and one for a parameter. That's why zero page addressing can't reference memory above the first 255 bytes.
+- **Absolute version** ($AD) has 3 bytes - that means that the Address occupies 2 bytes, making it possible to reference all of 65536 memory cells, as we've discussed.
 (*NOTE: 2 byte the parameter will be packed according to little-endian rules*)
 
-There are no opcodes that occupies more than 3 bytes. Opcode instruction can have a size: 1 byte, 2 bytes, 3 bytes. 
+There are no opcodes that occupy more than 3 bytes. Opcode instruction can have a size: 1 byte, 2 bytes, 3 bytes. 
 
-One important details is that majority of CPU instructions provide more than 1 addressing alternative. Ideally we don't want to re-implement the same addressing mode logic for every CPU instruction.
+One crucial detail is that majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.
 
 
 Let's try to codify how CPU should interpret different addressing modes:
@@ -233,7 +233,7 @@ impl CPU {
 
 ```
 
-That way we can change our initial **LDA** implementation 
+That way, we can change our initial **LDA** implementation. 
 
 ```rust
  fn lda(&mut self, mode: &AddressingMode) {
@@ -271,9 +271,9 @@ That way we can change our initial **LDA** implementation
 ```
 
 
-NOTE: It's important to to increment **program_counter** after each byte being read from instructions stream. 
+NOTE: It's crucial to increment **program_counter** after each byte being read from the instructions stream. 
 
-Don't forget the tests
+Don't forget the tests.
 
 ```rust
    #[test]
@@ -287,7 +287,7 @@ Don't forget the tests
    }
 ```
 
-Using same foundation we can easily implement **STA** instruction - the one that copies value from register A to memory
+Using the same foundation, we can quickly implement **STA** instruction, which copies the value from register A to memory.
 
 
 ```rust
@@ -316,9 +316,9 @@ Using same foundation we can easily implement **STA** instruction - the one that
     }
 ```
 
-Before we will wrap up, I'd like to mention that current **run** method is somewhat iffy. First of all, the requirements to increment program_counter by 1 or 2 after some operations is error prone. And if we introduce an error it would be really hard to spot it on. 
+Before we wrap up, I'd like to mention that the current **run** method is somewhat iffy. First of all, the requirements to increment program_counter by 1 or 2 after some operations is error-prone. And if we introduce an error, it would be tough to spot it on. 
 
-Second, wouldn't it be more readable and convinient if we could group all "LDA" operations under one single match? 
+Second, wouldn't it be more readable and convenient if we could group all "LDA" operations under a single `match` cause? 
 
 Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Wouldn't it be great if we could represent our opcodes in some table form?
 
