@@ -1,0 +1,401 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Cartridges - Writing NES Emulator in Rust</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html" class="active"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Writing NES Emulator in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#cartridges" id="cartridges">Cartridges</a></h1>
+<div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
+<p>The first version of the cartridges was relatively straightforward. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics. </p>
+<p>Upon insertion into the console, PRG ROM got connected to CPU, and CHR ROM got connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM, and PPU wasn't able to access PRG ROM. </p>
+<blockquote>
+<p>Later versions of cartridges had additional hardware: </p>
+<ul>
+<li>mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM (beyond addressable 64 KiB)</li>
+<li>extra RAM with a battery to save and restore game state</li>
+</ul>
+</blockquote>
+<p>However, we won't be working with cartridges. We will be working with files containing ROM images.</p>
+<p>There are several file formats for ROM dumps; the most popular one is iNES designed by <a href="http://fms.komkon.org">Marat Fayzullin</a></p>
+<div style="text-align:center"><img src="./images/ch5/image_2_ines_file_format.png" width="60%"/></div>
+<p>The file consists of 3-4 sections:</p>
+<ul>
+<li>16-byte header</li>
+<li>optional 512 of so-called Trainer, a data created by Famicom copiers to keep own mapping. We can skip this section if it is being present.</li>
+<li>Section containing PRG ROM code</li>
+<li>Section containing CHR ROM data</li>
+</ul>
+<p>The header is the most interesting part.</p>
+<div style="text-align:center"><img src="./images/ch5/image_3_ines_header.png" width="60%"/></div>
+<p>Control Byte 1 and Control Byte 2 (Byte 06 and 07 in the header) contain some additional info about the file data, but it's packed in bits.</p>
+<table><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td><div style="text-align:center"><img src="./images/ch5/image_4_control_byte_1.png" width="100%"/></div></td><td><div style="text-align:center"><img src="./images/ch5/image_5_control_byte_2.png" width="100%"/></div></td></tr>
+</tbody></table>
+<br/>
+We won't cover and support the iNES 2.0 format as it's not very popular. But you can find the formal format specification of both iNES version [here](https://formats.kaitai.io/ines/index.html)
+<p>The bare minimum information we care about at this point:</p>
+<ul>
+<li>PRG ROM</li>
+<li>CHR ROM</li>
+<li>Mapper type</li>
+<li>Mirroring type: Horizontal, Vertical, 4 Screen</li>
+</ul>
+<p>We would discuss mirroring extensively in the following PPU chapters. 
+For now, we need to figure out which mirroring type the game is using. </p>
+<p>For now, we would be aiming only to support the iNES 1.0 format and mapper 0. </p>
+<p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is. </p>
+<p>Let's start by defining Rom data structure:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>#[derive(Debug, PartialEq)]
+pub enum Mirroring {
+   VERTICAL,
+   HORIZONTAL,
+   FOUR_SCREEN,
+}
+ 
+pub struct Rom {
+   pub prg_rom: Vec&lt;u8&gt;,
+   pub chr_rom: Vec&lt;u8&gt;,
+   pub mapper: u8,
+   pub screen_mirroring: Mirroring,
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Then we need to write parsing code:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl Rom {
+   pub fn new(raw: &amp;Vec&lt;u8&gt;) -&gt; Result&lt;Rom, String&gt; {
+       if &amp;raw[0..4] != NES_TAG {
+           return Err(&quot;File is not in iNES file format&quot;.to_string());
+       }
+ 
+       let mapper = (raw[7] &amp; 0b1111_0000) | (raw[6] &gt;&gt; 4);
+ 
+       let ines_ver = (raw[7] &gt;&gt; 2) &amp; 0b11;
+       if ines_ver != 0 {
+           return Err(&quot;NES2.0 format is not supported&quot;.to_string());
+       }
+ 
+       let four_screen = raw[6] &amp; 0b1000 != 0;
+       let vertical_mirroring = raw[6] &amp; 0b1 != 0;
+       let screen_mirroring = match (four_screen, vertical_mirroring) {
+           (true, _) =&gt; Mirroring::FOUR_SCREEN,
+           (false, true) =&gt; Mirroring::VERTICAL,
+           (false, false) =&gt; Mirroring::HORIZONTAL,
+       };
+ 
+       let prg_rom_size = raw[4] as usize * PRG_ROM_PAGE_SIZE;
+       let chr_rom_size = raw[5] as usize * CHR_ROM_PAGE_SIZE;
+ 
+       let skip_trainer = raw[6] &amp; 0b100 != 0;
+ 
+       let prg_rom_start = 16 + if skip_trainer { 512 } else { 0 };
+       let chr_rom_start = prg_rom_start + prg_rom_size;
+ 
+       Ok(Rom {
+           prg_rom: raw[prg_rom_start..(prg_rom_start + prg_rom_size)].to_vec(),
+           chr_rom: raw[chr_rom_start..(chr_rom_start + chr_rom_size)].to_vec(),
+           mapper: mapper,
+           screen_mirroring: screen_mirroring,
+       })
+   }
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>As always, don't forget the tests!</p>
+<p>Next we need to connect our bus to the ROM:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct Bus {
+   cpu_vram: [u8; 2048],
+   rom: Rom,
+}
+ 
+impl Bus {
+   pub fn new(rom: Rom) -&gt; Self {
+       Bus {
+           cpu_vram: [0; 2048],
+           rom: rom,
+       }
+   }
+   //....
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>And finally we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG Rom space. </p>
+<p>One caveat: for the mapper 0, PRG Rom Size might be 16 KiB or 32 KiB.
+Because <strong>[0x8000 … 0x10000]</strong> range gives us 32 KiB of addressable space, we need to map upper 16 KiB to lower 16 KiB if the game has only 16 KiB worth of PRG ROM. </p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl Mem for Bus {
+   fn mem_read(&amp;self, addr: u16) -&gt; u8 {
+       match addr {
+           //….
+           0x8000..=0xFFFF =&gt; self.read_prg_rom(addr),
+       }
+   }
+ 
+   fn mem_write(&amp;mut self, addr: u16, data: u8) {
+       match addr {
+           //...
+           0x8000..=0xFFFF =&gt; {
+               panic!(&quot;Attempt to write to Cartridge ROM space&quot;)
+           }
+       }
+   }
+}
+
+impl Bus {
+  // ...
+ 
+   fn read_prg_rom(&amp;self, mut addr: u16) -&gt; u8 {
+       addr -= 0x8000;
+       if self.rom.prg_rom.len() == 0x4000 &amp;&amp; addr &gt;= 0x4000 {
+           //mirror if needed
+           addr = addr % 0x4000;
+       }
+       self.rom.prg_rom[addr as usize]
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>You can download your first NES ROM dump file here: <TODO>
+You also need to change the main method to load and run it.</p>
+<p>Spoiler alert: it's a slight modification of a snake game. The game expects the same memory map for the input device, screen output, and random number generator. </p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="chapter_4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="chapter_5_1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="chapter_4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="chapter_5_1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+        <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-3286054-2', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Memory addressing modes - Writing NES Emulator in Rust</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html" class="active"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Writing NES Emulator in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#memory-addressing-modes" id="memory-addressing-modes">Memory addressing modes</a></h1>
+<p>In our initial implementation, the CPU receives instructions as a separate input stream, not how the things actually work.</p>
+<p>NES implements typical von Neumann architecture: computer memory stores both data and the instructions that need to be executed by the machine. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
+<div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
+<p>Let's try to sketch this out in our CPU code:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>pub struct CPU {
+   pub register_a: u8,
+   pub register_x: u8,
+   pub status: u8,
+   pub program_counter: u16,
+   memory: [u8; 0xFFFF]
+}
+ 
+impl CPU {
+ 
+    fn mem_read(&amp;self, addr: u16) -&gt; u8 {
+        self.memory[addr as usize]
+    }
+
+    fn mem_write(&amp;mut self, addr: u16, data: u8) {
+        self.memory[addr as usize] = data;
+    }
+
+    pub fn load_and_run(&amp;mut self, program: Vec&lt;u8&gt;) {
+        self.load(program);
+        self.run()
+    }
+
+    pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
+        self.memory[0x8000 .. (0x8000 + program.len())].copy_from_slice(&amp;program[..]);
+        self.program_counter = 0x8000;
+    }
+ 
+    pub fn run(&amp;mut self) {
+    // note: we move  intialization of program_counter from here to load function
+        loop {
+            let opscode = self.mem_read(self.program_counter);
+            self.program_counter += 1;
+
+            match opscode {
+                //..
+            }
+        }
+    }
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>For now, we just created an array for the whole 64 KiB worth of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
+<p>We also load program code into memory from 0x8000 Address. In reality, this is were Cartridge ROM memory map starts, so we can assume that the instructions stream would start somewhere in this space [0x8000 .. 0xFFFF] but not necessarily at exact 0x8000.</p>
+<p>NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called &quot;Reset interrupt&quot; that instructs CPU to:</p>
+<ul>
+<li>reset the state (registers and flags)</li>
+<li>set <strong>program_counter</strong> to the 16bit address that is stored at 0xFFFC</li>
+</ul>
+<p>Before implementing that, I should briefly mention that NES Cpu can address 65536 memory cells, that means that memory addresses can take 2 Bytes. NES CPU uses Little-Endian addressing rather than big-endian.
+That means that 8 liest significant bits of Address will be stored before 8 most significant bit. </p>
+<p>The difference can be illustrated like this:</p>
+<table><thead><tr><th></th><th align="right"></th></tr></thead><tbody>
+<tr><td>Real Address</td><td align="right"><strong>0x8000</strong></td></tr>
+<tr><td>Address packed in big-endian</td><td align="right"><strong>80 00</strong></td></tr>
+<tr><td>Address packed in little-endian</td><td align="right"><strong>00 80</strong></td></tr>
+</tbody></table>
+<p>For example, instruction to read data from memory cell 0x8000 into A register would look like:</p>
+<pre><code>LDA $8000      &lt;=&gt;    ad 00 80
+</code></pre>
+<p>Let's implement this behaviour:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>   fn mem_read_u16(&amp;mut self, pos: u16) -&gt; u16 {
+       let lo = self.mem_read(pos) as u16;
+       let hi = self.mem_read(pos + 1) as u16;
+       (hi &lt;&lt; 8) | (lo as u16)
+   }
+ 
+   fn mem_write_u16(&amp;mut self, pos: u16, data: u16) {
+       let hi = (data &gt;&gt; 8) as u8;
+       let lo = (data &amp; 0xff) as u8;
+       self.mem_write(pos, lo);
+       self.mem_write(pos + 1, hi);
+   }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now we can try implement <strong>reset</strong> functionality properly. We would also have to adjust load and load_and_run:</p>
+<ul>
+<li><strong>load</strong> method should load a program into PRG Rom space and save the reference to the code into 0xFFFC memory cell</li>
+<li><strong>reset</strong> method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>   pub fn reset(&amp;mut self) {
+       self.register_a = 0;
+       self.register_x = 0;
+       self.status = 0;
+ 
+       self.program_counter = self.mem_read_u16(0xFFFC);
+   }
+ 
+   pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
+       self.memory[0x8000 .. (0x8000 + program.len())].copy_from_slice(&amp;program[..]);
+       self.mem_write_u16(0xFFFC, 0x8000);
+   }
+ 
+   pub fn load_and_run(&amp;mut self, program: Vec&lt;u8&gt;) {
+       self.load(program);
+       self.reset();
+       self.run()
+   }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Don't forget to fix failing tests now <strong>:trollface:</strong></p>
+<p>Alright, that was the easy part. </p>
+<p>Remember LDA  opscode we've implemented last chapter? That single mnemonic (LDA) actually can be traslated into 8 different machine instructions depending on a type of the parameter:</p>
+<div style="text-align:center"><img src="./images/ch3.2/image_2_opcodes.png" width="80%"/></div>
+<p>You can read about addressing modes: </p>
+<ul>
+<li><a href="https://skilldrick.github.io/easy6502/#addressing">here</a></li>
+<li>and <a href="www.obelisk.me.uk/6502/addressing.html">here</a></li>
+</ul>
+<p>In short, the addressing mode is a property of an instruction that defines how CPU would interpret the next 1 or 2 bytes in the instruction stream. </p>
+<p>It's important to note that different addressing modes have different instruction sizes. 
+For example, </p>
+<ul>
+<li><strong>Zero Page version</strong> ($A5) has a size of 2 bytes - one for opcode itself, and one for a parameter. That's why zero page addressing can't reference memory above the first 255 bytes.</li>
+<li><strong>Absolute version</strong> ($AD) has 3 bytes - that means that the Address occupies 2 bytes, making it possible to reference all of 65536 memory cells, as we've discussed.
+(<em>NOTE: 2 byte the parameter will be packed according to little-endian rules</em>)</li>
+</ul>
+<p>There are no opcodes that occupy more than 3 bytes. Opcode instruction can have a size: 1 byte, 2 bytes, 3 bytes. </p>
+<p>One crucial detail is that majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
+<p>Let's try to codify how CPU should interpret different addressing modes:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>#[derive(Debug)]
+#[allow(non_camel_case_types)]
+pub enum AddressingMode {
+   Immediate,
+   ZeroPage,
+   ZeroPage_X,
+   ZeroPage_Y,
+   Absolute,
+   Absolute_X,
+   Absolute_Y,
+   Indirect_X,
+   Indirect_Y,
+   NoneAddressing,
+}
+ 
+impl CPU {
+   // ...
+   fn get_operand_address(&amp;self, mode: &amp;AddressingMode) -&gt; u16 {
+ 
+       match mode {
+           AddressingMode::Immediate =&gt; self.program_counter,
+ 
+           AddressingMode::ZeroPage  =&gt; self.mem_read(self.program_counter) as u16,
+          
+           AddressingMode::Absolute =&gt; self.mem_read_u16(self.program_counter),
+        
+           AddressingMode::ZeroPage_X =&gt; {
+               let pos = self.mem_read(self.program_counter);
+               let addr = pos.wrapping_add(self.register_x) as u16;
+               addr
+           }
+           AddressingMode::ZeroPage_Y =&gt; {
+               let pos = self.mem_read(self.program_counter);
+               let addr = pos.wrapping_add(self.register_y) as u16;
+               addr
+           }
+ 
+           AddressingMode::Absolute_X =&gt; {
+               let base = self.mem_read_u16(self.program_counter);
+               let addr = base.wrapping_add(self.register_x as u16);
+               addr
+           }
+           AddressingMode::Absolute_Y =&gt; {
+               let base = self.mem_read_u16(self.program_counter);
+               let addr = base.wrapping_add(self.register_y as u16);
+               addr
+           }
+ 
+           AddressingMode::Indirect_X =&gt; {
+               let base = self.mem_read(self.program_counter);
+ 
+               let ptr: u8 = (base as u8).wrapping_add(self.register_x);
+               let lo = self.mem_read(ptr as u16);
+               let hi = self.mem_read(ptr.wrapping_add(1) as u16);
+               (hi as u16) &lt;&lt; 8 | (lo as u16)
+           }
+           AddressingMode::Indirect_Y =&gt; {
+               let base = self.mem_read(self.program_counter);
+ 
+               let lo = self.mem_read(base as u16);
+               let hi = self.mem_read((base as u8).wrapping_add(1) as u16);
+               let deref_base = (hi as u16) &lt;&lt; 8 | (lo as u16);
+               let deref = deref_base.wrapping_add(self.register_y as u16);
+               deref
+           }
+         
+           AddressingMode::NoneAddressing =&gt; {
+               panic!(&quot;mode {:?} is not supported&quot;, mode);
+           }
+       }
+ 
+   }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>That way, we can change our initial <strong>LDA</strong> implementation. </p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span> fn lda(&amp;mut self, mode: &amp;AddressingMode) {
+       let addr = self.get_operand_address(mode);
+       let value = self.mem_read(addr);
+      
+       self.register_a = value;
+       self.update_zero_and_negative_flags(self.register_a);
+   }
+ 
+ 
+   pub fn run(&amp;mut self) {
+       loop {
+           let code = self.mem_read(self.program_counter);
+           self.program_counter += 1;
+ 
+           match code {
+               0xA9 =&gt; {
+                   self.lda(&amp;AddressingMode::Immediate);
+                   self.program_counter += 1;
+               }
+               0xA5 =&gt; {
+                   self.lda(&amp;AddressingMode::ZeroPage);
+                   self.program_counter += 1;
+               }
+               0xAD =&gt; {
+                   self.lda(&amp;AddressingMode::Absolute);
+                   self.program_counter += 2; 
+               }
+               //....
+           }
+       }
+   }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>NOTE: It's crucial to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
+<p>Don't forget the tests.</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>   #[test]
+   fn test_lda_from_memory() {
+       let mut cpu = CPU::new();
+       cpu.mem_write(0x10, 0x55);
+ 
+       cpu.load_and_run(vec![0xa5, 0x10, 0x00]);
+ 
+       assert_eq!(cpu.register_a, 0x55);
+   }
+<span class="boring">}
+</span></code></pre></pre>
+<p>Using the same foundation, we can quickly implement <strong>STA</strong> instruction, which copies the value from register A to memory.</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>    fn sta(&amp;mut self, mode: &amp;AddressingMode) {
+        let addr = self.get_operand_address(mode);
+        self.mem_write(addr, self.register_a);
+    }
+
+
+    pub fn run(&amp;mut self) {
+//... 
+        match code {
+            //.. 
+            /* STA */
+            0x85 =&gt; {
+                self.sta(AddressingMode::ZeroPage);
+                self.program_counter += 1;
+            }
+
+            0x95 =&gt; {
+                self.sta(AddressingMode::ZeroPage_X);
+                self.program_counter += 1;
+            } 
+            //..
+        }
+    }
+<span class="boring">}
+</span></code></pre></pre>
+<p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy. First of all, the requirements to increment program_counter by 1 or 2 after some operations is error-prone. And if we introduce an error, it would be tough to spot it on. </p>
+<p>Second, wouldn't it be more readable and convenient if we could group all &quot;LDA&quot; operations under a single <code>match</code> cause? </p>
+<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Wouldn't it be great if we could represent our opcodes in some table form?</p>
+<div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
+<p>I leave it to you to figure out how to get to this point.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="chapter_3_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="chapter_3_3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="chapter_3_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="chapter_3_3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+        <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-3286054-2', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

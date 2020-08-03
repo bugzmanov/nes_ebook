@@ -1,0 +1,561 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rendering Static Screen - Writing NES Emulator in Rust</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html" class="active"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Writing NES Emulator in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#rendering-static-screen" id="rendering-static-screen">Rendering Static Screen</a></h1>
+<p>At this point, the CPU and PPU are fully functional and working in coordination with each other. 
+So if we load a game into our emulator, the game would be executing and most likely would run into demo mode.</p>
+<p>The problem is that we can't see what's going on inside. Remember how we had intercepted the execution of the snake game to read the game screen state? And then had it rendered via SDL2 canvas? We will have to do something similar here. It's just the data format a frame used by NES is slightly more complicated.</p>
+<p>PPU has to deal with 2 categories of objects:</p>
+<div style="text-align:center"><img src="./images/ch6.4/image_8_bg_sprites_game.png" width="80%"/></div>
+<p>Both of those are constructed using CHR tiles, we've discussed in the last chapter. 
+In fact, the same tile can be used both for background and for sprites. </p>
+<p>But NES uses different memory spaces to hold background and sprites. Also, the set of possible transformations is different. </p>
+<h2><a class="header" href="#rending-background" id="rending-background">Rending Background</a></h2>
+<!-- <div style="text-align:center"><img src="./images/ch6.4/image_1_pacman_bg.png" width="30%"/></div> -->
+<p>Three main memory sections are responsible for the state of a background:</p>
+<ul>
+<li>Pattern Table - 2 banks of tiles from CHR ROM on a cartridge</li>
+<li>Nametable - the state of a screen stored in VRAM</li>
+<li>Palette table - the information about the real coloring of pixels, stored in internal PPU memory</li>
+</ul>
+<p>NES Screen background screen is composed of 960 tiles (a tile being 8x8 pixels: <code>256 / 8 * 240 / 8  = 960</code>) 
+To hold that information, NES allocates 960 bytes in VRAM in the so-called Nametable. Each byte in a Nametable contains an index of a tile to be used in the current position. </p>
+<div style="text-align:center"><img src="./images/ch6.4/image_2_nametable.png" width="100%"/></div>
+<blockquote>
+<p>The pattern table consists of 2 banks of tiles, and each bank holds 256 tiles. One byte in a name table can address only 256 elements within a single bank. 
+In addition, PPU relied on Control register that specified which bank should be used for background and sprites</p>
+<div style="text-align:left"><img src="./images/ch6.4/image_3_control_register_highlight.png" width="50%"/></div>
+</blockquote>
+<p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. It's important to understand that a single frame is defined by 1024 bytes (960 + 64). The fact that PPU VRAM has 2048 bytes means that the PPU can simultaneously hold 2 nametables - state of 2 frames. 
+Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge. 
+More details: http://wiki.nesdev.com/w/index.php/Mirroring</p>
+<p>The good news is that nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). So for us to get a screen state, we just need to read it from an appropriate nametable.</p>
+<p>The algorithm to draw current background tiles:</p>
+<ol>
+<li>Determine which nametable being used for the current screen (bit 0 and bit 1 or a Control register)</li>
+<li>Determine which CHR ROM bank is used for background tiles</li>
+<li>Read 960 bytes from the specified nametable and draw a 32x30 tile-based screen by looking up each tile shape in the specified CHR ROM bank.</li>
+</ol>
+<p>Let's add <code>render</code> function to render module:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub mod frame;
+pub mod palette;
+ 
+use crate::ppu::NesPPU;
+use frame::Frame;
+ 
+pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
+   let bank = ppu.ctrl.bknd_pattern_addr();
+ 
+   for i in 0..0x03c0 { // just for now, lets use the first nametable
+       let tile = ppu.vram[i] as u16;
+       let tile_x = i % 32;
+       let tile_y = i / 32;
+       let tile = &amp;ppu.chr_rom[(bank + tile * 16) as usize..=(bank + tile * 16 + 15) as usize];
+ 
+       for y in 0..=7 {
+           let mut upper = tile[y];
+           let mut lower = tile[y + 8];
+ 
+           for x in (0..=7).rev() {
+               let value = (1 &amp; upper) &lt;&lt; 1 | (1 &amp; lower);
+               upper = upper &gt;&gt; 1;
+               lower = lower &gt;&gt; 1;
+               let rgb = match value {
+                   0 =&gt; palette::SYSTEM_PALLETE[0x01],
+                   1 =&gt; palette::SYSTEM_PALLETE[0x23],
+                   2 =&gt; palette::SYSTEM_PALLETE[0x27],
+                   3 =&gt; palette::SYSTEM_PALLETE[0x30],
+                   _ =&gt; panic!(&quot;can't be&quot;),
+               };
+               frame.set_pixel(tile_x*8 + x, tile_y*8 + y, rgb)
+           }
+       }
+   }
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note: that we are still using random colors from a system palette for the color index.</p>
+<p>One more thing. We need to define when we should intercept the program execution and read the screen state. 
+On the real console, PPU is drawing one pixel each PPU clock cycle. However, we don't need to do that, we can wait for the whole frame to be ready and draw it in one go. </p>
+<blockquote>
+<p><strong>TODO: bad approach!!! Scrolls would be ZERO!!!</strong></p>
+</blockquote>
+<p>In reality, PPU was actively drawing screen state on a TV screen during 0 - 240 scanlines, then during scanlines 241 - 262 the CPU was updating the state of PPU for the next frame, then the cycle repeated.</p>
+<p>So it looks like the easiest would be to intercept PPU before it moves to from scanline 262 to 0.</p>
+<p>First lets add callback to the bus, that will be triggered every time PPU jumps from 262 to 0 scanline:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>ub struct Bus&lt;'call&gt; {
+   cpu_vram: [u8; 2048],
+   prg_rom: Vec&lt;u8&gt;,
+   ppu: NesPPU,
+ 
+   cycles: usize,
+   gameloop_callback: Box&lt;dyn FnMut(&amp;NesPPU) + 'call&gt;,
+ 
+}
+ 
+impl&lt;'a&gt; Bus&lt;'a&gt; {
+   pub fn new&lt;'call, F&gt;(rom: Rom, gameloop_callback: F) -&gt; Bus&lt;'call&gt;
+   where
+       F: FnMut(&amp;NesPPU) + 'call,
+   {
+       let ppu = NesPPU::new(rom.chr_rom, rom.screen_mirroring);
+ 
+       Bus {
+           cpu_vram: [0; 2048],
+           prg_rom: rom.prg_rom,
+           ppu: ppu,
+           cycles: 0,
+           gameloop_callback: Box::from(gameloop_callback),
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Then lets tweak <code>tick</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl&lt;'a&gt; Bus&lt;'a&gt; {
+//..
+   pub fn tick(&amp;mut self, cycles: u8) {
+       self.cycles += cycles as usize;
+       let new_frame = self.ppu.tick(cycles * 3);
+       if new_frame {
+           (self.gameloop_callback)(&amp;self.ppu);
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Then our main game loop would become:</p>
+<pre><pre class="playpen"><code class="language-rust">fn main() {
+   // init sdl2…
+ 
+   //load the game
+   let bytes: Vec&lt;u8&gt; = std::fs::read(&quot;game.nes&quot;).unwrap();
+   let rom = Rom::new(&amp;bytes).unwrap();
+ 
+   let mut frame = Frame::new();
+ 
+   // the game cycle
+   let bus = Bus::new(rom, move |ppu: &amp;NesPPU| {
+       render::render(ppu, &amp;mut frame);
+       texture.update(None, &amp;frame.data, 256 * 3).unwrap();
+ 
+       canvas.copy(&amp;texture, None, None).unwrap();
+ 
+       canvas.present();
+       for event in event_pump.poll_iter() {
+           match event {
+             Event::Quit { .. }
+             | Event::KeyDown {
+                 keycode: Some(Keycode::Escape),
+                 ..
+             } =&gt; std::process::exit(0),
+             _ =&gt; { /* do nothing */ }
+           }
+        }
+   });
+ 
+   let mut cpu = CPU::new(bus);
+ 
+   cpu.reset();
+   cpu.run();
+}
+</code></pre></pre>
+<p>It's working!</p>
+<div style="text-align:center"><img src="./images/ch6.4/image_4_pacman_result.png" width="30%"/></div>
+<p>Beautiful. Now let's fix the colors.</p>
+<h2><a class="header" href="#working-with-colors" id="working-with-colors">Working with Colors</a></h2>
+<p>NES Console could generate 52 different colors on a TV screen. Those colors constitute the hardwired System Palette of the console. </p>
+<p>However, a single screen could use only 25 colors simultaneously: 13 background colors and 12 for sprites. </p>
+<p>NES had internal memory RAM to store palette settings for a screen, in so-called palette tables. 
+Space is divided into 8 palettes: 4 for background and 4 for sprites. Each palette contains 3 colors. 
+Remember that a pixel in a tile was coded using 2 bits - that's 4 possible values. </p>
+<blockquote>
+<p><strong>0b00</strong> for <em>background</em> tile means using Universal background color (at <strong>0x3F00</strong>). </p>
+<p>For <em>sprites</em> - <strong>0b00</strong> means that the pixel is transparent</p>
+</blockquote>
+<div style="text-align:center"><img src="./images/ch6.4/image_5_palette_table.png" width="100%"/></div>
+<p>A single tile can be drawn using only one palette from the palette table. 
+For background tiles, the last 64 bytes of each nametable are reserved for assigning a specific palette to a part of the background. This section is called an attribute table.</p>
+<p>A byte in an attribute table controls palettes for 4 meta-tiles. (a meta tile is a space composed of 4x4 tiles)
+A byte is composed of four 2bits blocks. And each block is assigning a background palette for four neighboring tiles. </p>
+<div style="text-align:center"><img src="./images/ch6.4/image_6_attribute_table.png" width="70%"/></div>
+<p>First let's extract palette for a tile specified by its row and column position on a screen:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn bg_pallette(ppu: &amp;NesPPU, tile_column: usize, tile_row : usize) -&gt; [u8;4] {
+   let attr_table_idx = tile_row / 4 * 8 +  tile_column / 4;
+   let attr_byte = ppu.vram[0x3c0 + attr_table_idx];  // note: still using hardcoded first nametable
+ 
+   let pallet_idx = match (tile_column %4 / 2, tile_row % 4 / 2) {
+       (0,0) =&gt; attr_byte &amp; 0b11,
+       (1,0) =&gt; (attr_byte &gt;&gt; 2) &amp; 0b11,
+       (0,1) =&gt; (attr_byte &gt;&gt; 4) &amp; 0b11,
+       (1,1) =&gt; (attr_byte &gt;&gt; 6) &amp; 0b11,
+       (_,_) =&gt; panic!(&quot;should not happen&quot;),
+   };
+ 
+   let pallete_start: usize = 1 + (pallet_idx as usize)*4;
+   [ppu.palette_table[0], ppu.palette_table[pallete_start], ppu.palette_table[pallete_start+1], ppu.palette_table[pallete_start+2]]
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>And just rewire our color lookup in <code>render</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
+   let bank = ppu.ctrl.bknd_pattern_addr();
+ 
+   for i in 0..0x3c0 {
+       let tile = ppu.vram[i] as u16;
+       let tile_column = i % 32;
+       let tile_row = i / 32;
+       let tile = &amp;ppu.chr_rom[(bank + tile * 16) as usize..=(bank + tile * 16 + 15) as usize];
+       let palette = bg_pallette(ppu, tile_column, tile_row);
+ 
+       for y in 0..=7 {
+           let mut upper = tile[y];
+           let mut lower = tile[y + 8];
+ 
+           for x in (0..=7).rev() {
+               let value = (1 &amp; lower) &lt;&lt; 1 | (1 &amp; upper);
+               upper = upper &gt;&gt; 1;
+               lower = lower &gt;&gt; 1;
+               let rgb = match value {
+                   0 =&gt; palette::SYSTEM_PALLETE[ppu.palette_table[0] as usize],
+                   1 =&gt; palette::SYSTEM_PALLETE[palette[1] as usize],
+                   2 =&gt; palette::SYSTEM_PALLETE[palette[2] as usize],
+                   3 =&gt; palette::SYSTEM_PALLETE[palette[3] as usize],
+                   _ =&gt; panic!(&quot;can't be&quot;),
+               };
+               frame.set_pixel(tile_column * 8 + x, tile_row * 8 + y, rgb)
+           }
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>That's it.</p>
+<h2><a class="header" href="#rendering-sprites" id="rendering-sprites">Rendering sprites.</a></h2>
+<p>Rendering sprites is somewhat similar, yet a bit easier. 
+NES had an internal RAM for storing states of all sprites in the frame, so-called Object Attribute Memory (OAM).</p>
+<p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object of a screen usually consists of 4 tiles).</p>
+<p>In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Thus each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the last one specifies how the object would look like</p>
+<p>NES Dev Wiki provides a pretty solid specification of each byte in the OAM record: http://wiki.nesdev.com/w/index.php/PPU_OAM</p>
+<p>So rendering all sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
+
+//.. draw background
+//draw sprites
+   for i in (0..ppu.oam_data.len()).step_by(4).rev() {
+       let tile_idx = ppu.oam_data[i + 1] as u16;
+       let tile_x = ppu.oam_data[i + 3] as usize;
+       let tile_y = ppu.oam_data[i] as usize;
+ 
+       let flip_vertical = if ppu.oam_data[i + 2] &gt;&gt; 7 &amp; 1 == 1 {
+           true
+       } else {
+           false
+       };
+       let flip_horizontal = if ppu.oam_data[i + 2] &gt;&gt; 6 &amp; 1 == 1 {
+           true
+       } else {
+           false
+       };
+       let pallette_idx = ppu.oam_data[i + 2] &amp; 0b11;
+       let sprite_palette = sprite_palette(ppu, pallette_idx);
+      
+       let bank: u16 = ppu.ctrl.sprt_pattern_addr();
+ 
+       let tile = &amp;ppu.chr_rom[(bank + tile_idx * 16) as usize..=(bank + tile_idx * 16 + 15) as usize];
+ 
+ 
+       for y in 0..=7 {
+           let mut upper = tile[y];
+           let mut lower = tile[y + 8];
+           'ololo: for x in (0..=7).rev() {
+               let value = (1 &amp; lower) &lt;&lt; 1 | (1 &amp; upper);
+               upper = upper &gt;&gt; 1;
+               lower = lower &gt;&gt; 1;
+               let rgb = match value {
+                   0 =&gt; continue 'ololo, // skip coloring the pixel
+                   1 =&gt; palette::SYSTEM_PALLETE[sprite_palette[1] as usize],
+                   2 =&gt; palette::SYSTEM_PALLETE[sprite_palette[2] as usize],
+                   3 =&gt; palette::SYSTEM_PALLETE[sprite_palette[3] as usize],
+                   _ =&gt; panic!(&quot;can't be&quot;),
+               };
+               match (flip_horizontal, flip_vertical) {
+                   (false, false) =&gt; frame.set_pixel(tile_x + x, tile_y + y, rgb),
+                   (true, false) =&gt; frame.set_pixel(tile_x + 7 - x, tile_y + y, rgb),
+                   (false, true) =&gt; frame.set_pixel(tile_x + x, tile_y + 7 - y, rgb),
+                   (true, true) =&gt; frame.set_pixel(tile_x + 7 - x, tile_y + 7 - y, rgb),
+               }
+           }
+       }
+   }
+<span class="boring">}
+</span></code></pre></pre>
+<p>And the sprite palette lookup is very easy:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn sprite_palette(ppu: &amp;NesPPU, pallete_idx: u8) -&gt; [u8; 4] {
+    let start = 0x11 + (pallete_idx * 4) as usize;
+    [
+        0,
+        ppu.palette_table[start],
+        ppu.palette_table[start + 1],
+        ppu.palette_table[start + 2],
+    ]
+}
+<span class="boring">}
+</span></code></pre></pre>
+<div style="text-align:center"><img src="./images/ch6.4/image_7_pacman_chrs.png" width="30%"/></div>
+<p>If you don't see characters in Pacman, most likely this means there are some issues in the way you've implemented memory mapping for OAM DMA register (0x4014) </p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="chapter_6_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="chapter_7.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="chapter_6_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="chapter_7.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+        <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-3286054-2', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

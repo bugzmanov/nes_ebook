@@ -1,0 +1,682 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Emulating PPU Registers - Writing NES Emulator in Rust</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html" class="active"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Writing NES Emulator in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#emulating-ppu-registers" id="emulating-ppu-registers">Emulating PPU Registers</a></h1>
+<p>PPU has its own memory map, that consists of RAM, CHR ROM address space, and address space mirrors.
+PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to <strong>[0x2000 - 0x2007]</strong> CPU memory map (and mirrored every 8 bytes in the region **[0x2008 .. 0x3FFF])</p>
+<div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="80%"/></div>
+<p>To be entirely fair, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate that. </p>
+<p>5 Registers are responsible for accessing PPU ram:</p>
+<ul>
+<li>OAM Address (0x2003) &amp; OAM Data (0x2004)  - provides access to Object Attribute Memory - the space responsible for sprites</li>
+<li>Address (0x2006) &amp; Data (0x2006) - provide access to the full addressable space available for PPU</li>
+<li>Direct Memory Access (0x4014) - for fast copying of 256 bytes from CPU RAM to PPU RAM</li>
+</ul>
+<p>3 Write-only registers are controlling PPU actions:</p>
+<ul>
+<li>Controller (0x2000) - instructs PPU on general logic flow (which mem table to use, if PPU should interrupt CPU, etc.)</li>
+<li>Mask (0x2001) - instructs PPU how to render sprites and background</li>
+<li>Scroll (0x2005) - instructs PPU how to set view port</li>
+</ul>
+<p>One register reports current PPU status:</p>
+<ul>
+<li>Status 0x2002 - read only </li>
+</ul>
+<p>The full spec of the registers can be found on <a href="http://wiki.nesdev.com/w/index.php/PPU_registers">NES Dev wiki</a></p>
+<div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="80%"/></div>
+<p>2 communication channels exist between CPU and PPU:</p>
+<ul>
+<li>CPU is driving communication through IO registers</li>
+<li>PPU sends an interrupt signal to CPU upon entering V-BLANK period</li>
+</ul>
+<blockquote>
+<p>PPU execution lifecycle was tightly coupled with the electron beam of the TV screen. </p>
+<p>The PPU renders 262 scanlines per frame. 
+Each scanline lasts for 341 PPU clock cycles,  with each clock cycle producing one pixel.
+The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible. </p>
+<div style="text-align:center"><img src="./images/ch6.1/image_7_scanlines_with_viewer.png" width="30%"/></div>
+Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes no memory accesses during 241-262 scanlines, so PPU memory can be freely accessed by the program. The majority of games play it safe and update the screen state only during this period, essentially preparing the view state for the next frame. 
+</blockquote>
+<h2><a class="header" href="#ppu-sketch" id="ppu-sketch">PPU sketch</a></h2>
+<p>Initial sketch of out PPU would look like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct NesPPU {
+   pub chr_rom: Vec&lt;u8&gt;,
+   pub palette_table: [u8; 32],
+   pub vram: [u8; 2048],
+   pub oam_data: [u8; 256],
+
+   pub mirroring: Mirroring,
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p><em>chr_rom</em>, <em>palette_table</em>, <em>vram</em> and <em>oam_data</em> constitutes the whole addressing space of the PPU.</p>
+<p>mirroring specification and chr_rom would be provided by a cartridge Rom:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl NesPPU {
+   pub fn new(chr_rom: Vec&lt;u8&gt;, mirroring: Mirroring) -&gt; Self {
+       NesPPU {
+           chr_rom: chr_rom,
+           mirroring: mirroring,
+           vram: [0; 2048],
+           oam_data: [0; 64 * 4],
+           palette_table: [0; 32],
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h2><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers" id="emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
+<p>Lets try to emulate 2 most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
+<p>There are multiple caveats in the way the CPU can access PPU RAM. Say, CPU wants to access mem cell at 0x0600 PPU memory space:</p>
+<ol>
+<li>It has to load the requesting address to the Addr register. It has to write to the register twice - because memory cell 0x2006 (mapped to PPU address register) has the size of 1 byte and the addressable space in PPU is 2 bytes:<br/><br/> For example, if the program needs to access memory at 0x0600, it has to do 2 STA calls</li>
+</ol>
+<pre><code class="language-bash"> LDA #$06
+ STA $2006
+ LDA #$00
+ STA $2006
+</code></pre>
+<p>Note: it <strong>doesn't</strong> follow <em>little-endian</em> notation. </p>
+<ol start="2">
+<li>Then CPU can request load from PPU Data register (0x2007)</li>
+</ol>
+<pre><code class="language-bash">LDA $2007
+</code></pre>
+<blockquote>
+<p>Because CHR ROM and RAM are considered external devices to PPU, PPU can't get the value right away. PPU would require copying that value to the internal buffer before it can return it to the CPU.<br/> 
+So the first read from 0x2007 would return the content of this internal buffer filled during the previous load operation. From the CPU perspective, this is a dummy read. </p>
+</blockquote>
+<ol start="3">
+<li>CPU has to read from 0x2007 one more time to finally get the value from PPU internal buffer. </li>
+</ol>
+<pre><code class="language-bash">LDA $2007
+</code></pre>
+<blockquote>
+<p>Also note that read or write access to 0x2007 increments the PPU Address (0x2006). The increment size is determined by the state of the Control register (0x2000):</p>
+<div style="text-align:left"><img src="./images/ch6.1/image_3_controller_register_spec.png" width="60%"/></div>
+</blockquote>
+<p>The sequence of requests can be illustrated in this diagram:</p>
+<div style="text-align:center"><img src="./images/ch6.1/image_4_ppu_ram_sequence.png" width="60%"/></div>
+<blockquote>
+<p><strong>IMPORTANT:</strong> This buffered reading behavior is specific only to ROM and RAM. <br/>
+Reading palette data from $3F00-$3FFF works differently. The palette data is placed immediately on the data bus, and hence no dummy read is required.</p>
+</blockquote>
+<p>Lets model Address register first:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct AddrRegister {
+   value: (u8, u8),
+   hi_ptr: bool,
+}
+ 
+impl AddrRegister {
+   pub fn new() -&gt; Self {
+       AddrRegister {
+           value: (0, 0), // high byte first, lo byte second
+           hi_ptr: true,
+       }
+   }
+   fn set(&amp;mut self, data: u16) {
+       self.value.0 = (data &gt;&gt; 8) as u8;
+       self.value.1 = (data &amp; 0xff) as u8;
+   }
+ 
+   pub fn update(&amp;mut self, data: u8) {
+       if self.hi_ptr {
+           self.value.0 = data;
+       } else {
+           self.value.1 = data;
+       }
+ 
+       if self.get() &gt; 0x3fff { //mirror down addr above 0x3fff
+           self.set(self.get() &amp; 0b11111111111111);
+       }
+       self.hi_ptr = !self.hi_ptr;
+   }
+ 
+   pub fn increment(&amp;mut self, inc: u8) {
+       let lo = self.value.1;
+       self.value.1 = self.value.1.wrapping_add(inc);
+       if lo &gt; self.value.1 {
+           self.value.0 = self.value.0.wrapping_add(1);
+       }
+       if self.get() &gt; 0x3fff {
+           self.set(self.get() &amp; 0b11111111111111); //mirror down addr above 0x3fff
+       }
+   }
+ 
+   pub fn reset_latch(&amp;mut self) {
+       self.hi_ptr = true;
+   }
+ 
+   pub fn get(&amp;self) -&gt; u16 {
+       ((self.value.0 as u16) &lt;&lt; 8) | (self.value.1 as u16)
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Next, we need to expose this register as being writable:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct NesPPU {
+   //...
+   addr: AddrRegister,
+}
+
+impl NesPPU {
+// ...
+   fn write_to_ppu_addr(&amp;mut self, value: u8) {
+       self.addr.update(value);
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Next, we can sketch out Controller Register: </p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>bitflags! {
+ 
+   // 7  bit  0
+   // ---- ----
+   // VPHB SINN
+   // |||| ||||
+   // |||| ||++- Base nametable address
+   // |||| ||    (0 = $2000; 1 = $2400; 2 = $2800; 3 = $2C00)
+   // |||| |+--- VRAM address increment per CPU read/write of PPUDATA
+   // |||| |     (0: add 1, going across; 1: add 32, going down)
+   // |||| +---- Sprite pattern table address for 8x8 sprites
+   // ||||       (0: $0000; 1: $1000; ignored in 8x16 mode)
+   // |||+------ Background pattern table address (0: $0000; 1: $1000)
+   // ||+------- Sprite size (0: 8x8 pixels; 1: 8x16 pixels)
+   // |+-------- PPU master/slave select
+   // |          (0: read backdrop from EXT pins; 1: output color on EXT pins)
+   // +--------- Generate an NMI at the start of the
+   //            vertical blanking interval (0: off; 1: on)
+   pub struct ControlRegister: u8 {
+       const NAMETABLE1              = 0b00000001;
+       const NAMETABLE2              = 0b00000010;
+       const VRAM_ADD_INCREMENT      = 0b00000100;
+       const SPRITE_PATTERN_ADDR     = 0b00001000;
+       const BACKROUND_PATTERN_ADDR  = 0b00010000;
+       const SPRITE_SIZE             = 0b00100000;
+       const MASTER_SLAVE_SELECT     = 0b01000000;
+       const GENERATE_NMI            = 0b10000000;
+   }
+}
+ 
+impl ControlRegister {
+   pub fn new() -&gt; Self {
+       ControlRegister::from_bits_truncate(0b00000000)
+   }
+ 
+   pub fn vram_addr_increment(&amp;self) -&gt; u8 {
+       if !self.contains(ControlRegister::VRAM_ADD_INCREMENT) {
+           1
+       } else {
+           32
+       }
+   }
+ 
+   pub fn update(&amp;mut self, data: u8) {
+       self.bits = data;
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>And also expose it as being writable:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct NesPPU {
+   pub ctrl: ControlRegister,
+   //...
+}
+ 
+impl NesPPU {
+   //...
+   fn write_to_ctrl(&amp;mut self, value: u8) {
+       self.ctrl.update(value);
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now we can try to implement reading PPU memory:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl NesPPU {
+   //...
+   fn increment_vram_addr(&amp;mut self) {
+       self.addr.increment(self.ctrl.vram_addr_increment());
+   }
+ 
+ 
+   fn read_data(&amp;mut self) -&gt; u8 {
+       let addr = self.addr.get();
+       self.increment_vram_addr();
+ 
+ 
+ 
+       match addr {
+           0..=0x1fff =&gt; todo!(&quot;read from chr_rom&quot;),
+           0x2000..=0x2fff =&gt; todo!(&quot;read from RAM&quot;),
+           0x3000..=0x3eff =&gt; panic!(&quot;addr space 0x3000..0x3eff is not expected to be used, requested = {} &quot;, addr),
+           0x3f00..=0x3fff =&gt;
+           {
+               self.palette_table[(addr - 0x3f00) as usize]
+           }
+           _ =&gt; panic!(&quot;unexpected access to mirrored space {}&quot;, addr),
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>We can emulate this internal buffer behavior for RAM and ROM by using temporary field that holds a value from a previous read request:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>pub struct NesPPU {
+    //..
+    internal_data_buf: u8,
+}
+
+impl NesPPU {
+ // ...
+
+    fn read_data(&amp;mut self) -&gt; u8 {
+        let addr = self.addr.get();
+        self.increment_vram_addr();
+
+        match addr {
+            0..=0x1fff =&gt; {
+                let result = self.internal_data_buf;
+                self.internal_data_buf = self.chr_rom[addr as usize];
+                result
+            }
+            0x2000..=0x2fff =&gt; {
+                let result = self.internal_data_buf;
+                self.internal_data_buf = self.vram[self.mirror_vram_addr(addr) as usize];
+                result
+            }
+            // ..
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Writing to PPU memory can be implemented similarly, just don't forget that writes to 0x2007 also increments Address Register.</p>
+<h2><a class="header" href="#mirroring" id="mirroring">Mirroring</a></h2>
+<p>One thing that isn't covered is how <code>mirror_vram_addr</code> is implemented. </p>
+<p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="http://wiki.nesdev.com/w/index.php/Mirroring">Mirroring</a>.</p>
+<p>VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
+We would spend enough time discussing this in the chapter about Scroll. 
+For now, we can just codify mirroring behavior without really understanding why it's needed. </p>
+<p>NES uses 1 KiB of VRAM to represent a single screen state. Having 2 KiB of VRAM onboard means that NES can keep a state of 2 screens.</p>
+<p>On the PPU memory map, the range <em><strong>[0x2000...0x3F00]</strong></em> is reserved for Nametable (screens state), which is 4 KiB of mem space. And two &quot;additional&quot; screens have to be mapped to existing ones.
+The way they are mapped is dependent on the mirroring type, specified by a game (in iNES cartridge ROM this information is stored in header) </p>
+<div style="text-align:center"><img src="./images/ch6.1/image_5_mirroring.png" width="60%"/></div>
+<p>For example, in <em>horizontal Mirroring</em>: </p>
+<ul>
+<li>Address spaces <strong>[0x2000 .. 0x2400]</strong> and <strong>[0x2400 .. 0x2800]</strong> should be mapped to the first 1 KiB of VRAM. </li>
+<li>Address spaces <strong>[0x2800 .. 0x2C00]</strong> and <strong>[0x2C00 .. 0x3F00]</strong> should be mapped to the second 1 KiB of VRAM.</li>
+</ul>
+<p>One way to codify that:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl NesPPU {
+   //...  
+ 
+   // Horizontal:
+   //   [ A ] [ a ]
+   //   [ B ] [ b ]
+ 
+   // Vertical:
+   //   [ A ] [ B ]
+   //   [ a ] [ b ]
+   pub fn mirror_vram_addr(&amp;self, addr: u16) -&gt; u16 {
+       let mirrored_vram = addr &amp; 0b10111111111111; // mirror down 0x3000-0x3eff to 0x2000 - 0x2eff
+       let vram_index = mirrored_vram - 0x2000; // to vram vector
+       let name_table = vram_index / 0x400; // to the name table index
+       match (&amp;self.mirroring, name_table) {
+           (Mirroring::VERTICAL, 2) | (Mirroring::VERTICAL, 3) =&gt; vram_index - 0x800,
+           (Mirroring::HORIZONTAL, 2) =&gt; vram_index - 0x400,
+           (Mirroring::HORIZONTAL, 1) =&gt; vram_index - 0x400,
+           (Mirroring::HORIZONTAL, 3) =&gt; vram_index - 0x800,
+           _ =&gt; vram_index,
+       }
+   }
+}
+
+<span class="boring">}
+</span></code></pre></pre>
+<h2><a class="header" href="#connecting-ppu-to-the-bus" id="connecting-ppu-to-the-bus">Connecting PPU to the BUS</a></h2>
+<p>One last step is to connect PPU to the BUS:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>pub struct Bus {
+    cpu_vram: [u8; 2048],
+    prg_rom: Vec&lt;u8&gt;,
+    ppu: NesPPU
+}
+
+impl Bus {
+    pub fn new(rom: Rom) -&gt; Self {
+        let ppu = NesPPU::new(rom.chr_rom, rom.screen_mirroring);
+
+        Bus {
+            cpu_vram: [0; 2048],
+            prg_rom: rom.prg_rom,
+            ppu: ppu,
+        }
+    }
+//..
+
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>And provide memory mapping for the registers we've implemented:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>impl Bus {
+    //...
+    fn mem_read(&amp;mut self, addr: u16) -&gt; u8 {
+        match addr {
+            RAM..=RAM_MIRRORS_END =&gt; {
+                let mirror_down_addr = addr &amp; 0b00000111_11111111;
+                self.cpu_vram[mirror_down_addr as usize]
+            }
+            0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 | 0x4014 =&gt; {
+                panic!(&quot;Attempt to read from write-only PPU address {:x}&quot;, addr);
+            }
+            0x2007 =&gt; self.ppu.read_data(),
+
+            0x2008..=PPU_REGISTERS_MIRRORS_END =&gt; {
+                let mirror_down_addr = addr &amp; 0b00100000_00000111;
+                self.mem_read(mirror_down_addr)
+            }
+            0x8000..=0xFFFF =&gt; self.read_prg_rom(addr),
+
+            _ =&gt; {
+                println!(&quot;Ignoring mem access at {}&quot;, addr);
+                0
+            }
+        }
+    }
+
+    fn mem_write(&amp;mut self, addr: u16, data: u8) {
+        match addr {
+            RAM..=RAM_MIRRORS_END =&gt; {
+                let mirror_down_addr = addr &amp; 0b11111111111;
+                self.cpu_vram[mirror_down_addr as usize] = data;
+            }
+            0x2000 =&gt; {
+                self.ppu.write_to_ctrl(data);
+            }
+
+            0x2006 =&gt; {
+                self.ppu.write_to_ppu_addr(data);
+            }
+            0x2007 =&gt; {
+                self.ppu.write_to_data(data);
+            }
+
+            0x2008..=PPU_REGISTERS_MIRRORS_END =&gt; {
+                let mirror_down_addr = addr &amp; 0b00100000_00000111;
+                self.mem_write(mirror_down_addr, data);
+            }
+            0x8000..=0xFFFF =&gt; panic!(&quot;Attempt to write to Cartridge ROM space: {:x}&quot;, addr),
+
+            _ =&gt; {
+                println!(&quot;Ignoring mem write-access at {}&quot;, addr);
+            }
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>The communication with the rest of the PPU register is somewhat more straightforward. And I leave this exercise to the reader. </p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="chapter_6.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="chapter_6_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="chapter_6.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="chapter_6_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+        <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-3286054-2', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

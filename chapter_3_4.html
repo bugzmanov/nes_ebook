@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Running our first game - Writing NES Emulator in Rust</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html" class="active"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Writing NES Emulator in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
+<div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
+<p>Great, you've made it this far. What we are going to do next is a bit of a detour. 
+The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a truly NES game. It is built on top of 6502 instructions set but uses quate different memory mappings.</p>
+<p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play our first game. </p>
+<p>The majority of logic we are to implement now would be reused some way or another when we will be implementing PPU rendering capabilities. So nothing is a wasted effort. I promise. </p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span>
+<span class="boring">fn main() {
+</span>let game_code = vec![
+    0x20, 0x06, 0x06, 0x20, 0x38, 0x06, 0x20, 0x0d, 0x06, 0x20, 0x2a, 0x06, 0x60, 0xa9, 0x02, 0x85,
+    0x02, 0xa9, 0x04, 0x85, 0x03, 0xa9, 0x11, 0x85, 0x10, 0xa9, 0x10, 0x85, 0x12, 0xa9, 0x0f, 0x85,
+    0x14, 0xa9, 0x04, 0x85, 0x11, 0x85, 0x13, 0x85, 0x15, 0x60, 0xa5, 0xfe, 0x85, 0x00, 0xa5, 0xfe,
+    0x29, 0x03, 0x18, 0x69, 0x02, 0x85, 0x01, 0x60, 0x20, 0x4d, 0x06, 0x20, 0x8d, 0x06, 0x20, 0xc3,
+    0x06, 0x20, 0x19, 0x07, 0x20, 0x20, 0x07, 0x20, 0x2d, 0x07, 0x4c, 0x38, 0x06, 0xa5, 0xff, 0xc9,
+    0x77, 0xf0, 0x0d, 0xc9, 0x64, 0xf0, 0x14, 0xc9, 0x73, 0xf0, 0x1b, 0xc9, 0x61, 0xf0, 0x22, 0x60,
+    0xa9, 0x04, 0x24, 0x02, 0xd0, 0x26, 0xa9, 0x01, 0x85, 0x02, 0x60, 0xa9, 0x08, 0x24, 0x02, 0xd0,
+    0x1b, 0xa9, 0x02, 0x85, 0x02, 0x60, 0xa9, 0x01, 0x24, 0x02, 0xd0, 0x10, 0xa9, 0x04, 0x85, 0x02,
+    0x60, 0xa9, 0x02, 0x24, 0x02, 0xd0, 0x05, 0xa9, 0x08, 0x85, 0x02, 0x60, 0x60, 0x20, 0x94, 0x06,
+    0x20, 0xa8, 0x06, 0x60, 0xa5, 0x00, 0xc5, 0x10, 0xd0, 0x0d, 0xa5, 0x01, 0xc5, 0x11, 0xd0, 0x07,
+    0xe6, 0x03, 0xe6, 0x03, 0x20, 0x2a, 0x06, 0x60, 0xa2, 0x02, 0xb5, 0x10, 0xc5, 0x10, 0xd0, 0x06,
+    0xb5, 0x11, 0xc5, 0x11, 0xf0, 0x09, 0xe8, 0xe8, 0xe4, 0x03, 0xf0, 0x06, 0x4c, 0xaa, 0x06, 0x4c,
+    0x35, 0x07, 0x60, 0xa6, 0x03, 0xca, 0x8a, 0xb5, 0x10, 0x95, 0x12, 0xca, 0x10, 0xf9, 0xa5, 0x02,
+    0x4a, 0xb0, 0x09, 0x4a, 0xb0, 0x19, 0x4a, 0xb0, 0x1f, 0x4a, 0xb0, 0x2f, 0xa5, 0x10, 0x38, 0xe9,
+    0x20, 0x85, 0x10, 0x90, 0x01, 0x60, 0xc6, 0x11, 0xa9, 0x01, 0xc5, 0x11, 0xf0, 0x28, 0x60, 0xe6,
+    0x10, 0xa9, 0x1f, 0x24, 0x10, 0xf0, 0x1f, 0x60, 0xa5, 0x10, 0x18, 0x69, 0x20, 0x85, 0x10, 0xb0,
+    0x01, 0x60, 0xe6, 0x11, 0xa9, 0x06, 0xc5, 0x11, 0xf0, 0x0c, 0x60, 0xc6, 0x10, 0xa5, 0x10, 0x29,
+    0x1f, 0xc9, 0x1f, 0xf0, 0x01, 0x60, 0x4c, 0x35, 0x07, 0xa0, 0x00, 0xa5, 0xfe, 0x91, 0x00, 0x60,
+    0xa6, 0x03, 0xa9, 0x00, 0x81, 0x10, 0xa2, 0x00, 0xa9, 0x01, 0x81, 0x10, 0x60, 0xa2, 0x00, 0xea,
+    0xea, 0xca, 0xd0, 0xfb, 0x60
+];
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>You can find assembly code with comments <a href="https://gist.github.com/wkjagt/9043907">here</a></p>
+<p>The memory mapping that the game uses:</p>
+<table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
+<tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
+<tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Output screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
+</tbody></table>
+<p>The game executes standard game loop:</p>
+<ul>
+<li>read inputs from a user</li>
+<li>compute game state</li>
+<li>render game state to screen</li>
+<li>repeat</li>
+</ul>
+<p>We would need to intercept this cycle, get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl CPU {
+ // ...   
+    pub fn run(&amp;mut self) {
+        self.run_with_callback(|_| {});
+    }
+
+    pub fn run_with_callback&lt;F&gt;(&amp;mut self, mut callback: F)
+    where
+        F: FnMut(&amp;mut CPU),
+    {
+        let ref opcodes: HashMap&lt;u8, &amp;'static opcodes::OpCode&gt; = *opcodes::OPCODES_MAP;
+
+        loop {
+            callback(self);
+            //....
+            match code {
+                //...
+            }
+            // ..
+        }
+    }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now, the client code can provide a callback that will be executed on every opcode interpretation cycle.</p>
+<p>The sketch of the main method:</p>
+<pre><pre class="playpen"><code class="language-rust">fn main() {
+   let game_code = vec![
+// ...
+   ];
+ 
+   //load the game
+   let mut cpu = CPU::new();
+   cpu.load(game_code);
+   cpu.reset();
+ 
+   // run the game cycle
+   cpu.run_with_callback(move |cpu| {
+       // TODO:
+       // read user input and write it to mem[0xFF]
+       // update mem[0xFE] with new Random Number
+       // read mem mapped screen state
+       // render screen state
+   });
+}
+</code></pre></pre>
+<p>For our input-output, we would be using a cross-platform library
+that's popular in gamedev - <a href="https://www.libsdl.org/">Simple DirectMedia Layer library</a>.</p>
+<p>Luckily, there is a convenient crate that provides binding to the lib: <a href="https://rust-sdl2.github.io/rust-sdl2/sdl2/">rust-sdl2</a></p>
+<ol start="0">
+<li>Let's add it to Cargo.toml:</li>
+</ol>
+<pre><code class="language-toml"># ...
+
+[dependencies]
+lazy_static = &quot;1.4.0&quot;
+bitflags = &quot;1.2.1&quot;
+
+sdl2 = &quot;0.34.0&quot;
+rand = &quot;=0.7.3&quot;
+</code></pre>
+<ol>
+<li>First, we need to initialize sdl:</li>
+</ol>
+<pre><pre class="playpen"><code class="language-rust">use sdl2::event::Event;
+use sdl2::EventPump;
+use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
+use sdl2::pixels::PixelFormatEnum;
+ 
+fn main() {
+   // init sdl2
+   let sdl_context = sdl2::init().unwrap();
+   let video_subsystem = sdl_context.video().unwrap();
+   let window = video_subsystem
+       .window(&quot;Snake game&quot;, (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
+       .position_centered()
+       .build().unwrap();
+ 
+   let mut canvas = window.into_canvas().present_vsync().build().unwrap();
+   let mut event_pump = sdl_context.event_pump().unwrap();
+   canvas.set_scale(10.0, 10.0).unwrap();
+ 
+   //...
+}
+</code></pre></pre>
+<p>Note: because our game screen is tiny (32x32 pixels), we set the scale factor to 10.</p>
+<blockquote>
+<p>Using <code>.unwrap()</code> is justifiable because it's the outer layer of our application. 
+There are no other layers that potentially can handle Err values and do something about it.</p>
+</blockquote>
+<p>Next, we will create a texture that would be used for rendering:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>//...
+   let creator = canvas.texture_creator();
+   let mut texture = creator
+       .create_texture_target(PixelFormatEnum::RGB24, 32, 32).unwrap();
+//...
+<span class="boring">}
+</span></code></pre></pre>
+<p>We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em>)</p>
+<ol start="2">
+<li>Handling user input is straightforward:</li>
+</ol>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn handle_user_input(cpu: &amp;mut CPU, event_pump: &amp;mut EventPump) {
+   for event in event_pump.poll_iter() {
+       match event {
+           Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } =&gt; {
+               std::process::exit(0)
+           },
+           Event::KeyDown { keycode: Some(Keycode::W), .. } =&gt; {
+               cpu.mem_write(0xff, 0x77);
+           },
+           Event::KeyDown { keycode: Some(Keycode::S), .. } =&gt; {
+               cpu.mem_write(0xff, 0x73);
+           },
+           Event::KeyDown { keycode: Some(Keycode::A), .. } =&gt; {
+               cpu.mem_write(0xff, 0x61);
+           },
+           Event::KeyDown { keycode: Some(Keycode::D), .. } =&gt; {
+               cpu.mem_write(0xff, 0x64);
+           }
+           _ =&gt; {/* do nothing */}
+       }
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<ol start="3">
+<li>Rendering screen state is a bit trickier. 
+Our program assumes 1 byte per pixel, while SDL expects 3 bytes. 
+<br/>From the game point of view it doesn't matter much how we map colors, the only 2 maps that are essential are: </li>
+</ol>
+<ul>
+<li>0 - Black </li>
+<li>1 - White</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn color(byte: u8) -&gt; Color {
+   match byte {
+       0 =&gt; sdl2::pixels::Color::BLACK,
+       1 =&gt; sdl2::pixels::Color::WHITE,
+       2 | 9 =&gt; sdl2::pixels::Color::GREY,
+       3 | 10 =&gt; sdl2::pixels::Color::RED,
+       4 | 11 =&gt; sdl2::pixels::Color::GREEN,
+       5 | 12 =&gt; sdl2::pixels::Color::BLUE,
+       6 | 13 =&gt; sdl2::pixels::Color::MAGENTA,
+       7 | 14 =&gt; sdl2::pixels::Color::YELLOW,
+       _ =&gt; sdl2::pixels::Color::CYAN,
+   }
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>Now we can transform CPU screen map into 3 bytes like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>    let color_idx = cpu.mem_read(i as u16);
+    let (b1, b2, b3) = color(color_idx).rgb();
+<span class="boring">}
+</span></code></pre></pre>
+<p>Another caveat is that we don't want to force updating the SDL canvas if the screen state hasn't changed. 
+Remember that the CPU would call our callback after each instruction, and most of the time, those instructions have nothing to do with the screen. Meantime, updating canvas is a heavy operation.</p>
+<p>We can keep track of the screen state by creating a temp buffer that will be populated from the screen state. And only in case of screen changes, we would update SDL canvas.</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>fn read_screen_state(cpu: &amp;CPU, frame: &amp;mut [u8; 32 * 3 * 32]) -&gt; bool {
+   let mut frame_idx = 0;
+   let mut update = false;
+   for i in 0x0200..0x600 {
+       let color_idx = cpu.mem_read(i as u16);
+       let (b1, b2, b3) = color(color_idx).rgb();
+       if frame[frame_idx] != b1 || frame[frame_idx + 1] != b2 || frame[frame_idx + 2] != b3 {
+           frame[frame_idx] = b1;
+           frame[frame_idx + 1] = b2;
+           frame[frame_idx + 2] = b3;
+           update = true;
+       }
+       frame_idx += 3;
+   }
+   update
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>And the game loop becomes:</p>
+<pre><pre class="playpen"><code class="language-rust">fn main() {
+// ...init sdl
+// ...load program
+
+   let mut screen_state = [0 as u8; 32 * 3 * 32];
+   let mut rng = rand::thread_rng();
+ 
+   cpu.run_with_callback(move |cpu| {
+       handle_user_input(cpu, &amp;mut event_pump);
+       cpu.mem_write(0xfe, rng.gen_range(1, 16));
+ 
+       if read_screen_state(cpu, &amp;mut screen_state) {
+           texture.update(None, &amp;screen_state, 32 * 3).unwrap();
+           canvas.copy(&amp;texture, None, None).unwrap();
+           canvas.present();
+       }
+ 
+       ::std::thread::sleep(std::time::Duration::new(0, 70_000));
+   });
+}
+</code></pre></pre>
+<p>The last sleep statement was added to slow down things a bit to have a playable pace. </p>
+<p>And there you have it, the first game running on our emulator.</p>
+<div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="chapter_3_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="chapter_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="chapter_3_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="chapter_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+        <!-- Google Analytics Tag -->
+        <script type="text/javascript">
+            var localAddrs = ["localhost", "127.0.0.1", ""];
+
+            // make sure we don't activate google analytics if the developer is
+            // inspecting the book locally...
+            if (localAddrs.indexOf(document.location.hostname) === -1) {
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-3286054-2', 'auto');
+                ga('send', 'pageview');
+            }
+        </script>
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
