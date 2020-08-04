@@ -2,33 +2,33 @@
 
  <div style="text-align:center"><img src="./images/ch3/chapter_logo.png" width="20%"/></div>
 
-Let's try to interpret to execute our first program. It looks like this:
+Let's try to interpret our first program. The program looks like this:
 
 
 ```
 a9 c0 aa e8 00
 ```
 
-This is somewhat cryptic and isn't designed to be interpreted by humans. But we can more easily decipher what's going on if we represent those codes in mnemonics based language - assembler.  
+This is somewhat cryptic and isn't designed to be read by humans. But we can more easily decipher what's going on if we represent the program in [assembly code](https://en.wikipedia.org/wiki/Assembly_language)
 
 <div style="text-align:center"><img src="./images/ch3.1/image_1_assembler.png" width="40%"/></div>
 
-So our program consists of 4 instructions, and the first one has a parameter.
+Now it's more readable: it consists of 4 instructions, and the first instruction has a parameter.
 
-Let's try to interpret what's going on using ops code specifications: [6502 Instruction Reference](http://www.obelisk.me.uk/6502/reference.htm)
+Let's interpret what's going on using the opcode specification from [6502 Instruction Reference](http://www.obelisk.me.uk/6502/reference.htm)
 
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 
 It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). 
 
 
-> By looking at the LDA spec, we can also deduce that the ops code 0xA9 has one parameter: the instruction size is 2 Bytes: one byte is for operation code itself(standard for all NES CPU opcodes), and the other is for a parameter. 
+> From the LDA spec it follows that the opcode 0xA9 has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. 
 >
-> NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And the whole instruction would occupy 3 bytes.
+> NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.
 > 
-> Also, some of the operations use CPU registers as implicit parameters.  
+> Worth mentioning, that some operations use CPU registers as implicit parameters.  
 
-Let's try to sketch out how our CPU might look like from a high-level perspective:
+Let's sketch out how our CPU might look like from a high-level perspective:
 
 ```rust
 pub struct CPU {
@@ -52,9 +52,9 @@ impl CPU {
 }
 ```
 
-We also introduced a program counter register that would help us track our current position in the program. Note that the interpret method takes a mutable reference to self as we know that we would need to modify **register_a** during the execution.
+Note, that we introduced a program counter register that would help us track our current position in the program. Also note that the interpret method takes a mutable reference to self as we know that we would need to modify **register_a** during the execution.
 
-CPU works in a constant cycle:
+The CPU works in a constant cycle:
 * Fetch next execution instruction from the instruction memory
 * Decode the instruction
 * Execute the Instruction
@@ -77,7 +77,7 @@ pub fn interpret(&mut self, program: Vec<u8>) {
 }
 ```
 
-So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) ops code:
+So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) opcode:
 
 ```rust
         match opscode {
@@ -103,11 +103,11 @@ So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement th
         }
 ```
 
-We are not doing anything crazy here, just what was specified in LDA spec. Also, we are fully utilizing existing rust lang features for boolean arithmetic. 
+We are not doing anything crazy here, just following the spec. And using rust constructs to do binary arithmetic.
 
-> Note: it's essential to set and also erase CPU flag status depending on the results
+> It's essential to set or erase CPU flag status depending on the results.
 
-Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement **BRK (0x00)** ops code:
+Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement **BRK (0x00)** opcode:
 
 ```rust
         match opcode {
@@ -140,11 +140,11 @@ mod test {
 
 > Do you think that's enough? What else should we check? 
 
-Alright. Let's try to implement another opcode? 
+Alright. Let's try to implement another opcode, shall we? 
 
 <div style="text-align:center"><img src="./images/ch3.1/image_3_tax_spec.png" width="50%"/></div>
 
-This one is also really straightforward: copy a value from A to X.
+This one is also straightforward: copy a value from A to X, and update statys register.
 
 We need to introduce **register_x** in our CPU struct, and then we can implement the **TAX (0xAA)** opcode:
 
@@ -181,7 +181,7 @@ impl CPU {
 }
 ```
 
-And don't forget to write tests:
+Don't forget to write tests:
 
 
 ```rust 
@@ -196,8 +196,8 @@ And don't forget to write tests:
 ```
 
 Before moving to the next opcode, we have to admit that our code becomes quite convoluted:
-* interpret method is already quite complicated and does multiple things
-* there is quite a bit of duplication between the way TAX and LDA are implemented.
+* interpret method is already complicated and does multiple things
+* there is a noticeable duplication between the way TAX and LDA are implemented.
 
 Let's fix that: 
 
@@ -249,13 +249,13 @@ Let's fix that:
 
 Ok. Looks more manageable now. And hopefully, all tests are still passing. 
 
-I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes will unpredictably ripple a game logic.
+I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.
 
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 
 Implementing that last opcode from the program should not be a problem, and I'll leave this exercise to you. 
 
-At the end the following test should be passing: 
+At the end, these tests should be passing: 
 
 ```rust 
    #[test]
@@ -274,6 +274,4 @@ At the end the following test should be passing:
 
         assert_eq!(cpu.register_x, 1)
     }
-
-
 ```

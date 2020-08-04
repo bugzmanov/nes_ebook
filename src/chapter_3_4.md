@@ -3,11 +3,13 @@
  <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 
 Great, you've made it this far. What we are going to do next is a bit of a detour. 
-The snake game was introduced in this article: [Easy 6502](https://skilldrick.github.io/easy6502/#snake). In fact, it is not a truly NES game. It is built on top of 6502 instructions set but uses quate different memory mappings.
+The snake game was introduced in this article: [Easy 6502](https://skilldrick.github.io/easy6502/#snake). In fact, it is not a truly NES game. It is built on top of 6502 instructions but uses quate different memory mappings.
 
-However, it's a fun way to validate that our CPU is truly functional, and it's fun to play our first game. 
+However, it's a fun way to validate that our CPU is truly functional, and it's fun to play the first game. 
 
-The majority of logic we are to implement now would be reused some way or another when we will be implementing PPU rendering capabilities. So nothing is a wasted effort. I promise. 
+The majority of logic we are to implement now would be reused some way or another when we will be implementing rendering in PPU. So nothing is a wasted effort. 
+
+The machine code of the game:
 
 ```rust
 
@@ -43,16 +45,16 @@ The memory mapping that the game uses:
 | Address space | Type  | Description  |
 |---|---|---|
 | **0xFE** | Input | Random Number Generator |
-| **0xFF** | Input | A code of the last pressed Button|
-| **[0x0200..0x0600]**  | Output |  Output screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> **0x0200** - the color of (0,0) pixel <br/> **0x0201** - (1,0) <br/> **0x0220** - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div> | 
+| **0xFF** | Input | A code of the last pressed Button |
+| **[0x0200..0x0600]**  | Output |  Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> **0x0200** - the color of (0,0) pixel <br/> **0x0201** - (1,0) <br/> **0x0220** - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div> | 
 
 The game executes standard game loop:
 * read inputs from a user
 * compute game state
-* render game state to screen
+* render game state to a screen
 * repeat
 
-We would need to intercept this cycle, get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:
+We need to intercept this cycle, to get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:
 
 ```rust
 impl CPU {
@@ -79,7 +81,7 @@ impl CPU {
 }
 ```
 
-Now, the client code can provide a callback that will be executed on every opcode interpretation cycle.
+Now, the client code can provide a callback that will be executed before every opcode interpretation cycle.
 
 The sketch of the main method:
 
@@ -164,7 +166,7 @@ Next, we will create a texture that would be used for rendering:
 //...
 ```
 
-We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for *R*, *G* and *B*)
+We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for *R*, *G* and *B* colors) - i.e. the texture should be represented by an array of 32*32*3 bytes.
 
 2) Handling user input is straightforward:
 
@@ -195,7 +197,7 @@ fn handle_user_input(cpu: &mut CPU, event_pump: &mut EventPump) {
 
 3) Rendering screen state is a bit trickier. 
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes. 
-<br/>From the game point of view it doesn't matter much how we map colors, the only 2 maps that are essential are: 
+<br/>From the game point of view it doesn't matter much how we map colors, the only two color maps that are essential are: 
 * 0 - Black 
 * 1 - White
 
@@ -271,7 +273,7 @@ fn main() {
 }
 ```
 
-The last sleep statement was added to slow down things a bit to have a playable pace. 
+The last sleep statement was added to slow things down to have a playable pace. 
 
 And there you have it, the first game running on our emulator.
 

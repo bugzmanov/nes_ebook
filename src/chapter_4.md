@@ -7,7 +7,7 @@ CPU gets access to memory (including memory-mapped spaces) using three buses:
 * control bus notifies if it's a read or write access
 * data bus carries the byte of data being read or written
 
-The bus itself is not a device; it's a hardware wiring between platform components. 
+The bus itself is not a device; it's a wiring between platform components. 
 And we don't need to implement it as an independent module as rust allows us to wire components directly. 
 However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner. 
 
@@ -15,29 +15,29 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 
 In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions. 
 
-By introducing Bus module, we would have a single place for:
+By introducing Bus module, we can have a single place for:
 * Intra device communication:
     * Data reads/writes
     * Routing hardware interrupts to CPU (more on this later)
 * Handling memory mappings
-* Coordinating PPU and CPU clock cycles (more on this in coming chapters)
+* Coordinating PPU and CPU clock cycles (more on this later)
 
 The good news is that we don't need to write full-blown emulation of data, control, and address buses. Because it's not a hardware chip, no logic expects any specific behavior from the BUS. So we can just codify coordination and signal routing. 
 
-For now, we will implement bare bones of the BUS:
+For now, we can implement the bare bones of it:
 * Access to CPU RAM
 * Mirroring 
 
 Mirroring is a side-effect of NES trying to keep things as cheap as possible. It can be seen as an address space being mapped to another address space. 
 
-On a CPU memory map RAM address space **[0x000 .. 0x0800]** (2 KiB) is mirrored three times:
+For instance, on a CPU memory map RAM address space **[0x000 .. 0x0800]** (2 KiB) is mirrored three times:
 * **[0x800 .. 0x1000]**
 * **[0x1000 .. 0x1800]**
 * **[0x1800 .. 0x2000]**
 
 This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes. 
 
-The reason for mirroring lies in the fact that CPU RAM has only 2 KiB of ram space, and 11 bits are enough to address it. Naturally, the NES motherboard had 11 addressing tracks from CPU to RAM.
+The reason for mirroring is in the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.
 
 
  <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
@@ -67,7 +67,7 @@ impl Bus {
 }
 ```
 
-Lets codify read/write access:
+And it would provide read/write access:
 
 ```rust
 const RAM: u16 = 0x0000;
@@ -111,7 +111,7 @@ impl Mem for Bus {
 }
 ```
 
-Last step: replace direct access to RAM in CPU with access via BUS
+The last step is to replace direct access to RAM from CPU with access via BUS
 
 ```rust
 pub struct CPU {

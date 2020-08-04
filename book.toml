@@ -4,3 +4,6 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Writing NES Emulator in Rust"
+
+[output.html]
+google-analytics="UA-3286054-2"

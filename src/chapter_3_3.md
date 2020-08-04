@@ -5,7 +5,7 @@
 
 Implementing the rest of the 6502 CPU instructions should be relatively straightforward. I wouldn't go into detail with every one of them. 
 
-I would just put some remarks:
+Just some remarks:
 * **ADC** is perhaps the most complicated instruction from a logic flow perspective. Note that the spec contains details regarding decimal mode, that can be entirely skipped because Ricoh modification of the chip didn't support decimal mode.
 > This article goes into a detailed overview of how binary arithmetic is implemented in 6502: [The 6502 overflow flag explained mathematically ](http://www.righto.com/2012/12/the-6502-overflow-flag-explained.html)
 >
@@ -15,9 +15,9 @@ I would just put some remarks:
 `A - B = A + (-B)`. 
 And `-B = !B + 1` 
 
-* **PHP**, **PLP** and **RTI** have to deal with [2 bit B-flag](http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag). Those are the only commands that directly influence (or being directly influenced by) 5th Bit of **Status register P**
+* **PHP**, **PLP** and **RTI** have to deal with [2 bit B-flag](http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag). Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) 5th Bit of **Status register P**
 
-* Majority of branching and jumping operations can be implemented by merely modifying **program_counter** register. However, be careful not to modify the register afterward within the same instruction interpret cycle. 
+* Majority of branching and jumping operations can be implemented by merely modifying **program_counter** register. However, be careful not to increment the register within the same instruction interpret cycle. 
 
 If you get stuck, you can always look up the implementation of 6502 instruction set here: <link to code>
 

@@ -40,7 +40,7 @@ The emulator can take multiple approaches to simulate this behavior:
 
 2) Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime on our part. 
 
-3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components. <br/> <br/>For example, if CPU executes "LDA #$01" (opcode 0xA9) that means that CPU has spent 2 CPU Cycles, which means that PPU can run for 6 PPU cycles now (PPU clock is ticking 3 times faster than CPU clock)
+3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and then them run. This technique is called ["catch-up"](http://wiki.nesdev.com/w/index.php/Catch-up) <br/> <br/>For example, if CPU executes "LDA #$01" (opcode 0xA9) that means that CPU has spent 2 CPU Cycles, which means that PPU can run for 6 PPU cycles now (PPU clock is ticking 3 times faster than CPU clock)
 
 Because we already have CPU loop mostly spec'd out, the third approach would be the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.
  
