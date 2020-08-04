@@ -149,21 +149,21 @@
                     <main>
                         <h1><a class="header" href="#lets-get-started" id="lets-get-started">Let's get started.</a></h1>
 <div style="text-align:center"><img src="./images/ch3/chapter_logo.png" width="20%"/></div>
-<p>Let's try to interpret to execute our first program. It looks like this:</p>
+<p>Let's try to interpret our first program. The program looks like this:</p>
 <pre><code>a9 c0 aa e8 00
 </code></pre>
-<p>This is somewhat cryptic and isn't designed to be interpreted by humans. But we can more easily decipher what's going on if we represent those codes in mnemonics based language - assembler.</p>
+<p>This is somewhat cryptic and isn't designed to be read by humans. But we can more easily decipher what's going on if we represent the program in <a href="https://en.wikipedia.org/wiki/Assembly_language">assembly code</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_1_assembler.png" width="40%"/></div>
-<p>So our program consists of 4 instructions, and the first one has a parameter.</p>
-<p>Let's try to interpret what's going on using ops code specifications: <a href="http://www.obelisk.me.uk/6502/reference.htm">6502 Instruction Reference</a></p>
+<p>Now it's more readable: it consists of 4 instructions, and the first instruction has a parameter.</p>
+<p>Let's interpret what's going on using the opcode specification from <a href="http://www.obelisk.me.uk/6502/reference.htm">6502 Instruction Reference</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 <p>It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). </p>
 <blockquote>
-<p>By looking at the LDA spec, we can also deduce that the ops code 0xA9 has one parameter: the instruction size is 2 Bytes: one byte is for operation code itself(standard for all NES CPU opcodes), and the other is for a parameter. </p>
-<p>NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And the whole instruction would occupy 3 bytes.</p>
-<p>Also, some of the operations use CPU registers as implicit parameters.</p>
+<p>From the LDA spec it follows that the opcode 0xA9 has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. </p>
+<p>NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.</p>
+<p>Worth mentioning, that some operations use CPU registers as implicit parameters.</p>
 </blockquote>
-<p>Let's try to sketch out how our CPU might look like from a high-level perspective:</p>
+<p>Let's sketch out how our CPU might look like from a high-level perspective:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -188,8 +188,8 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We also introduced a program counter register that would help us track our current position in the program. Note that the interpret method takes a mutable reference to self as we know that we would need to modify <strong>register_a</strong> during the execution.</p>
-<p>CPU works in a constant cycle:</p>
+<p>Note, that we introduced a program counter register that would help us track our current position in the program. Also note that the interpret method takes a mutable reference to self as we know that we would need to modify <strong>register_a</strong> during the execution.</p>
+<p>The CPU works in a constant cycle:</p>
 <ul>
 <li>Fetch next execution instruction from the instruction memory</li>
 <li>Decode the instruction</li>
@@ -214,7 +214,7 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) ops code:</p>
+<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -241,11 +241,11 @@ impl CPU {
         }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We are not doing anything crazy here, just what was specified in LDA spec. Also, we are fully utilizing existing rust lang features for boolean arithmetic. </p>
+<p>We are not doing anything crazy here, just following the spec. And using rust constructs to do binary arithmetic.</p>
 <blockquote>
-<p>Note: it's essential to set and also erase CPU flag status depending on the results</p>
+<p>It's essential to set or erase CPU flag status depending on the results.</p>
 </blockquote>
-<p>Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement <strong>BRK (0x00)</strong> ops code:</p>
+<p>Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement <strong>BRK (0x00)</strong> opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -280,9 +280,9 @@ mod test {
 <blockquote>
 <p>Do you think that's enough? What else should we check? </p>
 </blockquote>
-<p>Alright. Let's try to implement another opcode? </p>
+<p>Alright. Let's try to implement another opcode, shall we? </p>
 <div style="text-align:center"><img src="./images/ch3.1/image_3_tax_spec.png" width="50%"/></div>
-<p>This one is also really straightforward: copy a value from A to X.</p>
+<p>This one is also straightforward: copy a value from A to X, and update statys register.</p>
 <p>We need to introduce <strong>register_x</strong> in our CPU struct, and then we can implement the <strong>TAX (0xAA)</strong> opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -319,7 +319,7 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>And don't forget to write tests:</p>
+<p>Don't forget to write tests:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -335,8 +335,8 @@ impl CPU {
 </span></code></pre></pre>
 <p>Before moving to the next opcode, we have to admit that our code becomes quite convoluted:</p>
 <ul>
-<li>interpret method is already quite complicated and does multiple things</li>
-<li>there is quite a bit of duplication between the way TAX and LDA are implemented.</li>
+<li>interpret method is already complicated and does multiple things</li>
+<li>there is a noticeable duplication between the way TAX and LDA are implemented.</li>
 </ul>
 <p>Let's fix that: </p>
 <pre><pre class="playpen"><code class="language-rust">
@@ -388,10 +388,10 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>Ok. Looks more manageable now. And hopefully, all tests are still passing. </p>
-<p>I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes will unpredictably ripple a game logic.</p>
+<p>I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.</p>
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 <p>Implementing that last opcode from the program should not be a problem, and I'll leave this exercise to you. </p>
-<p>At the end the following test should be passing: </p>
+<p>At the end, these tests should be passing: </p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -411,8 +411,6 @@ impl CPU {
 
         assert_eq!(cpu.register_x, 1)
     }
-
-
 <span class="boring">}
 </span></code></pre></pre>
 

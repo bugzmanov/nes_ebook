@@ -148,10 +148,10 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#memory-addressing-modes" id="memory-addressing-modes">Memory addressing modes</a></h1>
-<p>In our initial implementation, the CPU receives instructions as a separate input stream, not how the things actually work.</p>
-<p>NES implements typical von Neumann architecture: computer memory stores both data and the instructions that need to be executed by the machine. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
+<p>In our initial implementation, the CPU receives instructions as a separate input stream, this is not how the things actually work.</p>
+<p>NES implements typical von Neumann architecture: both data and the instructions are stored in memory. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
 <div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
-<p>Let's try to sketch this out in our CPU code:</p>
+<p>Let's sketch this out in our CPU code:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span>
@@ -199,25 +199,25 @@ impl CPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>For now, we just created an array for the whole 64 KiB worth of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
-<p>We also load program code into memory from 0x8000 Address. In reality, this is were Cartridge ROM memory map starts, so we can assume that the instructions stream would start somewhere in this space [0x8000 .. 0xFFFF] but not necessarily at exact 0x8000.</p>
+<p>For now, we just created an array for the whole 64 KiB of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
+<p>We also load program code into memory starting at 0x8000 dddress. We've discusses that [0x8000 .. 0xFFFF] is reserved for Program ROM. And we can assume that the instructions stream would start somewhere in this space, just not necessarily at exact 0x8000.</p>
 <p>NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called &quot;Reset interrupt&quot; that instructs CPU to:</p>
 <ul>
 <li>reset the state (registers and flags)</li>
 <li>set <strong>program_counter</strong> to the 16bit address that is stored at 0xFFFC</li>
 </ul>
-<p>Before implementing that, I should briefly mention that NES Cpu can address 65536 memory cells, that means that memory addresses can take 2 Bytes. NES CPU uses Little-Endian addressing rather than big-endian.
-That means that 8 liest significant bits of Address will be stored before 8 most significant bit. </p>
-<p>The difference can be illustrated like this:</p>
+<p>Before implementing that, I should briefly mention that NES CPU can address 65536 memory cells. It takes 2 bytes to store an address. NES CPU uses Little-Endian addressing rather than Big-Endian.
+That means that 8 liest significant bits of an address will be stored before 8 most significant bits. </p>
+<p>To illustrate the difference:</p>
 <table><thead><tr><th></th><th align="right"></th></tr></thead><tbody>
 <tr><td>Real Address</td><td align="right"><strong>0x8000</strong></td></tr>
 <tr><td>Address packed in big-endian</td><td align="right"><strong>80 00</strong></td></tr>
 <tr><td>Address packed in little-endian</td><td align="right"><strong>00 80</strong></td></tr>
 </tbody></table>
-<p>For example, instruction to read data from memory cell 0x8000 into A register would look like:</p>
+<p>For example, the instruction to read data from memory cell 0x8000 into A register would look like:</p>
 <pre><code>LDA $8000      &lt;=&gt;    ad 00 80
 </code></pre>
-<p>Let's implement this behaviour:</p>
+<p>We can implement this behaviour using rust bit arithetic:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -236,9 +236,10 @@ That means that 8 liest significant bits of Address will be stored before 8 most
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now we can try implement <strong>reset</strong> functionality properly. We would also have to adjust load and load_and_run:</p>
+<p>Or by using rust lang <a href="https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes">endian support for primitive types</a></p>
+<p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust load and load_and_run functions:</p>
 <ul>
-<li><strong>load</strong> method should load a program into PRG Rom space and save the reference to the code into 0xFFFC memory cell</li>
+<li><strong>load</strong> method should load a program into PRG ROM space and save the reference to the code into 0xFFFC memory cell</li>
 <li><strong>reset</strong> method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC</li>
 </ul>
 <pre><pre class="playpen"><code class="language-rust">
@@ -275,15 +276,15 @@ That means that 8 liest significant bits of Address will be stored before 8 most
 <li>and <a href="www.obelisk.me.uk/6502/addressing.html">here</a></li>
 </ul>
 <p>In short, the addressing mode is a property of an instruction that defines how CPU would interpret the next 1 or 2 bytes in the instruction stream. </p>
-<p>It's important to note that different addressing modes have different instruction sizes. 
+<p>It's important that different addressing modes have different instruction sizes. 
 For example, </p>
 <ul>
 <li><strong>Zero Page version</strong> ($A5) has a size of 2 bytes - one for opcode itself, and one for a parameter. That's why zero page addressing can't reference memory above the first 255 bytes.</li>
 <li><strong>Absolute version</strong> ($AD) has 3 bytes - that means that the Address occupies 2 bytes, making it possible to reference all of 65536 memory cells, as we've discussed.
 (<em>NOTE: 2 byte the parameter will be packed according to little-endian rules</em>)</li>
 </ul>
-<p>There are no opcodes that occupy more than 3 bytes. Opcode instruction can have a size: 1 byte, 2 bytes, 3 bytes. </p>
-<p>One crucial detail is that majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
+<p>There are no opcodes that occupy more than 3 bytes. CPU instruction size can be either 1 or 2 or 3 bytes. </p>
+<p>The majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
 <p>Let's try to codify how CPU should interpret different addressing modes:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -402,7 +403,7 @@ impl CPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>NOTE: It's crucial to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
+<p>NOTE: It's absolutely neccessary to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
 <p>Don't forget the tests.</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -447,9 +448,10 @@ impl CPU {
     }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy. First of all, the requirements to increment program_counter by 1 or 2 after some operations is error-prone. And if we introduce an error, it would be tough to spot it on. </p>
+<p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy.
+First, the requirements to increment program_counter by 1 (or 2) after some of operations is error-prone. And if we introduce an error, it would be tough to spot it. </p>
 <p>Second, wouldn't it be more readable and convenient if we could group all &quot;LDA&quot; operations under a single <code>match</code> cause? </p>
-<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Wouldn't it be great if we could represent our opcodes in some table form?</p>
+<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Keeping the code in some table form looks like a more managable approach. </p>
 <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 <p>I leave it to you to figure out how to get to this point.</p>
 

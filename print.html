@@ -162,150 +162,150 @@
 </ul>
 <p>We would go with incremental updates, with the potentially enjoyable milestones, gradually building a fully capable platform. One of the problems in writing an emulator is that you can't get any feedback until the end. Until the whole thing is done, and that's no fun. I've tried to break the entire exercise into small pieces with visible and playable goals. After all, it's all about having a good time. </p>
 <h1><a class="header" href="#why-rust" id="why-rust">Why Rust?</a></h1>
-<p>Rust is a modern language with modern expressing capabilities and pretty impressive performance characteristics. </p>
+<p>Rust is a modern language with modern expressing capabilities and impressive performance characteristics. </p>
 <blockquote>
 <p>For an overview of the language I recommend watching <a href="https://www.youtube.com/watch?v=DnT-LUQgc7s">&quot;Consider Rust&quot;</a> presentation by Jon Gjengse</p>
 </blockquote>
-<p>The language allows us to go as low-level as needed in terms of hardware and memory manipulation, which looks like a good fit for the problem of hardware simulation. For example, NES has a Central Processing Unit, and the majority of supported operations are dealing with unsigned 8bit arithmetic and bits manipulation. Rust provides excellent capabilities for working with signed and unsigned numbers of different sizes without any overhead. And Rust ecosystem offers multiple libraries that make working on bit-level data as convenient as it gets. </p>
-<p>Our goal is to run NES games on the hardware we have, meaning we have to simulate NES hardware. That alone implies that we are introducing significant performance overhead in comparison to running native applications. 
+<p>The language allows us to go as low-level as needed in terms of hardware and memory management, which looks like a good fit for the problem of hardware simulation. For example, NES has a Central Processing Unit (CPU), and the majority of supported operations are dealing with unsigned 8bit arithmetic and bits manipulation. Rust provides excellent capabilities for working with signed and unsigned numbers of different sizes without any overhead. And Rust ecosystem offers plethora of libraries that make working on bit-level data as convenient as it gets. </p>
+<p>The goal is play NES games on the hardware we have, meaning we have to simulate NES hardware. That alone implies that we are introducing significant performance overhead in comparison to running native applications. 
 By choosing rust, we hope to get some additional performance budget for our needs. NES hardware specs are pretty modest in today's standards. For example, the NES CPU is about 3000 times slower than modern CPUs. Emulating that in any language should not be a problem. Some folks were able to get playable performance on an emulator written in python. But it is still nice to have extra power for free. </p>
 <h1><a class="header" href="#prerequisites" id="prerequisites">Prerequisites</a></h1>
-<p>I expect the reader to haev a basic knowledge of rust language, understanding primary language constructs, and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
-<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and binary systems. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. </p>
+<p>I expect the reader to have a basic knowledge of Rust language, understanding primary language constructs, and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
+<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and  hexadecimal notations work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. </p>
 <h1><a class="header" href="#understanding-the-nes-platform" id="understanding-the-nes-platform">Understanding the NES Platform</a></h1>
 <h2><a class="header" href="#achitecture" id="achitecture">Achitecture</a></h2>
-<p>The simplified architecture of hardware-software interactions looks like this:</p>
+<p>The simplified architecture of hardware-software interaction looks like this:</p>
 <div style="text-align:center"><img src="./images/ch2/image_1_computer_arch.png" width="30%"/></div>
 <p>From top to bottom: </p>
 <ul>
-<li>applications are running business logic and interact with hardware through an Operating System. </li>
+<li>Applications are running business logic and interact with hardware through an Operating System. </li>
 <li>An Operating System is communicating with hardware using machine language. &lt;TODO: assembly lang&gt;</li>
-<li>On a hardware level, each device can be seen as memory elements or processing unit or both (for instance, from this perspective NES joypad is nothing more than an array of boolean items that represents buttons in either pressed or released state) </li>
-<li>Next levels down the stack are less of an interest to us. In the end, it all comes to logic gates and their arrangements. </li>
+<li>On a hardware level, each device can be seen as an array of memory elements or processing unit or both. For instance, from this perspective, NES joypad is nothing more than an array of eight 1-bit items, each one representing pressed/released state of a specific button</li>
+<li>Layers bellow ALU and Memory elements are less of an interest to us. On a hardware level, it all comes down to logic gates and their arrangements. </li>
 </ul>
 <blockquote>
-<p>If you want to get intimate knowledge of how computers are composed, starting from basic principles of boolean logic I highly recommend the book &quot;The Elements of Computing Systems Building a Modern Computer from First Principles by Noam Nisan, Shimon Schocken.&quot;</p>
+<p>If you want to get intimate knowledge of how computers are composed, starting from basic principles of boolean logic I highly recommend the book:<br/> <a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">&quot;The Elements of Computing Systems. Building a Modern Computer from First Principles&quot;</a> by Noam Nisan, Shimon Schocken.</p>
 </blockquote>
 <p>Luckily for us, NES doesn't have an Operating System. That means that the Application layer (Gamezzz) communicates with hardware directly, still using machine language.</p>
 <p>The symplified version of this layered architecture looks like this:</p>
 <div style="text-align:center"><img src="./images/ch2/image_2_nes_emul_arch.png" width="30%"/></div>
-<p>As you can see the machine language as an interface between our emulator and  NES games.</p>
-<p>In the coming emulator, we would need to implement NES Computer Architecture, Arithmetic Logic Unit, and Memory. We would try using existing Rust features and language constructs to execute low-level boolean logic and arithmetic. </p>
+<p>As you can see the machine language is the interface between our emulator and  NES games.</p>
+<p>In the coming emulator, we would need to implement NES Computer Architecture, Arithmetic Logic Unit, and Memory. By using high-level language we don't need to worry about simulating boolean arithmetic and sequantial logic. We would rely on existing Rust features and language constructs.</p>
 <h2><a class="header" href="#nes-platform-main-components" id="nes-platform-main-components">NES Platform Main Components</a></h2>
 <div style="text-align:center"><img src="./images/ch2/image_3_nes_components.png" width="50%"/></div>
-<p>This is a significantly simplified schema of main NES hardware components. </p>
+<p>The significantly simplified schema of main NES hardware components: </p>
 <ul>
 <li>
-<p>Central Processing Unit (<strong>CPU</strong>) is a modified version of 6502 chip (https://en.wikipedia.org/wiki/MOS_Technology_6502) - 2A03. As with any CPU, the goal of this module is to execute the main program instructions. </p>
+<p>Central Processing Unit (<strong>CPU</strong>) is a modified version of <a href="https://en.wikipedia.org/wiki/MOS_Technology_6502">6502 chip</a> - 2A03. As with any CPU, the goal of this module is to execute the main program instructions. </p>
 </li>
 <li>
 <p>Picture Processing Unit (<strong>PPU</strong>) - was based on chip 2C02 made by the same company that made CPU - Ricoh. This module's main goal is to draw the current state of a game on a TV Screen. </p>
 </li>
 <li>
-<p>Both CPU and PPU have access to their 2KB banks of Random Access Memory (<strong>RAM</strong>)</p>
+<p>Both CPU and PPU have access to their 2 KiB (2048 bytes) banks of Random Access Memory (<strong>RAM</strong>)</p>
 </li>
 <li>
 <p>Audio Processing Unit (<strong>APU</strong>) - the module is a part of 2A03 chip and is responsible for generating specific five-channel based sounds, that made NES chiptunes so recognizable.</p>
 </li>
 <li>
-<p>Cartridges - were an essential part of the platform, mainly because the console didn't have an operating system. Each cartridge carried at least two large ROM chips - Character Rom (CHR Rom) and Program Rom (PRG Rom). The former stores' video graphics data of a game, the latter stored the CPU instructions - code of a game. 
+<p>Cartridges - were an essential part of the platform, mainly because the console didn't have an operating system. Each cartridge carried at least two large ROM chips - Character ROM (CHR ROM) and Program ROM (PRG ROM). The former stored video graphics data of a game, the latter stored CPU instructions - code of a game. 
 (in reality, when a cartridge is inserted into the slot CHR Rom is connected directly to PPU, while PRG Rom is connected directly to CPU)
 The later version of cartridges carried additional hardware (ROM and RAM) accessible through so-called mappers. That explains why later games had provided significantly better gameplay and visuals despite running on the same console hardware. </p>
 </li>
 </ul>
 <div style="text-align:center"><img src="./images/ch2/image_4_cartridge.png" width="50%"/></div>
 <ul>
-<li>Gamepads - have a distinct goal to read inputs from a gamer and make it available for game logic. As we will learn, later on, the fact that the gamepad for the 8bit platform had only eight buttons is not a coincidence. </li>
+<li>Gamepads - have a distinct goal to read inputs from a gamer and make it available for game logic. As we will learn later, the fact that the gamepad for the 8-bit platform have only eight buttons is not a coincidence. </li>
 </ul>
 <p>What's interesting is that CPU, PPU, and APU are independent of each other. This fact makes NES a distributed system in which separate components have to coordinate to generate one seamless gaming experience.</p>
-<p>The schema of the main NES components naturally defines the implementation plan for our emulator. </p>
+<p>We can use the schema of the main NES components as an implementation plan for our emulator. </p>
 <div style="text-align:center"><img src="./images/ch2/image_6_impl_plan.png" width="80%"/></div>
-<p>We would be building a simulation of all of these modules. The goal is to have something playable as soon as possible. We would use an iterative approach to development, and on each cycle would try to implement the minimal amount of features to achieve the goal. Writing an emulator is a never-ending quest. But this quest has a start. And we will start by emulating the CPU.</p>
+<p>We have to build a simulation of all of these modules. The goal is to have something playable as soon as possible. Using iterative approach we would incrementally add features to achieve the goal. </p>
+<p>Writing a perfect emulator is a never-ending quest. But this quest has a start. And we will start by emulating the CPU.</p>
 <div style="text-align:center"><img src="./images/ch2/image_5_motherboard.png" width="80%"/></div>
 <h1><a class="header" href="#emulating-cpu" id="emulating-cpu">Emulating CPU</a></h1>
 <p>The goal of this chapter is to have our first NES game up and running. 
-We are going to play Snake game, whose source code can be found here: https://gist.github.com/wkjagt/9043907.</p>
+We are going to play Snake game. The source code with comments can be found <a href="https://gist.github.com/wkjagt/9043907">this gist</a>.</p>
 <div style="text-align:center"><img src="./images/ch3/snk_logo.png" width="40%"/></div>
  <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
-<p>CPU is the heart of any computer system. It's the CPUs job to run program instructions and orchestrate all available modules and hardware to provide a gamer the full experience. Despite PPU and APU running their independent circuits, they still need to execute commands issued by the CPU. </p>
+<p>CPU is the heart of any computer system. It's the CPUs job to run program instructions and orchestrate all available hardware modules to provide the full experience. Despite PPU and APU running their independent circuits, they still have to march under CPUs beat and execute commands issued by the CPU. </p>
 <p>Before jumping into implementation, we need to briefly discuss which resources are available to the CPU to do its work.</p>
-<p>The only two resources the CPU has access to are Memory and Cpu Registers. </p>
-<p>From a programming standpoint, memory is just a continuous array of 1-byte cells. NES Cpu uses 16bit memory addressing, which means that the CPU can address 65536 different memory cells. </p>
-<p>As we've seen before, the NES had only 2KB of Ram dedicated to the CPU. </p>
+<p>The only two resources the CPU has access to are the Memory Map and Cpu Registers. </p>
+<p>From a programming standpoint, memory map is just a continuous array of 1-byte cells. NES Cpu uses 16bit for memory addressing, which means that it can address 65536 different memory cells. </p>
+<p>As we've seen before, the NES paltform had only 2 KiB of RAM connected to the CPU. </p>
 <div style="text-align:center"><img src="./images/ch3/cpu_registers_memory.png" width="80%"/></div>
-<p>That Ram is accessible via <strong>[0x0000 … 0x2000]</strong> address space. </p>
+<p>That RAM is accessible via <strong>[0x0000 … 0x2000]</strong> address space. </p>
 <p>Access to <strong>[0x2000 … 0x4020]</strong> is redirected to other available NES hardware modules: PPU, APU, GamePads, etc. (more on this later)</p>
-<p>Access to <strong>[0x4020 .. 0x6000]</strong> is a special space that different generations of cartridges use differently. It might be mapped to nothing at all, RAM, ROM, etc</p>
-<p>Access to <strong>[0x6000 .. 0x8000]</strong> is reserved to Ram on a cartridge if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state.</p>
-<p>Access to <strong>[0x8000 … 0x10000]</strong> is redirected to Program Rom (PRG ROM) space on a cartridge. </p>
-<p>But because memory access is relatively slow, NES CPU has a few memory slots called registers with significantly lower access delay. </p>
+<p>Access to <strong>[0x4020 .. 0x6000]</strong> is a special space that different generations of cartridges used differently. It might be mapped to nothing at all, RAM, ROM, etc. The space is controlled by so-called mappers - special circutry on a cartridge. We would ignore this space.</p>
+<p>Access to <strong>[0x6000 .. 0x8000]</strong> is reserved to a RAM space on a cartridge, if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We would ignore this space</p>
+<p>Access to <strong>[0x8000 … 0x10000]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge. </p>
+<p>Memory access is relatively slow, NES CPU has a few internal memory slots called registers with significantly lower access delay.</p>
 <blockquote>
-<table><thead><tr><th>Cpu Operation type</th><th>Execution time (CPU Cycles)</th></tr></thead><tbody>
-<tr><td>Just register access</td><td>2</td></tr>
-<tr><td>Accessing first 255 bytes of RAM</td><td>3</td></tr>
-<tr><td>Accessing memory after the first 255</td><td>4-7</td></tr>
+<table><thead><tr><th>CPU Operation type</th><th>Execution time (in CPU Cycles)</th></tr></thead><tbody>
+<tr><td>Accesing only registers</td><td>2</td></tr>
+<tr><td>Accessing the first 255 bytes of RAM</td><td>3</td></tr>
+<tr><td>Accessing memory space after the first 255</td><td>4-7</td></tr>
 </tbody></table>
 </blockquote>
-<p>NES Cpu has 7 Registers:</p>
+<p>NES CPU has 7 Registers:</p>
 <ul>
 <li>
-<p>Program Counter - holds the address for the next machine language instruction to be executed</p>
+<p>Program Counter (<em>PC</em>) - holds the address for the next machine language instruction to be executed</p>
 </li>
 <li>
-<p>Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of the stack. NES Stack (as all stacks) grows from top to bottom: when a byte worth of data pushed to the stack - SP register decrements  and when an item is popped out of the stack the - SP register increments</p>
+<p>Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of that space. NES Stack (as all stacks) grows from top to bottom: when a byte got pushed to the stack - SP register decrements  and when an byte is retrieved from the stack - SP register increments</p>
 </li>
 <li>
-<p>Accumulator (A) - stores results of arithmetic, logic and memory access operations</p>
+<p>Accumulator (<em>A</em>) - stores results of arithmetic, logic and memory access operations. Being used as an input parameter for some of the operations.</p>
 </li>
 <li>
-<p>Index Register X (X) - used as an offset in specific memory addressing modes. Can be used for auxiliary needs (holding temp values, being used as a counter, etc.)</p>
+<p>Index Register X (<em>X</em>) - used as an offset in specific memory addressing modes (more on this later). Can be used for auxiliary needs (holding temp values, being used as a counter, etc.)</p>
 </li>
 <li>
-<p>Index Register Y (Y) -  similar use cases as with register X.</p>
+<p>Index Register Y (<em>Y</em> -  similar use cases as with register X.</p>
 </li>
 <li>
-<p>Processor status (P) - 8bit register represents 7 status flags that can be set or cleared depending on the result of the operation ( for example Z flag is set if the result of an executed instruction is 0, and is cleared otherwise)</p>
+<p>Processor status (<em>P</em>) - 8bit register represents 7 status flags that can be set or erased depending on the result of the last executed instruction ( for example Z flag is set (1) if the result of an operation is 0, and is erased (0) otherwise)</p>
 </li>
 </ul>
 <p>Each CPU comes with a predefined hard-wired instruction set that defines everything a CPU can do.</p>
-<p>CPU receives instructions from the application layer in the form of machine codes. And you can think of machine language as a thin interface between hardware and software. </p>
-<p>A full list of the official 6502 instruction set can be found :</p>
+<p>CPU receives instructions from the application layer in the form of machine codes. And you can think of machine language as a thin layer connecting software and hardware. </p>
+<p>A full list of the official 6502 instructions can be found:</p>
 <ul>
-<li>http://www.obelisk.me.uk/6502/reference.html</li>
-<li>http://www.6502.org/tutorials/6502opcodes.html</li>
+<li><a href="http://www.obelisk.me.uk/6502/reference.html">http://www.obelisk.me.uk/6502/reference.html</a></li>
+<li>or <a href="http://www.6502.org/tutorials/6502opcodes.html">http://www.6502.org/tutorials/6502opcodes.html</a></li>
 </ul>
-<p>Those pages provide full specs of available CPU features and their machine codes. </p>
-<p>I highly recommend reading an interactive tutorial on the 6502 instructions set here before moving on https://skilldrick.github.io/easy6502/.</p>
+<p>I tend to use both of the links. The pages provide full specs of available CPU features and their machine codes. </p>
+<p>I highly recommend reading this <a href="https://skilldrick.github.io/easy6502/">interactive tutorial on the 6502 instructions</a> before moving on </p>
 <div style="text-align:center"><img src="./images/ch3/image_4_opcodes.png" width="80%" /></div>
 <p>6502 chip is a relatively simple CPU; it supports only six types of commands and about 64 unique commands. Because some of the instructions have multiple versions (for different memory addressing modes), it results in about 150 machine code operations that we are to implement. </p>
-<p><strong>NOTE:</strong> NES had a custom chip 2A03 based on 6502 chip, but had noticeable differences:
-&gt;</p>
 <blockquote>
+<p><strong>NOTE:</strong> NES console had a custom chip 2A03 that is based on 6502, but has noticeable differences:</p>
 <ul>
-<li>in addition to official machine operations, it had about 110 unofficial additional ops codes (luckily, about a third of them are No-OPs)</li>
-<li>it had Audio Processing Unit on board</li>
+<li>in addition to official machine operations, it had about 110 unofficial additional opcodes (luckily, about a third of them are No-OPs)</li>
+<li>it had Audio Processing Unit on-board</li>
 <li>it didn't support decimal mode for arithmetic</li>
 </ul>
-<p>To keep things simple, we would need to implement support for 256 different machine instructions in the end. </p>
+<p>To keep things simple, we would need to implement support for 256 different machine instructions. </p>
 <p>The good news is that there are a lot of similarities between instructions. Once we have the foundation in place, we would constantly be re-using it to implement the whole set.</p>
 </blockquote>
 <h1><a class="header" href="#lets-get-started" id="lets-get-started">Let's get started.</a></h1>
 <div style="text-align:center"><img src="./images/ch3/chapter_logo.png" width="20%"/></div>
-<p>Let's try to interpret to execute our first program. It looks like this:</p>
+<p>Let's try to interpret our first program. The program looks like this:</p>
 <pre><code>a9 c0 aa e8 00
 </code></pre>
-<p>This is somewhat cryptic and isn't designed to be interpreted by humans. But we can more easily decipher what's going on if we represent those codes in mnemonics based language - assembler.</p>
+<p>This is somewhat cryptic and isn't designed to be read by humans. But we can more easily decipher what's going on if we represent the program in <a href="https://en.wikipedia.org/wiki/Assembly_language">assembly code</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_1_assembler.png" width="40%"/></div>
-<p>So our program consists of 4 instructions, and the first one has a parameter.</p>
-<p>Let's try to interpret what's going on using ops code specifications: <a href="http://www.obelisk.me.uk/6502/reference.htm">6502 Instruction Reference</a></p>
+<p>Now it's more readable: it consists of 4 instructions, and the first instruction has a parameter.</p>
+<p>Let's interpret what's going on using the opcode specification from <a href="http://www.obelisk.me.uk/6502/reference.htm">6502 Instruction Reference</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 <p>It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). </p>
 <blockquote>
-<p>By looking at the LDA spec, we can also deduce that the ops code 0xA9 has one parameter: the instruction size is 2 Bytes: one byte is for operation code itself(standard for all NES CPU opcodes), and the other is for a parameter. </p>
-<p>NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And the whole instruction would occupy 3 bytes.</p>
-<p>Also, some of the operations use CPU registers as implicit parameters.</p>
+<p>From the LDA spec it follows that the opcode 0xA9 has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. </p>
+<p>NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.</p>
+<p>Worth mentioning, that some operations use CPU registers as implicit parameters.</p>
 </blockquote>
-<p>Let's try to sketch out how our CPU might look like from a high-level perspective:</p>
+<p>Let's sketch out how our CPU might look like from a high-level perspective:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -330,8 +330,8 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We also introduced a program counter register that would help us track our current position in the program. Note that the interpret method takes a mutable reference to self as we know that we would need to modify <strong>register_a</strong> during the execution.</p>
-<p>CPU works in a constant cycle:</p>
+<p>Note, that we introduced a program counter register that would help us track our current position in the program. Also note that the interpret method takes a mutable reference to self as we know that we would need to modify <strong>register_a</strong> during the execution.</p>
+<p>The CPU works in a constant cycle:</p>
 <ul>
 <li>Fetch next execution instruction from the instruction memory</li>
 <li>Decode the instruction</li>
@@ -356,7 +356,7 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) ops code:</p>
+<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -383,11 +383,11 @@ impl CPU {
         }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We are not doing anything crazy here, just what was specified in LDA spec. Also, we are fully utilizing existing rust lang features for boolean arithmetic. </p>
+<p>We are not doing anything crazy here, just following the spec. And using rust constructs to do binary arithmetic.</p>
 <blockquote>
-<p>Note: it's essential to set and also erase CPU flag status depending on the results</p>
+<p>It's essential to set or erase CPU flag status depending on the results.</p>
 </blockquote>
-<p>Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement <strong>BRK (0x00)</strong> ops code:</p>
+<p>Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement <strong>BRK (0x00)</strong> opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -422,9 +422,9 @@ mod test {
 <blockquote>
 <p>Do you think that's enough? What else should we check? </p>
 </blockquote>
-<p>Alright. Let's try to implement another opcode? </p>
+<p>Alright. Let's try to implement another opcode, shall we? </p>
 <div style="text-align:center"><img src="./images/ch3.1/image_3_tax_spec.png" width="50%"/></div>
-<p>This one is also really straightforward: copy a value from A to X.</p>
+<p>This one is also straightforward: copy a value from A to X, and update statys register.</p>
 <p>We need to introduce <strong>register_x</strong> in our CPU struct, and then we can implement the <strong>TAX (0xAA)</strong> opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -461,7 +461,7 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>And don't forget to write tests:</p>
+<p>Don't forget to write tests:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -477,8 +477,8 @@ impl CPU {
 </span></code></pre></pre>
 <p>Before moving to the next opcode, we have to admit that our code becomes quite convoluted:</p>
 <ul>
-<li>interpret method is already quite complicated and does multiple things</li>
-<li>there is quite a bit of duplication between the way TAX and LDA are implemented.</li>
+<li>interpret method is already complicated and does multiple things</li>
+<li>there is a noticeable duplication between the way TAX and LDA are implemented.</li>
 </ul>
 <p>Let's fix that: </p>
 <pre><pre class="playpen"><code class="language-rust">
@@ -530,10 +530,10 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>Ok. Looks more manageable now. And hopefully, all tests are still passing. </p>
-<p>I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes will unpredictably ripple a game logic.</p>
+<p>I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.</p>
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 <p>Implementing that last opcode from the program should not be a problem, and I'll leave this exercise to you. </p>
-<p>At the end the following test should be passing: </p>
+<p>At the end, these tests should be passing: </p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -553,15 +553,13 @@ impl CPU {
 
         assert_eq!(cpu.register_x, 1)
     }
-
-
 <span class="boring">}
 </span></code></pre></pre>
 <h1><a class="header" href="#memory-addressing-modes" id="memory-addressing-modes">Memory addressing modes</a></h1>
-<p>In our initial implementation, the CPU receives instructions as a separate input stream, not how the things actually work.</p>
-<p>NES implements typical von Neumann architecture: computer memory stores both data and the instructions that need to be executed by the machine. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
+<p>In our initial implementation, the CPU receives instructions as a separate input stream, this is not how the things actually work.</p>
+<p>NES implements typical von Neumann architecture: both data and the instructions are stored in memory. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
 <div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
-<p>Let's try to sketch this out in our CPU code:</p>
+<p>Let's sketch this out in our CPU code:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span>
@@ -609,25 +607,25 @@ impl CPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>For now, we just created an array for the whole 64 KiB worth of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
-<p>We also load program code into memory from 0x8000 Address. In reality, this is were Cartridge ROM memory map starts, so we can assume that the instructions stream would start somewhere in this space [0x8000 .. 0xFFFF] but not necessarily at exact 0x8000.</p>
+<p>For now, we just created an array for the whole 64 KiB of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
+<p>We also load program code into memory starting at 0x8000 dddress. We've discusses that [0x8000 .. 0xFFFF] is reserved for Program ROM. And we can assume that the instructions stream would start somewhere in this space, just not necessarily at exact 0x8000.</p>
 <p>NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called &quot;Reset interrupt&quot; that instructs CPU to:</p>
 <ul>
 <li>reset the state (registers and flags)</li>
 <li>set <strong>program_counter</strong> to the 16bit address that is stored at 0xFFFC</li>
 </ul>
-<p>Before implementing that, I should briefly mention that NES Cpu can address 65536 memory cells, that means that memory addresses can take 2 Bytes. NES CPU uses Little-Endian addressing rather than big-endian.
-That means that 8 liest significant bits of Address will be stored before 8 most significant bit. </p>
-<p>The difference can be illustrated like this:</p>
+<p>Before implementing that, I should briefly mention that NES CPU can address 65536 memory cells. It takes 2 bytes to store an address. NES CPU uses Little-Endian addressing rather than Big-Endian.
+That means that 8 liest significant bits of an address will be stored before 8 most significant bits. </p>
+<p>To illustrate the difference:</p>
 <table><thead><tr><th></th><th align="right"></th></tr></thead><tbody>
 <tr><td>Real Address</td><td align="right"><strong>0x8000</strong></td></tr>
 <tr><td>Address packed in big-endian</td><td align="right"><strong>80 00</strong></td></tr>
 <tr><td>Address packed in little-endian</td><td align="right"><strong>00 80</strong></td></tr>
 </tbody></table>
-<p>For example, instruction to read data from memory cell 0x8000 into A register would look like:</p>
+<p>For example, the instruction to read data from memory cell 0x8000 into A register would look like:</p>
 <pre><code>LDA $8000      &lt;=&gt;    ad 00 80
 </code></pre>
-<p>Let's implement this behaviour:</p>
+<p>We can implement this behaviour using rust bit arithetic:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -646,9 +644,10 @@ That means that 8 liest significant bits of Address will be stored before 8 most
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now we can try implement <strong>reset</strong> functionality properly. We would also have to adjust load and load_and_run:</p>
+<p>Or by using rust lang <a href="https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes">endian support for primitive types</a></p>
+<p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust load and load_and_run functions:</p>
 <ul>
-<li><strong>load</strong> method should load a program into PRG Rom space and save the reference to the code into 0xFFFC memory cell</li>
+<li><strong>load</strong> method should load a program into PRG ROM space and save the reference to the code into 0xFFFC memory cell</li>
 <li><strong>reset</strong> method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC</li>
 </ul>
 <pre><pre class="playpen"><code class="language-rust">
@@ -685,15 +684,15 @@ That means that 8 liest significant bits of Address will be stored before 8 most
 <li>and <a href="www.obelisk.me.uk/6502/addressing.html">here</a></li>
 </ul>
 <p>In short, the addressing mode is a property of an instruction that defines how CPU would interpret the next 1 or 2 bytes in the instruction stream. </p>
-<p>It's important to note that different addressing modes have different instruction sizes. 
+<p>It's important that different addressing modes have different instruction sizes. 
 For example, </p>
 <ul>
 <li><strong>Zero Page version</strong> ($A5) has a size of 2 bytes - one for opcode itself, and one for a parameter. That's why zero page addressing can't reference memory above the first 255 bytes.</li>
 <li><strong>Absolute version</strong> ($AD) has 3 bytes - that means that the Address occupies 2 bytes, making it possible to reference all of 65536 memory cells, as we've discussed.
 (<em>NOTE: 2 byte the parameter will be packed according to little-endian rules</em>)</li>
 </ul>
-<p>There are no opcodes that occupy more than 3 bytes. Opcode instruction can have a size: 1 byte, 2 bytes, 3 bytes. </p>
-<p>One crucial detail is that majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
+<p>There are no opcodes that occupy more than 3 bytes. CPU instruction size can be either 1 or 2 or 3 bytes. </p>
+<p>The majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
 <p>Let's try to codify how CPU should interpret different addressing modes:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -812,7 +811,7 @@ impl CPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>NOTE: It's crucial to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
+<p>NOTE: It's absolutely neccessary to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
 <p>Don't forget the tests.</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -857,15 +856,16 @@ impl CPU {
     }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy. First of all, the requirements to increment program_counter by 1 or 2 after some operations is error-prone. And if we introduce an error, it would be tough to spot it on. </p>
+<p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy.
+First, the requirements to increment program_counter by 1 (or 2) after some of operations is error-prone. And if we introduce an error, it would be tough to spot it. </p>
 <p>Second, wouldn't it be more readable and convenient if we could group all &quot;LDA&quot; operations under a single <code>match</code> cause? </p>
-<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Wouldn't it be great if we could represent our opcodes in some table form?</p>
+<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Keeping the code in some table form looks like a more managable approach. </p>
 <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 <p>I leave it to you to figure out how to get to this point.</p>
 <h1><a class="header" href="#implementing-the-rest-of-cpu-instructions" id="implementing-the-rest-of-cpu-instructions">Implementing the rest of CPU instructions</a></h1>
 <div style="text-align:center"><img src="./images/ch3.3/image_1_how_to_draw_owl.png" width="60%"/></div>
 <p>Implementing the rest of the 6502 CPU instructions should be relatively straightforward. I wouldn't go into detail with every one of them. </p>
-<p>I would just put some remarks:</p>
+<p>Just some remarks:</p>
 <ul>
 <li><strong>ADC</strong> is perhaps the most complicated instruction from a logic flow perspective. Note that the spec contains details regarding decimal mode, that can be entirely skipped because Ricoh modification of the chip didn't support decimal mode.</li>
 </ul>
@@ -880,19 +880,20 @@ impl CPU {
 And <code>-B = !B + 1</code> </p>
 </li>
 <li>
-<p><strong>PHP</strong>, <strong>PLP</strong> and <strong>RTI</strong> have to deal with <a href="http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag">2 bit B-flag</a>. Those are the only commands that directly influence (or being directly influenced by) 5th Bit of <strong>Status register P</strong></p>
+<p><strong>PHP</strong>, <strong>PLP</strong> and <strong>RTI</strong> have to deal with <a href="http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag">2 bit B-flag</a>. Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) 5th Bit of <strong>Status register P</strong></p>
 </li>
 <li>
-<p>Majority of branching and jumping operations can be implemented by merely modifying <strong>program_counter</strong> register. However, be careful not to modify the register afterward within the same instruction interpret cycle. </p>
+<p>Majority of branching and jumping operations can be implemented by merely modifying <strong>program_counter</strong> register. However, be careful not to increment the register within the same instruction interpret cycle. </p>
 </li>
 </ul>
 <p>If you get stuck, you can always look up the implementation of 6502 instruction set here: <link to code></p>
 <h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
 <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 <p>Great, you've made it this far. What we are going to do next is a bit of a detour. 
-The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a truly NES game. It is built on top of 6502 instructions set but uses quate different memory mappings.</p>
-<p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play our first game. </p>
-<p>The majority of logic we are to implement now would be reused some way or another when we will be implementing PPU rendering capabilities. So nothing is a wasted effort. I promise. </p>
+The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a truly NES game. It is built on top of 6502 instructions but uses quate different memory mappings.</p>
+<p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play the first game. </p>
+<p>The majority of logic we are to implement now would be reused some way or another when we will be implementing rendering in PPU. So nothing is a wasted effort. </p>
+<p>The machine code of the game:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span>
@@ -927,16 +928,16 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 <table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
 <tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
-<tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Output screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
+<tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
 </tbody></table>
 <p>The game executes standard game loop:</p>
 <ul>
 <li>read inputs from a user</li>
 <li>compute game state</li>
-<li>render game state to screen</li>
+<li>render game state to a screen</li>
 <li>repeat</li>
 </ul>
-<p>We would need to intercept this cycle, get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:</p>
+<p>We need to intercept this cycle, to get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -964,7 +965,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now, the client code can provide a callback that will be executed on every opcode interpretation cycle.</p>
+<p>Now, the client code can provide a callback that will be executed before every opcode interpretation cycle.</p>
 <p>The sketch of the main method:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    let game_code = vec![
@@ -1042,7 +1043,7 @@ There are no other layers that potentially can handle Err values and do somethin
 //...
 <span class="boring">}
 </span></code></pre></pre>
-<p>We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em>)</p>
+<p>We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em> colors) - i.e. the texture should be represented by an array of 32<em>32</em>3 bytes.</p>
 <ol start="2">
 <li>Handling user input is straightforward:</li>
 </ol>
@@ -1076,7 +1077,7 @@ There are no other layers that potentially can handle Err values and do somethin
 <ol start="3">
 <li>Rendering screen state is a bit trickier. 
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes. 
-<br/>From the game point of view it doesn't matter much how we map colors, the only 2 maps that are essential are: </li>
+<br/>From the game point of view it doesn't matter much how we map colors, the only two color maps that are essential are: </li>
 </ol>
 <ul>
 <li>0 - Black </li>
@@ -1154,7 +1155,7 @@ Remember that the CPU would call our callback after each instruction, and most o
    });
 }
 </code></pre></pre>
-<p>The last sleep statement was added to slow down things a bit to have a playable pace. </p>
+<p>The last sleep statement was added to slow things down to have a playable pace. </p>
 <p>And there you have it, the first game running on our emulator.</p>
 <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
 <h1><a class="header" href="#emulating-bus" id="emulating-bus">Emulating BUS</a></h1>
@@ -1165,12 +1166,12 @@ Remember that the CPU would call our callback after each instruction, and most o
 <li>control bus notifies if it's a read or write access</li>
 <li>data bus carries the byte of data being read or written</li>
 </ul>
-<p>The bus itself is not a device; it's a hardware wiring between platform components. 
+<p>The bus itself is not a device; it's a wiring between platform components. 
 And we don't need to implement it as an independent module as rust allows us to wire components directly. 
 However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner. </p>
 <div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
 <p>In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions. </p>
-<p>By introducing Bus module, we would have a single place for:</p>
+<p>By introducing Bus module, we can have a single place for:</p>
 <ul>
 <li>Intra device communication:
 <ul>
@@ -1179,23 +1180,23 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 </ul>
 </li>
 <li>Handling memory mappings</li>
-<li>Coordinating PPU and CPU clock cycles (more on this in coming chapters)</li>
+<li>Coordinating PPU and CPU clock cycles (more on this later)</li>
 </ul>
 <p>The good news is that we don't need to write full-blown emulation of data, control, and address buses. Because it's not a hardware chip, no logic expects any specific behavior from the BUS. So we can just codify coordination and signal routing. </p>
-<p>For now, we will implement bare bones of the BUS:</p>
+<p>For now, we can implement the bare bones of it:</p>
 <ul>
 <li>Access to CPU RAM</li>
 <li>Mirroring </li>
 </ul>
 <p>Mirroring is a side-effect of NES trying to keep things as cheap as possible. It can be seen as an address space being mapped to another address space. </p>
-<p>On a CPU memory map RAM address space <strong>[0x000 .. 0x0800]</strong> (2 KiB) is mirrored three times:</p>
+<p>For instance, on a CPU memory map RAM address space <strong>[0x000 .. 0x0800]</strong> (2 KiB) is mirrored three times:</p>
 <ul>
 <li><strong>[0x800 .. 0x1000]</strong></li>
 <li><strong>[0x1000 .. 0x1800]</strong></li>
 <li><strong>[0x1800 .. 0x2000]</strong></li>
 </ul>
 <p>This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes. </p>
-<p>The reason for mirroring lies in the fact that CPU RAM has only 2 KiB of ram space, and 11 bits are enough to address it. Naturally, the NES motherboard had 11 addressing tracks from CPU to RAM.</p>
+<p>The reason for mirroring is in the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.</p>
 <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 <p>CPU however has <strong>[0x0000 - 0x2000]</strong> addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM. 
 Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b11_1111_1111</strong> (11 bits) via the address bus. </p>
@@ -1219,7 +1220,7 @@ impl Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Lets codify read/write access:</p>
+<p>And it would provide read/write access:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -1264,7 +1265,7 @@ impl Mem for Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Last step: replace direct access to RAM in CPU with access via BUS</p>
+<p>The last step is to replace direct access to RAM from CPU with access via BUS</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -2156,7 +2157,7 @@ The CPU however, might instruct PPU to not trigger NMI by resetting 7th bit in t
 <p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime on our part. </p>
 </li>
 <li>
-<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components. <br/> <br/>For example, if CPU executes &quot;LDA #$01&quot; (opcode 0xA9) that means that CPU has spent 2 CPU Cycles, which means that PPU can run for 6 PPU cycles now (PPU clock is ticking 3 times faster than CPU clock)</p>
+<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and then them run. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">&quot;catch-up&quot;</a> <br/> <br/>For example, if CPU executes &quot;LDA #$01&quot; (opcode 0xA9) that means that CPU has spent 2 CPU Cycles, which means that PPU can run for 6 PPU cycles now (PPU clock is ticking 3 times faster than CPU clock)</p>
 </li>
 </ol>
 <p>Because we already have CPU loop mostly spec'd out, the third approach would be the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>

@@ -150,9 +150,10 @@
                         <h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
 <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 <p>Great, you've made it this far. What we are going to do next is a bit of a detour. 
-The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a truly NES game. It is built on top of 6502 instructions set but uses quate different memory mappings.</p>
-<p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play our first game. </p>
-<p>The majority of logic we are to implement now would be reused some way or another when we will be implementing PPU rendering capabilities. So nothing is a wasted effort. I promise. </p>
+The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a truly NES game. It is built on top of 6502 instructions but uses quate different memory mappings.</p>
+<p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play the first game. </p>
+<p>The majority of logic we are to implement now would be reused some way or another when we will be implementing rendering in PPU. So nothing is a wasted effort. </p>
+<p>The machine code of the game:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span>
@@ -187,16 +188,16 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 <table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
 <tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
-<tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Output screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
+<tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
 </tbody></table>
 <p>The game executes standard game loop:</p>
 <ul>
 <li>read inputs from a user</li>
 <li>compute game state</li>
-<li>render game state to screen</li>
+<li>render game state to a screen</li>
 <li>repeat</li>
 </ul>
-<p>We would need to intercept this cycle, get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:</p>
+<p>We need to intercept this cycle, to get user input into the input mapping space, and render the state of the screen. Let's modify our CPU run cycle:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -224,7 +225,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now, the client code can provide a callback that will be executed on every opcode interpretation cycle.</p>
+<p>Now, the client code can provide a callback that will be executed before every opcode interpretation cycle.</p>
 <p>The sketch of the main method:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    let game_code = vec![
@@ -302,7 +303,7 @@ There are no other layers that potentially can handle Err values and do somethin
 //...
 <span class="boring">}
 </span></code></pre></pre>
-<p>We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em>)</p>
+<p>We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em> colors) - i.e. the texture should be represented by an array of 32<em>32</em>3 bytes.</p>
 <ol start="2">
 <li>Handling user input is straightforward:</li>
 </ol>
@@ -336,7 +337,7 @@ There are no other layers that potentially can handle Err values and do somethin
 <ol start="3">
 <li>Rendering screen state is a bit trickier. 
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes. 
-<br/>From the game point of view it doesn't matter much how we map colors, the only 2 maps that are essential are: </li>
+<br/>From the game point of view it doesn't matter much how we map colors, the only two color maps that are essential are: </li>
 </ol>
 <ul>
 <li>0 - Black </li>
@@ -414,7 +415,7 @@ Remember that the CPU would call our callback after each instruction, and most o
    });
 }
 </code></pre></pre>
-<p>The last sleep statement was added to slow down things a bit to have a playable pace. </p>
+<p>The last sleep statement was added to slow things down to have a playable pace. </p>
 <p>And there you have it, the first game running on our emulator.</p>
 <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
 
