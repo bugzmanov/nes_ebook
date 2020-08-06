@@ -17,3 +17,4 @@
     - [Rendering Static Screen](./chapter_6_4.md)
 - [Emulating Joypads](./chapter_7.md)
 - [PPU Scrolling](./chapter_8.md)
+- [Emulating APU](./chapter_9.md)
