@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html" class="active"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html" class="active"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -148,10 +148,72 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
+<p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
+That's not the whole story. PPU has 2 additional mechanisms to tell its progress: </p>
+<ul>
+<li><a href="https://wiki.nesdev.com/w/index.php?title=PPU_OAM&amp;redirect=no#Sprite_zero_hits">sprite zero hit flag</a></li>
+<li><a href="https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
+</ul>
+<p>Both are reported using <a href="https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read">PPU status register <strong>0x2002</strong></a></p>
+<div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
+<p>Sprite overflow is rerally used, because it had a bug that resulted in false positives and false negatives. 
+Sprite 0 hit though is used by the majority of games that has scrolling. <br/>It's the way to get mid frame progress status
+of PPU:</p>
+<ul>
+<li>put sprite zero on a specific screen location (X,Y)</li>
+<li>poll status register</li>
+<li>when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU have finished rendering <strong>[0 .. Y]</strong> scanlines, and on the Y scanline, it's done rendering X pixels.</li>
+</ul>
+<blockquote>
+<p>This is very rough simulation of the behaviour. The accurate one requires checking opaque pixel of a sprite colliding with opaque pixel of background.</p>
+</blockquote>
+<p>We need to codify this behavior in PPU <code>tick</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>    pub fn tick(&amp;mut self, cycles: u8) -&gt; bool {
+        self.cycles += cycles as usize;
+        if self.cycles &gt;= 341 {
+            if self.is_sprite_0_hit(self.cycles) {
+                self.status.set_sprite_zero_hit(true);
+            }
+
+            self.cycles = self.cycles - 341;
+            self.scanline += 1;
+
+            if self.scanline == 241 {
+                self.status.set_vblank_status(true);
+                self.status.set_sprite_zero_hit(false);
+                if self.ctrl.generate_vblank_nmi() {
+                    self.nmi_interrupt = Some(1);
+                }
+            }
+
+            if self.scanline &gt;= 262 {
+                self.scanline = 0;
+                self.nmi_interrupt = None;
+                self.status.set_sprite_zero_hit(false);
+                self.status.reset_vblank_status();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    fn is_sprite_0_hit(&amp;self, cycle: usize) -&gt; bool {
+        let y = self.oam_data[0] as usize;
+        let x = self.oam_data[3] as usize;
+        (y == self.scanline as usize) &amp;&amp; x &lt;= cycle &amp;&amp; self.mask.show_sprites()
+    }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note: the sprite zero hit flag should be erased upon entering VBLANK state.</p>
+<h2><a class="header" href="#scrolling" id="scrolling">Scrolling</a></h2>
 <p>The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 <p>The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
-<p>PPU can keep two screens in memory simultaneously (remember one name table - 1 KiB, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
+<p>PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
 That also means that most of the time, the PPU is rendering parts of both nametables. </p>
 <p>Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game. 
 Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can &quot;move&quot; in all 4 directions. </p>
@@ -159,7 +221,7 @@ Games that came later on had a mechanism to alternate scrolling between stages. 
 <p>Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level. </p>
 <p>For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:</p>
 <ul>
-<li>Mirroring type (set on a cartridge ROM level)</li>
+<li>Mirroring type (set in a cartridge ROM header)</li>
 <li>Base Nametable address (value in PPU Control register)</li>
 <li>Status of PPU Scroll Register (X and Y shift values of the viewport, in pixels)</li>
 <li>Content of Nametables</li>
@@ -171,11 +233,11 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 <p>2 last notes before jumping into implementation:</p>
 <ul>
-<li>The palette of a tile is defined by the nametable the tile belongs to. </li>
-<li>For horizontal scrolling the content of the base nametable goes to the left part of the viewport (or top part in case of vertical scrolling)</li>
+<li>The palette of a tile is defined by the nametable the tile belongs to, <strong>not</strong> byt the base one defined in Control register</li>
+<li>For horizontal scrolling the content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)</li>
 </ul>
 <div style="text-align:center;"><img src="./images/ch8/image_5_scroll_caveats.png" width="80%"/></div>
-<p>Implementing scroll rendering is not hard but requires attention to many details. The most convenient mental model I could come up with is the following:</p>
+<p>Implementing scroll rendering is not hard but requires attention to details. The most convenient mental model I could come up with is the following:</p>
 <ul>
 <li>For each frame, we would scan through both nametables.</li>
 <li>For each nametable we would specify visible part of the nametable:</li>
@@ -203,7 +265,7 @@ impl Rect {
 <span class="boring">}
 </span></code></pre></pre>
 <ul>
-<li>And shift transformation for each visible pixel - shift_x, shift_y</li>
+<li>And apply shift transformation for each visible pixel - shift_x, shift_y</li>
 </ul>
 <blockquote>
 <p>For example,</p>
@@ -295,8 +357,8 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 <span class="boring">}
 </span></code></pre></pre>
 <p>Implementing vertical scroll is similar, we would reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
-<p>The fully defined code for scrolling can be found [here]</p>
-<p>Support for scrolling means that now we can play platformers like Super Mario Bros and Ice Climber.</p>
+<p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
+<p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
 <p>The final missing piece is APU. </p>
 
                     </main>
@@ -309,6 +371,10 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
                             </a>
                         
 
+                        
+                            <a rel="next" href="chapter_9.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -323,6 +389,10 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
                     </a>
                 
 
+                
+                    <a rel="next" href="chapter_9.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

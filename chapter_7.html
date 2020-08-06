@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html" class="active"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html" class="active"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -151,31 +151,31 @@
 <p>NES and Famicom supported a variety of controllers:</p>
 <ul>
 <li><a href="https://www.youtube.com/watch?v=UKMO5tlANEU">Joypads</a></li>
-<li><a href="https://www.youtube.com/watch?v=ErzuU78v60M">power pads</a></li>
+<li><a href="https://www.youtube.com/watch?v=ErzuU78v60M">Power pads</a></li>
 <li><a href="https://www.youtube.com/watch?v=x6u3ek7BXps">Lightgun Zapper</a></li>
 <li><a href="https://www.youtube.com/watch?v=u9k6xoErR4w">Arkanoid controller</a></li>
 <li><a href="https://www.youtube.com/watch?v=j8J58aTxCPM">And even a keyboard</a></li>
 </ul>
-<p>We will emulate joypads as it's the easiest device to emulate</p>
+<p>We will emulate joypads as it's the most common one and the easiest device to emulate</p>
 <div style="text-align:center;"><img src="./images/ch7/image_1_joypad2.png" width="40%"/></div>
-<p>Two joypads are mapped to 0x4016 and 0x4017 CPU address space, respectively.
+<p>Two joypads are mapped to <strong>0x4016</strong> and <strong>0x4017</strong> CPU address space, respectively.
 The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports 1 button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
 <p>The order of reported Buttons is as follows: </p>
 <pre><code class="language-bash">A -&gt; B -&gt; Select -&gt; Start -&gt; Up -&gt; Down -&gt; Left -&gt; Right
 </code></pre>
-<p>After reporting button <strong>RIGHT</strong>*, the controller would return 1s for any following read, until a strobe mode change.</p>
-<p>The CPU can change the mode of a controller by writing a byte to the register. However, only 1 bit is used. </p>
+<p>After reporting the state of the button <strong>RIGHT</strong>, the controller would continually return 1s for all following read, until a strobe mode change.</p>
+<p>The CPU can change the mode of a controller by writing a byte to the register. However, only the first bit matters. </p>
 <p>Controller operates in 2 modes:</p>
 <ul>
-<li>strobe bit on - controller reports only status of button A (1 - pressed, 0 - released) on each read request</li>
-<li>strobe bit off - controller cycles through all buttons, 1 at a time. </li>
+<li>strobe bit on - controller reports only status of the button A on every read</li>
+<li>strobe bit off - controller cycles through all buttons</li>
 </ul>
 <p>So the most basic cycle to read the state of a joypad for CPU:</p>
 <ol>
-<li>Write 0x1 to 0x4016 (to reset the pointer to button A)</li>
-<li>Write 0x0 to 0x4016 (to turn off strobe bit)</li>
-<li>Read 0x4016 from 8 times </li>
+<li>Write <strong>0x1</strong> to <strong>0x4016</strong> (stobe mode on - to reset the pointer to button A)</li>
+<li>Write <strong>0x00</strong> to <strong>0x4016</strong> (strobe mode off)</li>
+<li>Read from <strong>0x4016</strong> eight times </li>
 <li>Repeat</li>
 </ol>
 <p>Ok, so let's sketch it out. </p>
@@ -198,9 +198,9 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>All we need to track: </p>
+<p>We need to track: </p>
 <ul>
-<li>strobe mode begin on/off , </li>
+<li>strobe mode on/off , </li>
 <li>the status of all buttons</li>
 <li>an index of a button to be reported on next read.</li>
 </ul>
@@ -250,8 +250,8 @@ impl Joypad {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Don't forget to connect the Joypad to the BUS and add a mapping for address 0x4016. </p>
-<p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released:</p>
+<p>Don't forget to connect the Joypad to the BUS and map it for address 0x4016. </p>
+<p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released on the host machine:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    //... init sdl2
    //... load the game
@@ -303,7 +303,8 @@ impl Joypad {
 }
 </code></pre></pre>
 <p>And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon. </p>
-<p>SDL2 fully supports gamepads, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. </p>
+<p>I'm not affiliated, I got <a href="https://www.amazon.com/gp/product/B07M7SYX11/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&amp;psc=1">these ones</a></p>
+<p>SDL2 fully supports <a href="https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html">joysticks</a>, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. </p>
 <div style="text-align:center;"><img src="./images/ch7/image_2_rl.png" width="40%"/></div>
 <p>Ok, we've made quite a bit of progress here. Two major pieces left out are: </p>
 <ul>

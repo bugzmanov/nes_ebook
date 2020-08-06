@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -221,6 +221,7 @@ The later version of cartridges carried additional hardware (ROM and RAM) access
 <p>We can use the schema of the main NES components as an implementation plan for our emulator. </p>
 <div style="text-align:center"><img src="./images/ch2/image_6_impl_plan.png" width="80%"/></div>
 <p>We have to build a simulation of all of these modules. The goal is to have something playable as soon as possible. Using iterative approach we would incrementally add features to achieve the goal. </p>
+<p>I'm roughly estimating the effort required for each component in percentages. PPU being the hardest one, and the BUS being the easiest.</p>
 <p>Writing a perfect emulator is a never-ending quest. But this quest has a start. And we will start by emulating the CPU.</p>
 <div style="text-align:center"><img src="./images/ch2/image_5_motherboard.png" width="80%"/></div>
 <h1><a class="header" href="#emulating-cpu" id="emulating-cpu">Emulating CPU</a></h1>
@@ -2506,18 +2507,18 @@ In fact, the same tile can be used both for background and for sprites. </p>
 Each tile is represented by one byte in VRAM in the space called Nametable. </p>
 <div style="text-align:center"><img src="./images/ch6.4/image_2_nametable.png" width="100%"/></div>
 <blockquote>
-<p>Using byte in nametable PPU can address only 256 elements within a single bank in pattern table.
+<p>Using a byte in nametable PPU can address only 256 elements within a single bank in pattern table.
 Control register decides which of two banks should be used for background (and which one should be used for sprites)</p>
 <div style="text-align:left"><img src="./images/ch6.4/image_3_control_register_highlight.png" width="50%"/></div>
 </blockquote>
-<p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total a single frame is defined by 1024 bytes (960 + 64). PPU VRAM can simultaneously hold 2 nametables - state of 2 frames. </p>
+<p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total a single frame is defined by 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - state of two frames. </p>
 <p>Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge. 
 More details: http://wiki.nesdev.com/w/index.php/Mirroring</p>
-<p>Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). So for us to get a screen state, we just need to read it from an appropriate nametable.</p>
+<p>Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's fully determined by game code. All we need to do is to read the correct part of the VRAM. </p>
 <p>The algorithm to draw current background:</p>
 <ol>
-<li>Determine which nametable being used for the current screen (bit 0 and bit 1 or a Control register)</li>
-<li>Determine which CHR ROM bank is used for background tiles</li>
+<li>Determine which nametable being used for the current screen (by reading bit 0 and bit 1 from Control register)</li>
+<li>Determine which CHR ROM bank is used for background tiles (by reading bit 4 from Control Register)</li>
 <li>Read 960 bytes from the specified nametable and draw a 32x30 tile-based screen </li>
 </ol>
 <p>Let's add <code>render</code> function to a new <code>render</code> module:</p>
@@ -2563,18 +2564,18 @@ pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
 <span class="boring">}
 </span></code></pre></pre>
 <blockquote>
-<p>Note: We are still using random colors from a system palette for the color index just to see shapes</p>
+<p>Note: We are still using randomly picked colors from a system palette just to see shapes</p>
 </blockquote>
-<p>We need to define when we should intercept the program execution and read the screen state. 
+<p>Again we need to intercept the program execution to read the screen state. 
 On the real console, PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of screen state on each PPU clock tick, we can wait untill the full screen is ready and read it in one go. </p>
 <blockquote>
-<p><strong>WARNING</strong> This is a very drastic simplification, which limits type of games it will be possible to play. More advanced games used a lot of tricks to enrich gaming experience. </br><br/>
-Tricks like changing scroll in the middle of the frame (so-called <a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors in the middle of the frame. <br/>
-This simplification wouldn't affect first-gen NES games much. However, more advanced games would require more accurancy in PPU emulation.</p>
+<p><strong>WARNING</strong> This is quite a drastic simplification, that limits type of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich gaming experience. 
+For example, changing scroll in the middle of the frame (so-called <a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
+This simplification wouldn't affect first-gen NES games much. But the majority of NES games would require more accurancy in PPU emulation.</p>
 </blockquote>
-<p>On a real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines, then during scanlines 241 - 262 the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
-<p>One way is to get screen state right after NMI interrupt - when PPU is done rendering current frame and before CPU starts creating next frame.</p>
-<p>First lets add callback to the bus, that will be triggered every time PPU triggers NMI:</p>
+<p>On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines, during scanlines 241 - 262 the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
+<p>One way to intercept is to read the screen state right after NMI interrupt - when PPU is done rendering current frame, but before CPU starts creating next one.</p>
+<p>First lets add callback to the bus, that will be called every time PPU triggers NMI:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -2662,27 +2663,27 @@ impl&lt;'a&gt; Bus&lt;'a&gt; {
    cpu.run();
 }
 </code></pre></pre>
-<p>It's working! Beutifull. </p>
+<p>It's working! Beau·ti·ful. </p>
 <div style="text-align:center"><img src="./images/ch6.4/image_4_pacman_result.png" width="30%"/></div>
 <p>Now let's fix the colors.</p>
 <h2><a class="header" href="#working-with-colors" id="working-with-colors">Working with Colors</a></h2>
 <p>NES Console could generate 52 different colors on a TV screen. Those colors constitute the hardwired System Palette of the console. </p>
-<p>However, a single screen could use only 25 colors simultaneously: 13 background colors and 12 for sprites. </p>
+<p>However, a single screen can use only 25 colors simultaneously: 13 background colors and 12 for sprites. </p>
 <p>NES had internal memory RAM to store palette settings. 
 The space is divided into 8 palettes tables: 4 for background and 4 for sprites. Each palette contains three colors. 
-Remember that a pixel in a tile was coded using 2 bits - that's 4 possible values. </p>
+Remember that a pixel in a tile was coded using 2 bits - that's 4 possible values. 0b00 is a special one.</p>
 <blockquote>
-<p><strong>0b00</strong> for <em>background</em> tile means using Universal background color (at <strong>0x3F00</strong>). </p>
+<p><strong>0b00</strong> for <em>background</em> tile means using Universal background color (stored at <strong>0x3F00</strong>). </p>
 <p>For <em>sprites</em> - <strong>0b00</strong> means that the pixel is transparent</p>
 </blockquote>
 <div style="text-align:center"><img src="./images/ch6.4/image_5_palette_table.png" width="100%"/></div>
 <p>A single tile can be drawn using only one palette from the palette table. 
 For background tiles, the last 64 bytes of each nametable are reserved for assigning a specific palette to a part of the background. This section is called an attribute table.</p>
-<p>A byte in an attribute table controls palettes for 4 neighboring meta-tiles. (a meta tile is a space composed of 2x2 tiles)
+<p>A byte in an attribute table controls palettes for 4 neighboring meta-tiles. (a meta-tile is a space composed of 2x2 tiles)
 To say it another way, 1 byte controlls which palettes are used for 4x4 tile blocks or 32x32 pixels<br />
 A byte is split into four 2bits blocks. And each block is assigning a background palette for four neighboring tiles. </p>
 <div style="text-align:center"><img src="./images/ch6.4/image_6_attribute_table.png" width="70%"/></div>
-<p>First let's extract palette for a tile specified by its row and column position on a screen:</p>
+<p>First let's extract palette for a background tile specified by its row and column position on a screen:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -2703,7 +2704,7 @@ A byte is split into four 2bits blocks. And each block is assigning a background
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>And just rewire our color lookup in <code>render</code> function:</p>
+<p>And just rewire our color lookup in <code>render</code> function from using randomly picked colors to the actual ones:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -2743,10 +2744,10 @@ A byte is split into four 2bits blocks. And each block is assigning a background
 <h2><a class="header" href="#rendering-sprites" id="rendering-sprites">Rendering sprites.</a></h2>
 <p>Rendering sprites is somewhat similar, yet a bit easier. 
 NES had an internal RAM for storing states of all sprites in the frame, so-called Object Attribute Memory (OAM).</p>
-<p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of 4 tiles).</p>
+<p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of atleast 3-4 tiles).</p>
 <p>CPU has to option of updating OAM Table: </p>
 <ul>
-<li>using OAM Addr and OAM Data registers, updating one byte at a time. </li>
+<li>using OAM Addr and OAM Data PPUT registers, updating one byte at a time. </li>
 <li>bulk updating the whole table by transfering 256 bytes from CPU RAM using OAM DMA</li>
 </ul>
 <p>In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)</p>
@@ -2829,31 +2830,31 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 <p>NES and Famicom supported a variety of controllers:</p>
 <ul>
 <li><a href="https://www.youtube.com/watch?v=UKMO5tlANEU">Joypads</a></li>
-<li><a href="https://www.youtube.com/watch?v=ErzuU78v60M">power pads</a></li>
+<li><a href="https://www.youtube.com/watch?v=ErzuU78v60M">Power pads</a></li>
 <li><a href="https://www.youtube.com/watch?v=x6u3ek7BXps">Lightgun Zapper</a></li>
 <li><a href="https://www.youtube.com/watch?v=u9k6xoErR4w">Arkanoid controller</a></li>
 <li><a href="https://www.youtube.com/watch?v=j8J58aTxCPM">And even a keyboard</a></li>
 </ul>
-<p>We will emulate joypads as it's the easiest device to emulate</p>
+<p>We will emulate joypads as it's the most common one and the easiest device to emulate</p>
 <div style="text-align:center;"><img src="./images/ch7/image_1_joypad2.png" width="40%"/></div>
-<p>Two joypads are mapped to 0x4016 and 0x4017 CPU address space, respectively.
+<p>Two joypads are mapped to <strong>0x4016</strong> and <strong>0x4017</strong> CPU address space, respectively.
 The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports 1 button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
 <p>The order of reported Buttons is as follows: </p>
 <pre><code class="language-bash">A -&gt; B -&gt; Select -&gt; Start -&gt; Up -&gt; Down -&gt; Left -&gt; Right
 </code></pre>
-<p>After reporting button <strong>RIGHT</strong>*, the controller would return 1s for any following read, until a strobe mode change.</p>
-<p>The CPU can change the mode of a controller by writing a byte to the register. However, only 1 bit is used. </p>
+<p>After reporting the state of the button <strong>RIGHT</strong>, the controller would continually return 1s for all following read, until a strobe mode change.</p>
+<p>The CPU can change the mode of a controller by writing a byte to the register. However, only the first bit matters. </p>
 <p>Controller operates in 2 modes:</p>
 <ul>
-<li>strobe bit on - controller reports only status of button A (1 - pressed, 0 - released) on each read request</li>
-<li>strobe bit off - controller cycles through all buttons, 1 at a time. </li>
+<li>strobe bit on - controller reports only status of the button A on every read</li>
+<li>strobe bit off - controller cycles through all buttons</li>
 </ul>
 <p>So the most basic cycle to read the state of a joypad for CPU:</p>
 <ol>
-<li>Write 0x1 to 0x4016 (to reset the pointer to button A)</li>
-<li>Write 0x0 to 0x4016 (to turn off strobe bit)</li>
-<li>Read 0x4016 from 8 times </li>
+<li>Write <strong>0x1</strong> to <strong>0x4016</strong> (stobe mode on - to reset the pointer to button A)</li>
+<li>Write <strong>0x00</strong> to <strong>0x4016</strong> (strobe mode off)</li>
+<li>Read from <strong>0x4016</strong> eight times </li>
 <li>Repeat</li>
 </ol>
 <p>Ok, so let's sketch it out. </p>
@@ -2876,9 +2877,9 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>All we need to track: </p>
+<p>We need to track: </p>
 <ul>
-<li>strobe mode begin on/off , </li>
+<li>strobe mode on/off , </li>
 <li>the status of all buttons</li>
 <li>an index of a button to be reported on next read.</li>
 </ul>
@@ -2928,8 +2929,8 @@ impl Joypad {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Don't forget to connect the Joypad to the BUS and add a mapping for address 0x4016. </p>
-<p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released:</p>
+<p>Don't forget to connect the Joypad to the BUS and map it for address 0x4016. </p>
+<p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released on the host machine:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    //... init sdl2
    //... load the game
@@ -2981,7 +2982,8 @@ impl Joypad {
 }
 </code></pre></pre>
 <p>And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon. </p>
-<p>SDL2 fully supports gamepads, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. </p>
+<p>I'm not affiliated, I got <a href="https://www.amazon.com/gp/product/B07M7SYX11/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&amp;psc=1">these ones</a></p>
+<p>SDL2 fully supports <a href="https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html">joysticks</a>, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. </p>
 <div style="text-align:center;"><img src="./images/ch7/image_2_rl.png" width="40%"/></div>
 <p>Ok, we've made quite a bit of progress here. Two major pieces left out are: </p>
 <ul>
@@ -2990,10 +2992,72 @@ impl Joypad {
 </ul>
 <div style="text-align:center;"><img src="./images/ch7/image_3_progress.png" width="80%"/></div>
 <h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
+<p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
+That's not the whole story. PPU has 2 additional mechanisms to tell its progress: </p>
+<ul>
+<li><a href="https://wiki.nesdev.com/w/index.php?title=PPU_OAM&amp;redirect=no#Sprite_zero_hits">sprite zero hit flag</a></li>
+<li><a href="https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
+</ul>
+<p>Both are reported using <a href="https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read">PPU status register <strong>0x2002</strong></a></p>
+<div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
+<p>Sprite overflow is rerally used, because it had a bug that resulted in false positives and false negatives. 
+Sprite 0 hit though is used by the majority of games that has scrolling. <br/>It's the way to get mid frame progress status
+of PPU:</p>
+<ul>
+<li>put sprite zero on a specific screen location (X,Y)</li>
+<li>poll status register</li>
+<li>when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU have finished rendering <strong>[0 .. Y]</strong> scanlines, and on the Y scanline, it's done rendering X pixels.</li>
+</ul>
+<blockquote>
+<p>This is very rough simulation of the behaviour. The accurate one requires checking opaque pixel of a sprite colliding with opaque pixel of background.</p>
+</blockquote>
+<p>We need to codify this behavior in PPU <code>tick</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>    pub fn tick(&amp;mut self, cycles: u8) -&gt; bool {
+        self.cycles += cycles as usize;
+        if self.cycles &gt;= 341 {
+            if self.is_sprite_0_hit(self.cycles) {
+                self.status.set_sprite_zero_hit(true);
+            }
+
+            self.cycles = self.cycles - 341;
+            self.scanline += 1;
+
+            if self.scanline == 241 {
+                self.status.set_vblank_status(true);
+                self.status.set_sprite_zero_hit(false);
+                if self.ctrl.generate_vblank_nmi() {
+                    self.nmi_interrupt = Some(1);
+                }
+            }
+
+            if self.scanline &gt;= 262 {
+                self.scanline = 0;
+                self.nmi_interrupt = None;
+                self.status.set_sprite_zero_hit(false);
+                self.status.reset_vblank_status();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    fn is_sprite_0_hit(&amp;self, cycle: usize) -&gt; bool {
+        let y = self.oam_data[0] as usize;
+        let x = self.oam_data[3] as usize;
+        (y == self.scanline as usize) &amp;&amp; x &lt;= cycle &amp;&amp; self.mask.show_sprites()
+    }
+
+<span class="boring">}
+</span></code></pre></pre>
+<p>Note: the sprite zero hit flag should be erased upon entering VBLANK state.</p>
+<h2><a class="header" href="#scrolling" id="scrolling">Scrolling</a></h2>
 <p>The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 <p>The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
-<p>PPU can keep two screens in memory simultaneously (remember one name table - 1 KiB, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
+<p>PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
 That also means that most of the time, the PPU is rendering parts of both nametables. </p>
 <p>Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game. 
 Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can &quot;move&quot; in all 4 directions. </p>
@@ -3001,7 +3065,7 @@ Games that came later on had a mechanism to alternate scrolling between stages. 
 <p>Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level. </p>
 <p>For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:</p>
 <ul>
-<li>Mirroring type (set on a cartridge ROM level)</li>
+<li>Mirroring type (set in a cartridge ROM header)</li>
 <li>Base Nametable address (value in PPU Control register)</li>
 <li>Status of PPU Scroll Register (X and Y shift values of the viewport, in pixels)</li>
 <li>Content of Nametables</li>
@@ -3013,11 +3077,11 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 <p>2 last notes before jumping into implementation:</p>
 <ul>
-<li>The palette of a tile is defined by the nametable the tile belongs to. </li>
-<li>For horizontal scrolling the content of the base nametable goes to the left part of the viewport (or top part in case of vertical scrolling)</li>
+<li>The palette of a tile is defined by the nametable the tile belongs to, <strong>not</strong> byt the base one defined in Control register</li>
+<li>For horizontal scrolling the content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)</li>
 </ul>
 <div style="text-align:center;"><img src="./images/ch8/image_5_scroll_caveats.png" width="80%"/></div>
-<p>Implementing scroll rendering is not hard but requires attention to many details. The most convenient mental model I could come up with is the following:</p>
+<p>Implementing scroll rendering is not hard but requires attention to details. The most convenient mental model I could come up with is the following:</p>
 <ul>
 <li>For each frame, we would scan through both nametables.</li>
 <li>For each nametable we would specify visible part of the nametable:</li>
@@ -3045,7 +3109,7 @@ impl Rect {
 <span class="boring">}
 </span></code></pre></pre>
 <ul>
-<li>And shift transformation for each visible pixel - shift_x, shift_y</li>
+<li>And apply shift transformation for each visible pixel - shift_x, shift_y</li>
 </ul>
 <blockquote>
 <p>For example,</p>
@@ -3137,9 +3201,11 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 <span class="boring">}
 </span></code></pre></pre>
 <p>Implementing vertical scroll is similar, we would reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
-<p>The fully defined code for scrolling can be found [here]</p>
-<p>Support for scrolling means that now we can play platformers like Super Mario Bros and Ice Climber.</p>
+<p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
+<p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
 <p>The final missing piece is APU. </p>
+<p><br/> <br/> <br/> <br/></p>
+<div style="text-align:center;"><img src="./images/ch9/image_1_coming_soon_3.png" width="30%"/></div>
 
                     </main>
 
