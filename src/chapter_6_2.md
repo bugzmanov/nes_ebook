@@ -1,6 +1,6 @@
 # Emulating Interrupts
 
-Interrupts are the mechanism for the CPU to break the sequential execution flow and react to the events that require immediate attention ("attend to an interrupt").
+Interrupts are the mechanism for the CPU to break the sequential execution flow and react to events that require immediate attention ("attend to an interrupt").
 
 We've already implemented one of the supported interrupts - RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and the CPU needs to execute the reset subroutine.
 
@@ -12,9 +12,9 @@ From a high-level perspective, this means two things:
 - PPU is done rendering the current frame
 - CPU can safely access PPU memory to update the state for the next frame.
 
-> The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers would corrupt data in those buffers and would cause noticeable graphic glitches on a screen. 
+> The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and would cause noticeable graphic glitches on a screen. 
 
-Unlike other interrupts, CPU can't ignore the NMI interrupt. And the **Disable Interrupt** flag in the **Status register P** has no effect on the way the CPU responds to NMI.
+Unlike other interrupts, CPU can't ignore the NMI. And the **Disable Interrupt** flag in the **Status register P** has no effect on the way the CPU attends to it.
 The CPU however, might instruct PPU to not trigger NMI by resetting 7th bit in the PPU Control register. 
 
 ## Clock cycles
@@ -33,14 +33,14 @@ But to simplify,
 
 > **NOTE:** PPU Cycles and CPU Cycles are not the same things
 
-On the NES Platform, all components were running independently in parallel. This makes NES a distributed system. The coordination was carefully designed by game developers based on timing specs of the instructions they were using. I can only imagine how tedious this manual process was. 
+On the NES Platform, all components were running independently in parallel. This makes NES a distributed system. The coordination hast to be carefully designed by game developers based on timing specs of the instructions. I can only imagine how tedious this manual process is. 
 
 The emulator can take multiple approaches to simulate this behavior:
-1) Allocate a thread per component and simulate proper timing for each instruction. I don't know any emulator that does that. First of all, simulating proper timing is a hell of a task. Second of all this approach requires allocating more hardware resources than needed for the job (PPU, CPU, and APU would require 3 threads, and potentially would occupy 3 cores on host machine hardware)
+1) Allocate a thread per component and simulate proper timing for each instruction. I don't know any emulator that does that. Simulating proper timing is a hell of a task. Second, this approach requires allocating more hardware resources than needed for the job (PPU, CPU, and APU would require 3 threads, and potentially would occupy 3 cores on the host machine)
 
-2) Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime on our part. 
+2) Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime. 
 
-3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and then them run. This technique is called ["catch-up"](http://wiki.nesdev.com/w/index.php/Catch-up) <br/> <br/>For example, if CPU executes "LDA #$01" (opcode 0xA9) that means that CPU has spent 2 CPU Cycles, which means that PPU can run for 6 PPU cycles now (PPU clock is ticking 3 times faster than CPU clock)
+3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called ["catch-up"](http://wiki.nesdev.com/w/index.php/Catch-up) <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)
 
 Because we already have CPU loop mostly spec'd out, the third approach would be the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.
  
@@ -101,7 +101,7 @@ impl Bus {
 }
 ```
 
-And then the PPU would track cycles it's in and which scanline should be drawn according to the current cycle:
+The PPU would track cycles and calculate which scanline is should be drawing:
 
 ```rust
 pub struct NesPPU {
@@ -139,21 +139,21 @@ impl NesPPU {
 
 ```
 
-Some crucial details are still missing: some of the operations have variable clock time depending on the execution. 
+Some crucial details are still missing: some of the CPU operations take variable clock time depending on the execution flow. 
 For example, conditional branch operations (like BNE) take an additional CPU cycle if the comparison is successful. And yet another CPU cycle if the JUMP would result in program counter to be on another memory page
 
-> Memory page on the NES is 256. For example, the range [0x0000 .. 0x00FF]- belongs to page 0, [0x0100 .. 0x01FF] belongs to page 1, etc.
-> To check if 2 addresses are on the same page, it's enough to compare the upper byte of the addresses. 
+> Memory page size is 256 bytes. For example, the range [0x0000 .. 0x00FF]- belongs to page 0, [0x0100 .. 0x01FF] belongs to page 1, etc.
+> It's enough to compare the upper byte of the addresses to see if they are on the same page. 
 
 I leave it up to the reader to figure out how to codify those additional ticks that may or may not happen. 
 
 # Interrupts
 
-So far our dependency graph looks straightforward:
+So far our dependency graph looks one-directional:
 
  <div style="text-align:center"><img src="./images/ch6.2/image_2_components_dag.png" width="60%"/></div>
 
-The problem is that we need to deliver signals from PPU to CPU and Rust doesn't really allow to have dependency cycles easily. 
+The problem is that we want to deliver signals from PPU to CPU and Rust doesn't really allow to have dependency cycles easily. 
 
 One way to overcome this is to replace the push model with pull. The CPU can ask if there are interrupts ready at the beginning of the interpret cycle. 
 
@@ -175,18 +175,18 @@ impl CPU {
 }
 ```
 
-The last piece is to implement interrupt behavior.
-Upon receiving the interrupt CPU:
+The final piece is to implement interrupt behavior.
+Upon receiving an interrupt signal the CPU:
 1) finishes execution of current instruction
 2) Stores Program Counter and Status flag to the stack
-3) Disables Interrupts by setting **Disable Interrupt** flag in the status register
-4) Loads the Address of Interrupt handler routine from 0xFFFA
+3) Disables Interrupts by setting **Disable Interrupt** flag in the status register P
+4) Loads the Address of Interrupt handler routine from 0xFFFA (for NMI)
 5) Sets **Program Counter** register pointing to that address
 
  <div style="text-align:center"><img src="./images/ch6.2/image_3_interrupt_mem.png" width="40%"/></div>
 
 
-Interrupt handler would call RTI operation at the end, that would restore Status Flag and Program Counter position from the stack. Effectively restoring the execution flow of the CPU from where it was left off. 
+Interrupt handler would have to call RTI operation at the end to finish interrupt attendance. That would restore Status Flag and Program Counter position from the stack. Effectively going back to the execution flow where it was left off. 
 
 
 ```rust

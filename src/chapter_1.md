@@ -8,7 +8,7 @@ This series is about creating an emulator capable of running and playing first-g
 - [PacMan](https://en.wikipedia.org/wiki/Pac-Man)
 - [Donkey Kong](https://en.wikipedia.org/wiki/Donkey_Kong)
 - [Ice Climber](https://en.wikipedia.org/wiki/Ice_Climber)
-- [Mario Super Bros](https://en.wikipedia.org/wiki/Super_Mario_Bros)
+- [Super Mario Bros](https://en.wikipedia.org/wiki/Super_Mario_Bros)
 - etc
 
 We would go with incremental updates, with the potentially enjoyable milestones, gradually building a fully capable platform. One of the problems in writing an emulator is that you can't get any feedback until the end. Until the whole thing is done, and that's no fun. I've tried to break the entire exercise into small pieces with visible and playable goals. After all, it's all about having a good time. 

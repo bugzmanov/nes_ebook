@@ -1,6 +1,6 @@
 # Running our first test ROM
 
-NES dev community has created large suites of tests that can be used to check our emulator. https://wiki.nesdev.com/w/index.php/Emulator_tests
+NES dev community has created [large suites of tests](https://wiki.nesdev.com/w/index.php/Emulator_tests) that can be used to check our emulator. 
 
 They cover pretty much every aspect, including quirks and famous bugs that were embedded in the platform. 
 
@@ -9,18 +9,18 @@ They cover pretty much every aspect, including quirks and famous bugs that were 
 We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles. 
 
 The iNES file of the test is located here: [nestest.nes](http://nickmass.com/images/nestest.nes)
-An execution log accompanies the test, and shows how the CPU platform should behave executing this test: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
+An execution log accompanies the test, that shows how the execution should look like: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
 
-The challenge is to create an execution log feature for our platform. 
+Next goal is to generate similar execution log for the CPU while its running a program.
 
  <div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
 
 
-For now, we can ignore the last column and focus on the first 5. 
+For now, we can ignore the last column and focus on the first five. 
 
 The fourth column ```@ 80 = 0200 = 00``` is somewhat interesting. 
-* The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode. Thus the offset is defined by register X 
-* The second number is a 2-byte target address that was fetched from [0x80 .. 0x81]
+* The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode and the offset is defined by register X 
+* The second number is a 2-byte target address that was fetched from **[0x80 .. 0x81]**. In this case it's [*0x00*, *0x02*]
 * The third number is content of address cell 0x0200
 
 We already have a place to intercept CPU execution: 
@@ -155,34 +155,34 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
                                                               > C6BD  04 A9    *NOP $A9 = 00                    A:AA X:97 Y:4
 ```
 
-I.e., everything that our emulator has produced should exactly match the golden standard. If anything is off before reaching line **0xC6BC**, we made a mistake in our CPU implementation. And this needs to be fixed.
+I.e., everything that our emulator has produced should exactly match the golden standard, up to line **0xC6BC**. If anything is off before the line, we have a mistake in our CPU implementation. And it needs to be fixed.
 
-But that doesn't explain why our program terminated and why we didn't get the perfect match after the line 0xC6BC. 
+But that doesn't explain why our program terminated and why we didn't get the perfect match after the line **0xC6BC**. 
 
-If you look close enough, our program has failed at 
+The program has failed at 
 ```bash 
 C6BD  04 A9    *NOP $A9 = 00
 ```
 
-So it looks like our CPU doesn't know how to interpret opcode 0x04. 
+It looks like our CPU doesn't know how to interpret opcode 0x04. 
 
-So here is the bad news: there are about 110 unofficial CPU instructions. And most of the real NES games do use them a lot. For us to move on, we would need to implement those. 
+Here is the bad news: there are about 110 unofficial CPU instructions. And most of the real NES games do use them a lot. For us to move on, we would need to implement all of them. 
 
 The specs can be found here:
-* http://nesdev.com/undocumented_opcodes.txt,
-* https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes,
-* https://wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes,
-* http://www.oxyron.de/html/opcodes02.html 
+* [nesdev.com/undocumented_opcodes.txt](http://nesdev.com/undocumented_opcodes.txt)
+* [wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes](https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes)
+* [wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes](https://wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes)
+* [www.oxyron.de/html/opcodes02.html](http://www.oxyron.de/html/opcodes02.html)
 
 
 Remember how to draw an owl? ) 
 
-The testing ROM should drive your progress. In the end, the CPU would support 256 instructions. Given that CPU instructions reserve only 1 byte for the operation code, we've exhausted all possible values. 
+The testing ROM should drive your progress. In the end, the CPU should support 256 instructions. Considering that 1 byte is  for the operation code, we've exhausted all possible values. 
 
 Finally, the first mismatch should happen on this line:
 ```bash
 C68B  8D 15 40  STA $4015 = FF                  A:02 X:FF Y:15 P:25 SP:FB
 ```
-almost at the very end of the log file. 
+almost at the very end of the nes test log file. 
 
 That's a good sign. 4015 is a memory map for the APU register. And we don't have that implemented yet. 

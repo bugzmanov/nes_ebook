@@ -76,19 +76,14 @@ impl<'a> Bus<'a> {
         self.cycles += cycles as usize;
 
         let nmi_before = self.ppu.nmi_interrupt.is_some();
-        let _render = self.ppu.tick(cycles *3);
+        self.ppu.tick(cycles *3);
         let nmi_after = self.ppu.nmi_interrupt.is_some();
+        
         if !nmi_before && nmi_after {
             (self.gameloop_callback)(&self.ppu, &mut self.joypad1);
         }
-
-
-        // let new_frame = self.ppu.tick(cycles * 3);
-        // if new_frame {
-        //     (self.gameloop_callback)(&self.ppu, &mut self.joypad1);
-        // }
     }
-
+    
     pub fn poll_nmi_status(&mut self) -> Option<u8> {
         self.ppu.poll_nmi_interrupt()
     }

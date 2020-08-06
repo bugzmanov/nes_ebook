@@ -1,36 +1,38 @@
 # Emulating PPU Registers
-PPU has its own memory map, that consists of RAM, CHR ROM address space, and address space mirrors.
-PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to **[0x2000 - 0x2007]** CPU memory map (and mirrored every 8 bytes in the region **[0x2008 .. 0x3FFF])
+PPU has its own memory map, composed from PPU RAM, CHR ROM, and address space mirrors.
+PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to **[0x2000 - 0x2007]** CPU memory map (and mirrored every 8 bytes through the region of **[0x2008 .. 0x3FFF]**)
 
- <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="70%"/></div>
 
-To be entirely fair, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate that. 
+To be precise, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate that. 
 
-5 Registers are responsible for accessing PPU ram:
-* OAM Address (0x2003) & OAM Data (0x2004)  - provides access to Object Attribute Memory - the space responsible for sprites
-* Address (0x2006) & Data (0x2006) - provide access to the full addressable space available for PPU
-* Direct Memory Access (0x4014) - for fast copying of 256 bytes from CPU RAM to PPU RAM
+2 registers are responsible for accessing PPU memory map:
+* Address (0x2006) & Data (0x2006) - provide access to the memory map available for PPU
+
+3 registers controlls internal memory that keeps the state of sprites
+* OAM Address (0x2003) & OAM Data (0x2004)  - Object Attribute Memory - the space responsible for sprites
+* Direct Memory Access (0x4014) - for fast copying of 256 bytes from CPU RAM to OAM 
 
 3 Write-only registers are controlling PPU actions:
 * Controller (0x2000) - instructs PPU on general logic flow (which mem table to use, if PPU should interrupt CPU, etc.)
 * Mask (0x2001) - instructs PPU how to render sprites and background
-* Scroll (0x2005) - instructs PPU how to set view port
+* Scroll (0x2005) - instructs PPU how to set a viewport
 
-One register reports current PPU status:
-* Status 0x2002 - read only 
+One read-only register is used for reporting PPU status:
+* Status 0x2002
 
 The full spec of the registers can be found on [NES Dev wiki](http://wiki.nesdev.com/w/index.php/PPU_registers)
 
- <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 
-2 communication channels exist between CPU and PPU:
+Two communication channels exist between CPU and PPU:
 * CPU is driving communication through IO registers
 * PPU sends an interrupt signal to CPU upon entering V-BLANK period
 
 > PPU execution lifecycle was tightly coupled with the electron beam of the TV screen. 
 >
-> The PPU renders 262 scanlines per frame. 
-> Each scanline lasts for 341 PPU clock cycles,  with each clock cycle producing one pixel.
+> The PPU renders 262 scanlines per frame. (0 - 240 are visible scanlines, the rest are so-called vertical overscan)<br/>
+> Each scanline lasts for 341 PPU clock cycles, with each clock cycle producing one pixel. (the first 256 pixels are visible, the rest is horizontal overscal)<br/>
 > The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible. 
 >
 > <div style="text-align:center"><img src="./images/ch6.1/image_7_scanlines_with_viewer.png" width="30%"/></div>
@@ -51,10 +53,14 @@ pub struct NesPPU {
 }
 ```
 
-*chr_rom*, *palette_table*, *vram* and *oam_data* constitutes the whole addressing space of the PPU.
+Where 
+* **chr_rom** -  visuals of a game stored on a cartridge
+* **palette_table** - internal memory to keep palette tables used by a screen
+* **vram** - 2 KiB banks of space to hold background information
+* and **oam_data** - internal memory to keep state of sprites.
 
 
-mirroring specification and chr_rom would be provided by a cartridge Rom:
+mirroring and chr_rom are specific to each game, and provided by a cartridge
 
 ```rust
 impl NesPPU {
@@ -72,11 +78,11 @@ impl NesPPU {
 
 ## Emulating PPU memory access: Address and Data registers
 
-Lets try to emulate 2 most complex registers: Address (**0x2006**) and Data(**0x2007**)
+Lets try to emulate two the most complex registers: Address (**0x2006**) and Data(**0x2007**)
 
 There are multiple caveats in the way the CPU can access PPU RAM. Say, CPU wants to access mem cell at 0x0600 PPU memory space:
 
-1) It has to load the requesting address to the Addr register. It has to write to the register twice - because memory cell 0x2006 (mapped to PPU address register) has the size of 1 byte and the addressable space in PPU is 2 bytes:<br/><br/> For example, if the program needs to access memory at 0x0600, it has to do 2 STA calls
+1) It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1 byte register:<br/><br/> 
 
 ```bash
  LDA #$06
@@ -87,15 +93,15 @@ There are multiple caveats in the way the CPU can access PPU RAM. Say, CPU wants
 
 Note: it **doesn't** follow *little-endian* notation. 
 
-2) Then CPU can request load from PPU Data register (0x2007)
+2) Then, the CPU can request data load from PPU Data register (0x2007)
 ```bash 
 LDA $2007
 ```
 
->Because CHR ROM and RAM are considered external devices to PPU, PPU can't get the value right away. PPU would require copying that value to the internal buffer before it can return it to the CPU.<br/> 
->So the first read from 0x2007 would return the content of this internal buffer filled during the previous load operation. From the CPU perspective, this is a dummy read. 
+> Because CHR ROM and RAM are considered external devices to PPU, PPU can't return the value right away. PPU has to fetch the data and keep it in internal buffer.<br/> 
+> The first read from 0x2007 would return the content of this internal buffer filled during the previous load operation. From the CPU perspective, this is a dummy read. 
 
-3) CPU has to read from 0x2007 one more time to finally get the value from PPU internal buffer. 
+3) CPU has to read from 0x2007 one more time to finally get the value from the PPUs internal buffer. 
 
 ```bash 
 LDA $2007
@@ -324,18 +330,18 @@ Again the NESDEV wiki provides excellent coverage of this topic: [Mirroring](htt
 
 VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll. 
-For now, we can just codify mirroring behavior without really understanding why it's needed. 
+For now, we can just codify mirroring behavior.
 
 NES uses 1 KiB of VRAM to represent a single screen state. Having 2 KiB of VRAM onboard means that NES can keep a state of 2 screens.  
 
 
-On the PPU memory map, the range ***[0x2000...0x3F00]*** is reserved for Nametable (screens state), which is 4 KiB of mem space. And two "additional" screens have to be mapped to existing ones.
-The way they are mapped is dependent on the mirroring type, specified by a game (in iNES cartridge ROM this information is stored in header) 
+On the PPU memory map, the range ***[0x2000...0x3F00]*** is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
+The way they are mapped depends on the mirroring type, specified by a game (iNES files have this info in the header) 
 
 
 <div style="text-align:center"><img src="./images/ch6.1/image_5_mirroring.png" width="60%"/></div>
 
-For example, in *horizontal Mirroring*: 
+For example, for *Horizontal Mirroring*: 
 * Address spaces **[0x2000 .. 0x2400]** and **[0x2400 .. 0x2800]** should be mapped to the first 1 KiB of VRAM. 
 * Address spaces **[0x2800 .. 0x2C00]** and **[0x2C00 .. 0x3F00]** should be mapped to the second 1 KiB of VRAM.
 
@@ -394,7 +400,7 @@ impl Bus {
 }
 ```
 
-And provide memory mapping for the registers we've implemented:
+And provide memory mapping for the registers we've implemented so far:
 
 
 ```rust
@@ -456,4 +462,4 @@ impl Bus {
 }
 ```
 
-The communication with the rest of the PPU register is somewhat more straightforward. And I leave this exercise to the reader. 
+The communication with the rest of the registers is similar. And I leave this exercise to the reader. 
