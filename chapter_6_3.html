@@ -148,34 +148,34 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#rendering-chr-rom-tiles" id="rendering-chr-rom-tiles">Rendering CHR ROM Tiles</a></h1>
-<p>PPU has <strong>[0x0 .. 0x2000]</strong> address space reserved for CHR ROM - visual graphics data  on a cartridge. </p>
+<p>The address space <strong>[0x0 .. 0x2000]</strong> on PPU is reserved for CHR ROM - visual graphics data of a game. </p>
 <p>That's <em>8 KiB</em> worth of data. And that's all there was in the first versions of NES cartridges. </p>
-<p>Visual data was packed in so-called tiles: an 8 pixels x 8 pixels image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors, and 0b00 is used as an indication that a pixel should be transparent)</p>
+<p>Visual data is packed in so-called tiles: an 8 x 8 pixel image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors, and 0b00 is used as an indication that a pixel should be transparent)</p>
 <pre><code class="language-bash">8 * 8 * 2 (2 bits to codify color) = 128 bits  = 16 bytes to codify a single tile
 </code></pre>
-<p>8 KiB / 128 bits = 512 tiles. So each cartridge contained 512 tiles in total, that were divided into 2 pages/banks. The banks did not really have a name, historically they are called &quot;left&quot; and &quot;right&quot;.</p>
+<p>8 KiB / 128 bits = 512 tiles. I.e. each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called &quot;left&quot; and &quot;right&quot;.</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_1_mario_tiles.png" width="50%"/></div>
 <p>8 pixels x 8 pixels is a tiny size, not much can be presented that way. The majority of objects in NES games are composed of multiple tiles. </p>
 <div style="text-align:center"><img src="./images/ch6.3/image_2_8bit_drawings.png" width="30%" ><br/> 8x8 pixel art by <a href="https://twitter.com/johanvinet">Johan Vinet</a> <br/><a href="https://twitter.com/PixelProspector/status/1097565152940044293">[Check it out]</a> </div>
-<p>What makes the CHR format tricky is that tiles themselves don't have color information. Each pixel in a tile is codified using 2 bits, essentially declaring color index in a palette, not really a color itself.</p>
+<p>What makes the CHR format tricky is that tiles themselves don't have color information. Each pixel in a tile is codified using 2 bits, declaring a color index in a palette, not a color itself.</p>
 <blockquote>
 <p>If NES were using popular RGB format for each pixel, a single tile would occupy  8<em>8</em>24 = 192 bytes. And it would require 96 KiB of CHR ROM space to hold 512 tiles. </p>
 </blockquote>
-<p>The real color of a pixel was decided during the rendering phase by using the color palette, that was assembled during program execution (more on this later)</p>
-<p>By reading just CHR ROM, it is impossible to derive the color, only that the color index of pixels are different. </p>
+<p>The real color of a pixel is decided during the rendering phase by using the so-called color palette, more on this later.</p>
+<p>By reading just CHR ROM, it is impossible to derive colors, only shapes. </p>
 <div style="text-align:center"><img src="./images/ch6.3/image_3_chr_content.png" width="30%"/></div>
 <div style="text-align:center"><img src="./images/ch6.3/image_4_color_code.png" width="50%"/></div>
-<p>Surprisingly, 2 bits that describe the color index of a pixel are not codified in the same byte. Each Row in a tile is encoded using 2 bytes that stands 8 bytes apart from each other. 
+<p>Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row in is encoded using 2 bytes that stands 8 bytes apart from each other. 
 To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same Row we would need to read 6th bits in the same bytes, etc..</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_5_16bytes_of_a_tile.png" width="50%"/></div>
 <h2><a class="header" href="#pallette" id="pallette">Pallette</a></h2>
-<p>Before reading our first CHR ROM, we need to briefly discuss the colors available to the NES. 
-Different versions of the PPU chip had slightly different system-level palettes of 64 hardwired color. </p>
+<p>Before rendering CHR ROM content, we need to briefly discuss the colors available to the NES. 
+Different versions of the PPU chip had slightly different system-level palettes of 52 hardwired colors. </p>
 <p>All necessary details can be found on corresponding <a href="http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes">nesdev wiki page</a>.</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_6_system_palette.png" width="50%"/></div>
 <p>There are multiple variations used in emulators. Some make the picture more visually appealing, while others keep it closer to the original picture NES generated on a TV. </p>
 <p>It doesn't matter much which one we would choose, most of them get us good enough results.</p>
-<p>However, we still need to codify that table in RGB format:</p>
+<p>However, we still need to codify that table in RGB format, that is recognized by SDL2 library:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -199,14 +199,14 @@ pub static SYSTEM_PALLETE: [(u8,u8,u8); 64] = [
 <span class="boring">}
 </span></code></pre></pre>
 <h2><a class="header" href="#rendering-chr-rom" id="rendering-chr-rom">Rendering CHR Rom</a></h2>
-<p>So our goal is to render tiles from a CHR ROM. To do that, we need to get a NES ROM file of a game. 
-Google would help you find a lot of ROMs copied from the well-known classics. However, downloading such ROMs if you don't have a cartridge would be illegal (wink-wink).
-On the other hand, there is a site that listed legit homebrew games that were recently developed. And some of them are pretty good, and most of them are free.
+<p>To render tiles from a CHR ROM, we need to get a ROM file of a game. 
+Google would help you find a lot of ROM dumps of the well-known classics. However, downloading such ROMs if you don't have a cartridge would be illegal (wink-wink).
+There is a site that listed legit homebrew games that were recently developed. And some of them are pretty good, most of them are free.
 Check it out: <a href="http://www.nesworld.com/article.php?system=nes&amp;data=neshomebrew">www.nesworld.com</a></p>
 <p>The caveat here that our emulator supports only NES 1.0 format. And homebrew developed games tend to use NES 2.0. 
 Games like &quot;Alter Ego&quot; would do. </p>
-<p>I would use Pacman, mostly because it's more recognizable, and I happen to own a cartridge of this game. </p>
-<p>First, let's create an abstraction layer for a frame, so we wouldn't need to work with SDL directly all the time:</p>
+<p>I would use Pacman, mostly because it's recognizable, and I happen to own a cartridge of this game. </p>
+<p>First, let's create an abstraction layer for a frame, so we wouldn't need to work with SDL directly:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -271,9 +271,9 @@ impl Frame {
 <span class="boring">}
 </span></code></pre></pre>
 <blockquote>
-<p><strong>Note:</strong> for now, we're interpreting color indices randomly. I've just picked a random color from the system palette for each separate index value. Just to see how it would look like.</p>
+<p><strong>Note:</strong> for now, we're interpreting color indices randomly. Just pick 4 random colors from the system palette for each index value to see how it would look like.</p>
 </blockquote>
-<p>Tying it all together in a main loop:</p>
+<p>Tying it all together in the main loop:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    // ….init sdl2
    // ....
@@ -308,7 +308,7 @@ impl Frame {
 <p>Might it be a Pacman's back..err.. head?  Who knows.</p>
 <p>We can adjust code just a little bit to draw all tiles from CHR ROM:</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_8_pacman_chr_rom.png" width="80%"/></div>
-<p>Aha! Despite colors being clearly off, the shapes are recognizable now. We can see parts of a ghost, some letters, and numbers.
+<p>Aha! Despite colors being clearly off, the shapes are recognizable now. Parts of ghosts, some letters, and numbers.
 I guess that's it. Moving on</p>
 
                     </main>

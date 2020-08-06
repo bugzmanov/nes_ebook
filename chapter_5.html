@@ -149,19 +149,19 @@
                     <main>
                         <h1><a class="header" href="#cartridges" id="cartridges">Cartridges</a></h1>
 <div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
-<p>The first version of the cartridges was relatively straightforward. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics. </p>
-<p>Upon insertion into the console, PRG ROM got connected to CPU, and CHR ROM got connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM, and PPU wasn't able to access PRG ROM. </p>
+<p>The first version of the cartridges was relatively simple. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics. </p>
+<p>Upon insertion into the console, PRG ROM got connected to CPU, and CHR ROM got connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM directly, and PPU wasn't able to access PRG ROM. </p>
 <blockquote>
 <p>Later versions of cartridges had additional hardware: </p>
 <ul>
-<li>mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM (beyond addressable 64 KiB)</li>
-<li>extra RAM with a battery to save and restore game state</li>
+<li>mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM </li>
+<li>extra RAM (with a battery) to save and restore a game state</li>
 </ul>
 </blockquote>
-<p>However, we won't be working with cartridges. We will be working with files containing ROM images.</p>
+<p>However, we won't be working with cartridges. An emulator with files containing dumps of ROM spaces.</p>
 <p>There are several file formats for ROM dumps; the most popular one is iNES designed by <a href="http://fms.komkon.org">Marat Fayzullin</a></p>
 <div style="text-align:center"><img src="./images/ch5/image_2_ines_file_format.png" width="60%"/></div>
-<p>The file consists of 3-4 sections:</p>
+<p>The file contains 3-4 sections:</p>
 <ul>
 <li>16-byte header</li>
 <li>optional 512 of so-called Trainer, a data created by Famicom copiers to keep own mapping. We can skip this section if it is being present.</li>
@@ -170,24 +170,24 @@
 </ul>
 <p>The header is the most interesting part.</p>
 <div style="text-align:center"><img src="./images/ch5/image_3_ines_header.png" width="60%"/></div>
-<p>Control Byte 1 and Control Byte 2 (Byte 06 and 07 in the header) contain some additional info about the file data, but it's packed in bits.</p>
+<p>Control Byte 1 and Control Byte 2 (Byte 06 and 07 in the header) contain some additional info about the data in file, but it's packed in bits.</p>
 <table><thead><tr><th></th><th></th></tr></thead><tbody>
 <tr><td><div style="text-align:center"><img src="./images/ch5/image_4_control_byte_1.png" width="100%"/></div></td><td><div style="text-align:center"><img src="./images/ch5/image_5_control_byte_2.png" width="100%"/></div></td></tr>
 </tbody></table>
 <br/>
-We won't cover and support the iNES 2.0 format as it's not very popular. But you can find the formal format specification of both iNES version [here](https://formats.kaitai.io/ines/index.html)
-<p>The bare minimum information we care about at this point:</p>
+We won't cover and support the iNES 2.0 format as it's not very popular. But you can find  <a href="https://formats.kaitai.io/ines/index.html">the formal specification of both iNES versions</a>.
+<p>The bare minimum information we care about:</p>
 <ul>
 <li>PRG ROM</li>
 <li>CHR ROM</li>
 <li>Mapper type</li>
 <li>Mirroring type: Horizontal, Vertical, 4 Screen</li>
 </ul>
-<p>We would discuss mirroring extensively in the following PPU chapters. 
+<p>Mirroring will be extensively covered in the coming PPU chapters. 
 For now, we need to figure out which mirroring type the game is using. </p>
-<p>For now, we would be aiming only to support the iNES 1.0 format and mapper 0. </p>
+<p>We would support only the iNES 1.0 format and mapper 0. </p>
 <p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is. </p>
-<p>Let's start by defining Rom data structure:</p>
+<p>Let's define cartridge Rom data structure:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -207,7 +207,7 @@ pub struct Rom {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>Then we need to write parsing code:</p>
+<p>Then we need to write the code to parse binary data:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -252,7 +252,7 @@ pub struct Rom {
 <span class="boring">}
 </span></code></pre></pre>
 <p>As always, don't forget the tests!</p>
-<p>Next we need to connect our bus to the ROM:</p>
+<p>Next, connect Rom to the BUS:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -272,9 +272,9 @@ impl Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>And finally we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG Rom space. </p>
-<p>One caveat: for the mapper 0, PRG Rom Size might be 16 KiB or 32 KiB.
-Because <strong>[0x8000 … 0x10000]</strong> range gives us 32 KiB of addressable space, we need to map upper 16 KiB to lower 16 KiB if the game has only 16 KiB worth of PRG ROM. </p>
+<p>And finally, we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG ROM space. </p>
+<p>One caveat: PRG Rom Size might be 16 KiB or 32 KiB.
+Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of addressable space, upper 16 KiB needs to be mapped to lower 16 KiB (if a game has only 16 KiB of PRG ROM)</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -310,9 +310,9 @@ impl Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>You can download your first NES ROM dump file here: <TODO>
-You also need to change the main method to load and run it.</p>
-<p>Spoiler alert: it's a slight modification of a snake game. The game expects the same memory map for the input device, screen output, and random number generator. </p>
+<p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">github</a>.</p>
+<p>You would need to modify the main method to load binary from a file.</p>
+<p>Spoiler alert: it's a modification of a snake game with more funk in physics. The game expects the same memory map for the input device, screen output, and random number generator. </p>
 
                     </main>
 
