@@ -51,8 +51,9 @@ We can use the schema of the main NES components as an implementation plan for o
 
 <div style="text-align:center"><img src="./images/ch2/image_6_impl_plan.png" width="80%"/></div>
 
-
 We have to build a simulation of all of these modules. The goal is to have something playable as soon as possible. Using iterative approach we would incrementally add features to achieve the goal. 
+
+I'm roughly estimating the effort required for each component in percentages. PPU being the hardest one, and the BUS being the easiest.
 
 Writing a perfect emulator is a never-ending quest. But this quest has a start. And we will start by emulating the CPU.
 

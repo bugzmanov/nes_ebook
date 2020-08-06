@@ -95,10 +95,8 @@ impl NesPPU {
     pub fn tick(&mut self, cycles: u8) -> bool {
         self.cycles += cycles as usize;
         if self.cycles >= 341 {
-            if self.has_sprite_hit(self.cycles) {
+            if self.is_sprite_0_hit(self.cycles) {
                 self.status.set_sprite_zero_hit(true);
-            } else {
-                self.status.set_sprite_zero_hit(false);
             }
 
             self.cycles = self.cycles - 341;
@@ -127,7 +125,7 @@ impl NesPPU {
         self.nmi_interrupt.take()
     }
 
-    fn has_sprite_hit(&self, cycle: usize) -> bool {
+    fn is_sprite_0_hit(&self, cycle: usize) -> bool {
         let y = self.oam_data[0] as usize;
         let x = self.oam_data[3] as usize;
         (y == self.scanline as usize) && x <= cycle && self.mask.show_sprites()

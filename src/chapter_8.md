@@ -1,12 +1,75 @@
 # PPU Scrolling
 
+Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
+That's not the whole story. PPU has 2 additional mechanisms to tell its progress: 
+* [sprite zero hit flag](https://wiki.nesdev.com/w/index.php?title=PPU_OAM&redirect=no#Sprite_zero_hits)
+* [sprite overflow flag](https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug)
+
+Both are reported using [PPU status register **0x2002**](https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read)
+
+<div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
+
+Sprite overflow is rerally used, because it had a bug that resulted in false positives and false negatives. 
+Sprite 0 hit though is used by the majority of games that has scrolling. <br/>It's the way to get mid frame progress status
+of PPU:
+* put sprite zero on a specific screen location (X,Y)
+* poll status register
+* when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU have finished rendering **[0 .. Y]** scanlines, and on the Y scanline, it's done rendering X pixels.
+
+> This is very rough simulation of the behaviour. The accurate one requires checking opaque pixel of a sprite colliding with opaque pixel of background.
+
+We need to codify this behavior in PPU `tick` function:
+
+```rust 
+    pub fn tick(&mut self, cycles: u8) -> bool {
+        self.cycles += cycles as usize;
+        if self.cycles >= 341 {
+            if self.is_sprite_0_hit(self.cycles) {
+                self.status.set_sprite_zero_hit(true);
+            }
+
+            self.cycles = self.cycles - 341;
+            self.scanline += 1;
+
+            if self.scanline == 241 {
+                self.status.set_vblank_status(true);
+                self.status.set_sprite_zero_hit(false);
+                if self.ctrl.generate_vblank_nmi() {
+                    self.nmi_interrupt = Some(1);
+                }
+            }
+
+            if self.scanline >= 262 {
+                self.scanline = 0;
+                self.nmi_interrupt = None;
+                self.status.set_sprite_zero_hit(false);
+                self.status.reset_vblank_status();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    fn is_sprite_0_hit(&self, cycle: usize) -> bool {
+        let y = self.oam_data[0] as usize;
+        let x = self.oam_data[3] as usize;
+        (y == self.scanline as usize) && x <= cycle && self.mask.show_sprites()
+    }
+
+```
+
+Note: the sprite zero hit flag should be erased upon entering VBLANK state.
+
+
+## Scrolling
+
 The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.
 
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 
 The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.  
 
-PPU can keep two screens in memory simultaneously (remember one name table - 1 KiB, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
+PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
 That also means that most of the time, the PPU is rendering parts of both nametables. 
 
 Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game. 
@@ -18,7 +81,7 @@ Games that came later on had a mechanism to alternate scrolling between stages. 
 Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level. 
 
 For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:
-- Mirroring type (set on a cartridge ROM level)
+- Mirroring type (set in a cartridge ROM header)
 - Base Nametable address (value in PPU Control register)
 - Status of PPU Scroll Register (X and Y shift values of the viewport, in pixels)
 - Content of Nametables
@@ -35,13 +98,13 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 
 2 last notes before jumping into implementation:
-* The palette of a tile is defined by the nametable the tile belongs to. 
-* For horizontal scrolling the content of the base nametable goes to the left part of the viewport (or top part in case of vertical scrolling)
+* The palette of a tile is defined by the nametable the tile belongs to, **not** byt the base one defined in Control register
+* For horizontal scrolling the content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)
 
 
 <div style="text-align:center;"><img src="./images/ch8/image_5_scroll_caveats.png" width="80%"/></div>
 
-Implementing scroll rendering is not hard but requires attention to many details. The most convenient mental model I could come up with is the following:
+Implementing scroll rendering is not hard but requires attention to details. The most convenient mental model I could come up with is the following:
 * For each frame, we would scan through both nametables.
 * For each nametable we would specify visible part of the nametable:
 
@@ -65,7 +128,7 @@ impl Rect {
 }
 ```
 
-* And shift transformation for each visible pixel - shift_x, shift_y
+* And apply shift transformation for each visible pixel - shift_x, shift_y
 
 > For example,
 > <div style="text-align:center;"><img src="./images/ch8/image_6_transform_example.png" width="30%"/></div>
@@ -157,8 +220,8 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
 Implementing vertical scroll is similar, we would reuse the same `render_name_table` helper function without changes. Just need to figure out proper *addressing*, *shifts*, and *view_port* parameters.
 
-The fully defined code for scrolling can be found [here]
+The fully defined code for scrolling can be found [here](https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8)
 
-Support for scrolling means that now we can play platformers like Super Mario Bros and Ice Climber.
+Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.
 
 The final missing piece is APU. 

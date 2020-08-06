@@ -2,17 +2,17 @@
 
 NES and Famicom supported a variety of controllers:
 - [Joypads](https://www.youtube.com/watch?v=UKMO5tlANEU)
-- [power pads](https://www.youtube.com/watch?v=ErzuU78v60M)
+- [Power pads](https://www.youtube.com/watch?v=ErzuU78v60M)
 - [Lightgun Zapper](https://www.youtube.com/watch?v=x6u3ek7BXps)
 - [Arkanoid controller](https://www.youtube.com/watch?v=u9k6xoErR4w)
 - [And even a keyboard](https://www.youtube.com/watch?v=j8J58aTxCPM)
 
-We will emulate joypads as it's the easiest device to emulate
+We will emulate joypads as it's the most common one and the easiest device to emulate
 <div style="text-align:center;"><img src="./images/ch7/image_1_joypad2.png" width="40%"/></div>
 
-Two joypads are mapped to 0x4016 and 0x4017 CPU address space, respectively.
+Two joypads are mapped to **0x4016** and **0x4017** CPU address space, respectively.
 The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports 1 button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. 
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. 
 
 The order of reported Buttons is as follows: 
 
@@ -20,19 +20,19 @@ The order of reported Buttons is as follows:
 A -> B -> Select -> Start -> Up -> Down -> Left -> Right
 ```
 
-After reporting button **RIGHT***, the controller would return 1s for any following read, until a strobe mode change.
+After reporting the state of the button **RIGHT**, the controller would continually return 1s for all following read, until a strobe mode change.
 
-The CPU can change the mode of a controller by writing a byte to the register. However, only 1 bit is used. 
+The CPU can change the mode of a controller by writing a byte to the register. However, only the first bit matters. 
 
 Controller operates in 2 modes:
-- strobe bit on - controller reports only status of button A (1 - pressed, 0 - released) on each read request
-- strobe bit off - controller cycles through all buttons, 1 at a time. 
+- strobe bit on - controller reports only status of the button A on every read
+- strobe bit off - controller cycles through all buttons
 
 
 So the most basic cycle to read the state of a joypad for CPU:
-1) Write 0x1 to 0x4016 (to reset the pointer to button A)
-2) Write 0x0 to 0x4016 (to turn off strobe bit)
-3) Read 0x4016 from 8 times 
+1) Write **0x1** to **0x4016** (stobe mode on - to reset the pointer to button A)
+2) Write **0x00** to **0x4016** (strobe mode off)
+3) Read from **0x4016** eight times 
 4) Repeat
 
 Ok, so let's sketch it out. 
@@ -55,8 +55,8 @@ bitflags! {
 }
 ```
 
-All we need to track: 
-- strobe mode begin on/off , 
+We need to track: 
+- strobe mode on/off , 
 - the status of all buttons  
 - an index of a button to be reported on next read.
 
@@ -103,9 +103,9 @@ impl Joypad {
 }
 ```
 
-Don't forget to connect the Joypad to the BUS and add a mapping for address 0x4016. 
+Don't forget to connect the Joypad to the BUS and map it for address 0x4016. 
 
-One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released:
+One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released on the host machine:
 
 ```rust 
 fn main() {
@@ -161,8 +161,9 @@ fn main() {
 
 And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon. 
 
-SDL2 fully supports gamepads, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. 
+I'm not affiliated, I got [these ones](https://www.amazon.com/gp/product/B07M7SYX11/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
 
+SDL2 fully supports [joysticks](https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html), and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. 
 
 <div style="text-align:center;"><img src="./images/ch7/image_2_rl.png" width="40%"/></div>
 
