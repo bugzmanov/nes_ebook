@@ -186,3 +186,9 @@ C68B  8D 15 40  STA $4015 = FF                  A:02 X:FF Y:15 P:25 SP:FB
 almost at the very end of the nes test log file. 
 
 That's a good sign. 4015 is a memory map for the APU register. And we don't have that implemented yet. 
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5.1" target="_blank">GitHub</a>

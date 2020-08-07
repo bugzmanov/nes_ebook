@@ -172,3 +172,9 @@ Ok, we've made quite a bit of progress here. Two major pieces left out are:
 - Audio Processing Unit - to get those sweet NES chiptunes back in our lives. 
 
 <div style="text-align:center;"><img src="./images/ch7/image_3_progress.png" width="80%"/></div>
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch7" target="_blank">GitHub</a>

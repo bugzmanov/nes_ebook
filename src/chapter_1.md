@@ -29,5 +29,16 @@ By choosing rust, we hope to get some additional performance budget for our need
 
 I expect the reader to have a basic knowledge of Rust language, understanding primary language constructs, and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.
 
-It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and  hexadecimal notations work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. 
+It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and  hexadecimal numbering systems work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. 
 
+# References
+
+1. [Nesdev Wiki](http://wiki.nesdev.com/w/index.php/Nesdev_Wiki) - nothing would be possible without it. One-stop shop for everything.
+2. [Nintendo Entertainment System Documentation](http://nesdev.com/NESDoc.pdf) - short tutorial that covers pretty much everything about NES
+3. [Nintendo Age Nerdy Nights](https://nerdy-nights.nes.science/) - a series to help people write games for the NES
+4. [I.Am.Error](https://www.goodreads.com/book/show/23461364-i-am-error) - a book full of histories of the Nintendo Entertainment System platform
+5. [The Elements of Computing Systems](https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems) - everything you need to know about computer systems, how to build tetris starting from logical gates 
+
+-------
+
+Created by [@bugzmanov](http://twitter.com/bugzmanov), 2020

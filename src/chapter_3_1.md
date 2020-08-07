@@ -22,7 +22,7 @@ Let's interpret what's going on using the opcode specification from [6502 Instru
 It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). 
 
 
-> From the LDA spec it follows that the opcode 0xA9 has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. 
+> From the **LDA** spec it follows that the opcode **0xA9** has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. 
 >
 > NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.
 > 
@@ -77,7 +77,7 @@ pub fn interpret(&mut self, program: Vec<u8>) {
 }
 ```
 
-So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) opcode:
+So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the **LDA (0xA9)** opcode:
 
 ```rust
         match opscode {
@@ -197,7 +197,7 @@ Don't forget to write tests:
 
 Before moving to the next opcode, we have to admit that our code becomes quite convoluted:
 * interpret method is already complicated and does multiple things
-* there is a noticeable duplication between the way TAX and LDA are implemented.
+* there is a noticeable duplication between the way **TAX** and **LDA** are implemented.
 
 Let's fix that: 
 
@@ -249,7 +249,7 @@ Let's fix that:
 
 Ok. Looks more manageable now. And hopefully, all tests are still passing. 
 
-I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.
+I cannot emphasize enough the importance of writing tests for all opcodes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.
 
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 
@@ -275,3 +275,8 @@ At the end, these tests should be passing:
         assert_eq!(cpu.register_x, 1)
     }
 ```
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.1" target="_blank">GitHub</a>

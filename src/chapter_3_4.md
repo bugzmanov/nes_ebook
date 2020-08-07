@@ -278,3 +278,9 @@ The last sleep statement was added to slow things down to have a playable pace.
 And there you have it, the first game running on our emulator.
 
  <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.4" target="_blank">GitHub</a>

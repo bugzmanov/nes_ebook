@@ -199,3 +199,8 @@ Aha! Despite colors being clearly off, the shapes are recognizable now. Parts of
 I guess that's it. Moving on
 
 
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.3" target="_blank">GitHub</a>

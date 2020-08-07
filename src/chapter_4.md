@@ -159,3 +159,9 @@ impl CPU {
 ```
 
 And that's pretty much it for now. Wasn't hard, right?
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch4" target="_blank">GitHub</a>

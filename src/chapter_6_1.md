@@ -463,3 +463,9 @@ impl Bus {
 ```
 
 The communication with the rest of the registers is similar. And I leave this exercise to the reader. 
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.1" target="_blank">GitHub</a>

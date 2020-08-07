@@ -225,3 +225,9 @@ The fully defined code for scrolling can be found [here](https://github.com/bugz
 Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.
 
 The final missing piece is APU. 
+
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8" target="_blank">GitHub</a>

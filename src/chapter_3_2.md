@@ -328,4 +328,9 @@ Lastly, all we do is hardcoding Instructions spec into Rust code. And the transl
 
 I leave it to you to figure out how to get to this point.
 
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.2" target="_blank">GitHub</a>
 

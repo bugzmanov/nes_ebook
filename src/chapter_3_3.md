@@ -22,3 +22,8 @@ And `-B = !B + 1`
 If you get stuck, you can always look up the implementation of 6502 instruction set here: <link to code>
 
 
+<br/>
+
+------
+
+> The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.3" target="_blank">GitHub</a>
