@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="chapter-item expanded "><a href="afterwords.html"><strong aria-hidden="true">10.</strong> Afterword</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="afterwords.html">Afterword</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -171,7 +171,17 @@
 By choosing rust, we hope to get some additional performance budget for our needs. NES hardware specs are pretty modest in today's standards. For example, the NES CPU is about 3000 times slower than modern CPUs. Emulating that in any language should not be a problem. Some folks were able to get playable performance on an emulator written in python. But it is still nice to have extra power for free. </p>
 <h1><a class="header" href="#prerequisites" id="prerequisites">Prerequisites</a></h1>
 <p>I expect the reader to have a basic knowledge of Rust language, understanding primary language constructs, and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
-<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and  hexadecimal notations work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. </p>
+<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and  hexadecimal numbering systems work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. </p>
+<h1><a class="header" href="#references" id="references">References</a></h1>
+<ol>
+<li><a href="http://wiki.nesdev.com/w/index.php/Nesdev_Wiki">Nesdev Wiki</a> - nothing would be possible without it. One-stop shop for everything.</li>
+<li><a href="http://nesdev.com/NESDoc.pdf">Nintendo Entertainment System Documentation</a> - short tutorial that covers pretty much everything about NES</li>
+<li><a href="https://nerdy-nights.nes.science/">Nintendo Age Nerdy Nights</a> - a series to help people write games for the NES</li>
+<li><a href="https://www.goodreads.com/book/show/23461364-i-am-error">I.Am.Error</a> - a book full of histories of the Nintendo Entertainment System platform</li>
+<li><a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">The Elements of Computing Systems</a> - everything you need to know about computer systems, how to build tetris starting from logical gates </li>
+</ol>
+<hr />
+<p>Created by <a href="http://twitter.com/bugzmanov">@bugzmanov</a>, 2020</p>
 <h1><a class="header" href="#understanding-the-nes-platform" id="understanding-the-nes-platform">Understanding the NES Platform</a></h1>
 <h2><a class="header" href="#achitecture" id="achitecture">Achitecture</a></h2>
 <p>The simplified architecture of hardware-software interaction looks like this:</p>
@@ -302,7 +312,7 @@ We are going to play Snake game. The source code with comments can be found <a h
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 <p>It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). </p>
 <blockquote>
-<p>From the LDA spec it follows that the opcode 0xA9 has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. </p>
+<p>From the <strong>LDA</strong> spec it follows that the opcode <strong>0xA9</strong> has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. </p>
 <p>NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.</p>
 <p>Worth mentioning, that some operations use CPU registers as implicit parameters.</p>
 </blockquote>
@@ -357,7 +367,7 @@ impl CPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the LDA (0xA9) opcode:</p>
+<p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the <strong>LDA (0xA9)</strong> opcode:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -479,7 +489,7 @@ impl CPU {
 <p>Before moving to the next opcode, we have to admit that our code becomes quite convoluted:</p>
 <ul>
 <li>interpret method is already complicated and does multiple things</li>
-<li>there is a noticeable duplication between the way TAX and LDA are implemented.</li>
+<li>there is a noticeable duplication between the way <strong>TAX</strong> and <strong>LDA</strong> are implemented.</li>
 </ul>
 <p>Let's fix that: </p>
 <pre><pre class="playpen"><code class="language-rust">
@@ -531,7 +541,7 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>Ok. Looks more manageable now. And hopefully, all tests are still passing. </p>
-<p>I cannot emphasize enough the importance of writing tests for all ops codes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.</p>
+<p>I cannot emphasize enough the importance of writing tests for all opcodes we are implementing. The operations themselves are almost trivial, but tiny accidental mistakes can unpredictably ripple a game logic.</p>
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 <p>Implementing that last opcode from the program should not be a problem, and I'll leave this exercise to you. </p>
 <p>At the end, these tests should be passing: </p>
@@ -556,6 +566,11 @@ impl CPU {
     }
 <span class="boring">}
 </span></code></pre></pre>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.1" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#memory-addressing-modes" id="memory-addressing-modes">Memory addressing modes</a></h1>
 <p>In our initial implementation, the CPU receives instructions as a separate input stream, this is not how the things actually work.</p>
 <p>NES implements typical von Neumann architecture: both data and the instructions are stored in memory. The execution code is data from the CPU perspective, and any data can potentially be interpreted as an execution code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
@@ -863,6 +878,11 @@ First, the requirements to increment program_counter by 1 (or 2) after some of o
 <p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Keeping the code in some table form looks like a more managable approach. </p>
 <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 <p>I leave it to you to figure out how to get to this point.</p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.2" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#implementing-the-rest-of-cpu-instructions" id="implementing-the-rest-of-cpu-instructions">Implementing the rest of CPU instructions</a></h1>
 <div style="text-align:center"><img src="./images/ch3.3/image_1_how_to_draw_owl.png" width="60%"/></div>
 <p>Implementing the rest of the 6502 CPU instructions should be relatively straightforward. I wouldn't go into detail with every one of them. </p>
@@ -888,6 +908,11 @@ And <code>-B = !B + 1</code> </p>
 </li>
 </ul>
 <p>If you get stuck, you can always look up the implementation of 6502 instruction set here: <link to code></p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.3" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
 <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 <p>Great, you've made it this far. What we are going to do next is a bit of a detour. 
@@ -1159,6 +1184,11 @@ Remember that the CPU would call our callback after each instruction, and most o
 <p>The last sleep statement was added to slow things down to have a playable pace. </p>
 <p>And there you have it, the first game running on our emulator.</p>
 <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.4" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#emulating-bus" id="emulating-bus">Emulating BUS</a></h1>
 <div style="text-align:center"><img src="./images/ch4/image_1_bus_schema.png" width="60%"/></div>
 <p>CPU gets access to memory (including memory-mapped spaces) using three buses:</p>
@@ -1315,6 +1345,11 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>And that's pretty much it for now. Wasn't hard, right?</p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch4" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#cartridges" id="cartridges">Cartridges</a></h1>
 <div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
 <p>The first version of the cartridges was relatively simple. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics. </p>
@@ -1481,6 +1516,11 @@ impl Bus {
 <p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">github</a>.</p>
 <p>You would need to modify the main method to load binary from a file.</p>
 <p>Spoiler alert: it's a modification of a snake game with more funk in physics. The game expects the same memory map for the input device, screen output, and random number generator. </p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#running-our-first-test-rom" id="running-our-first-test-rom">Running our first test ROM</a></h1>
 <p>NES dev community has created <a href="https://wiki.nesdev.com/w/index.php/Emulator_tests">large suites of tests</a> that can be used to check our emulator. </p>
 <p>They cover pretty much every aspect, including quirks and famous bugs that were embedded in the platform. </p>
@@ -1639,6 +1679,11 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
 </code></pre>
 <p>almost at the very end of the nes test log file. </p>
 <p>That's a good sign. 4015 is a memory map for the APU register. And we don't have that implemented yet. </p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5.1" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#emulating-picture-processing-unit" id="emulating-picture-processing-unit">Emulating Picture Processing Unit</a></h1>
 <p>Picture Processing Unit is the hardest one to emulate. Because it deals with the most complicated aspect of gaming - rendering the state of the screen, but also NES PPU has quite a bit of quirks. While emulating some of them is not necessarily required, others are crucially important to have a playable environment. 
 64KiB is not a hell lot of space, and NES platform designers tried to squeeze out of it as much as possible. Working with CHR ROM data means pretty much working with compressed data format; it requires a lot of bit arithmetic, uncompressing, and parsing.</p>
@@ -2120,6 +2165,11 @@ impl Bus {
 <span class="boring">}
 </span></code></pre></pre>
 <p>The communication with the rest of the registers is similar. And I leave this exercise to the reader. </p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.1" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#emulating-interrupts" id="emulating-interrupts">Emulating Interrupts</a></h1>
 <p>Interrupts are the mechanism for the CPU to break the sequential execution flow and react to events that require immediate attention (&quot;attend to an interrupt&quot;).</p>
 <p>We've already implemented one of the supported interrupts - RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and the CPU needs to execute the reset subroutine.</p>
@@ -2323,6 +2373,11 @@ Upon receiving an interrupt signal the CPU:</p>
 </span></code></pre></pre>
 <p>//TODO: interrupt after updating control!</p>
 <p>//TODO: break interrupts</p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.2" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#rendering-chr-rom-tiles" id="rendering-chr-rom-tiles">Rendering CHR ROM Tiles</a></h1>
 <p>The address space <strong>[0x0 .. 0x2000]</strong> on PPU is reserved for CHR ROM - visual graphics data of a game. </p>
 <p>That's <em>8 KiB</em> worth of data. And that's all there was in the first versions of NES cartridges. </p>
@@ -2486,6 +2541,11 @@ impl Frame {
 <div style="text-align:center"><img src="./images/ch6.3/image_8_pacman_chr_rom.png" width="80%"/></div>
 <p>Aha! Despite colors being clearly off, the shapes are recognizable now. Parts of ghosts, some letters, and numbers.
 I guess that's it. Moving on</p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.3" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#rendering-static-screen" id="rendering-static-screen">Rendering Static Screen</a></h1>
 <p>At this point, the CPU and PPU are fully functional and working in coordination with each other. 
 So if we load a game into our emulator, the game would be executing and most likely would run into demo mode.</p>
@@ -2826,6 +2886,11 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 </span></code></pre></pre>
 <div style="text-align:center"><img src="./images/ch6.4/image_7_pacman_chrs.png" width="30%"/></div>
 <p>Alright. Looks better now. </p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.4" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#emulating-joypads" id="emulating-joypads">Emulating joypads</a></h1>
 <p>NES and Famicom supported a variety of controllers:</p>
 <ul>
@@ -2991,6 +3056,11 @@ impl Joypad {
 <li>Audio Processing Unit - to get those sweet NES chiptunes back in our lives. </li>
 </ul>
 <div style="text-align:center;"><img src="./images/ch7/image_3_progress.png" width="80%"/></div>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch7" target="_blank">GitHub</a></p>
+</blockquote>
 <h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
 <p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress: </p>
@@ -3204,9 +3274,26 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 <p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
 <p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
 <p>The final missing piece is APU. </p>
+<br/>
+<hr />
+<blockquote>
+<p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8" target="_blank">GitHub</a></p>
+</blockquote>
 <p><br/> <br/> <br/> <br/></p>
 <div style="text-align:center;"><img src="./images/ch9/image_1_coming_soon_3.png" width="30%"/></div>
 <h1><a class="header" href="#afterword" id="afterword">Afterword</a></h1>
+<style type="text/css">
+    @media screen and (min-width: 651px) {
+        #full-screen { display: block }
+        #mobile { display: none }
+    }
+
+    @media screen and (max-width: 650px) {
+        #full-screen { display: none }
+        #mobile { display: block }
+    }
+</style>
+<div id="full-screen" >
 <table style="width:100%; border: none;"> 
 <tr>
 <td style="width:50%; border: none; padding: 0; ">Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in scala, rust and clojure. I usually work on data crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps and functional programming. 
@@ -3222,10 +3309,23 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 </table>
 <table style="width:100%"> 
 <tr>
-<td style="width:40%; border: none;"> <br/><img src="./images/afterwords/image_1_bye.png" width="80%"/> </td>
+<td style="width:40%; border: none;"> <br/><img src="./images/afterwords/image_1_bye.png" width="100%"/> </td>
 <td style="widht:70%; border: none;"> <br/> I hope you've enjoyed the read and had a great time. <br/> Emulating old hardware is so much fun. Those systems were designed to be read, understood and modified by humans. And despite being very low-level, you don't need ten layers of abstraction to get it and see it working. And that's amazing.<br/><br/>Until next time!</td>
 </tr>
-</table
+</table>
+</div>
+<div id="mobile">
+Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in scala, rust and clojure. I usually work on data crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps and functional programming. 
+<p>You can find more about me on:</p>
+<ul>
+<li><a href="https://twitter.com/bugzmanov">Twitter</a> </li>
+<li><a href="https://github.com/bugzmanov/">GitHub</a></li>
+<li><a href="https://www.linkedin.com/in/bugzmanov/">LinkedIn</a></li>
+</ul>
+<div style="text-align:center"><img src="./images/afterwords/image_2_reviews_bw.png" width="80%"/></div>
+<p>I hope you've enjoyed the read and had a great time. <br/> Emulating old hardware is so much fun. Those systems were designed to be read, understood and modified by humans. And despite being very low-level, you don't need ten layers of abstraction to get it and see it working. And that's amazing.<br/><br/>Until next time!</p>
+<div style="text-align:center"><img src="./images/afterwords/image_1_bye.png" width="80%"/></div>
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
