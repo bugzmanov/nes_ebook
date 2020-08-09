@@ -148,7 +148,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#emulating-ppu-registers" id="emulating-ppu-registers">Emulating PPU Registers</a></h1>
-<p>PPU has its own memory map, composed from PPU RAM, CHR ROM, and address space mirrors.
+<p>PPU has its own memory map, composed of PPU RAM, CHR ROM, and address space mirrors.
 PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to <strong>[0x2000 - 0x2007]</strong> CPU memory map (and mirrored every 8 bytes through the region of <strong>[0x2008 .. 0x3FFF]</strong>)</p>
 <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="70%"/></div>
 <p>To be precise, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate that. </p>
@@ -156,7 +156,7 @@ PPU exposes 8 IO Registers that are used by the CPU for communication. Those reg
 <ul>
 <li>Address (0x2006) &amp; Data (0x2006) - provide access to the memory map available for PPU</li>
 </ul>
-<p>3 registers controlls internal memory that keeps the state of sprites</p>
+<p>3 registers control internal memory(OAM) that keeps the state of sprites</p>
 <ul>
 <li>OAM Address (0x2003) &amp; OAM Data (0x2004)  - Object Attribute Memory - the space responsible for sprites</li>
 <li>Direct Memory Access (0x4014) - for fast copying of 256 bytes from CPU RAM to OAM </li>
@@ -208,7 +208,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <li><strong>vram</strong> - 2 KiB banks of space to hold background information</li>
 <li>and <strong>oam_data</strong> - internal memory to keep state of sprites.</li>
 </ul>
-<p>mirroring and chr_rom are specific to each game, and provided by a cartridge</p>
+<p>mirroring and chr_rom are specific to each game and provided by a cartridge</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -226,10 +226,10 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <span class="boring">}
 </span></code></pre></pre>
 <h2><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers" id="emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
-<p>Lets try to emulate two the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
+<p>Let's try to emulate two the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
 <p>There are multiple caveats in the way the CPU can access PPU RAM. Say, CPU wants to access mem cell at 0x0600 PPU memory space:</p>
 <ol>
-<li>It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1 byte register:<br/><br/> </li>
+<li>It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1-byte register:<br/><br/> </li>
 </ol>
 <pre><code class="language-bash"> LDA #$06
  STA $2006
@@ -243,7 +243,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <pre><code class="language-bash">LDA $2007
 </code></pre>
 <blockquote>
-<p>Because CHR ROM and RAM are considered external devices to PPU, PPU can't return the value right away. PPU has to fetch the data and keep it in internal buffer.<br/> 
+<p>Because CHR ROM and RAM are considered external devices to PPU, PPU can't return the value immediately. PPU has to fetch the data and keep it in internal buffer.<br/> 
 The first read from 0x2007 would return the content of this internal buffer filled during the previous load operation. From the CPU perspective, this is a dummy read. </p>
 </blockquote>
 <ol start="3">
@@ -434,7 +434,7 @@ impl NesPPU {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We can emulate this internal buffer behavior for RAM and ROM by using temporary field that holds a value from a previous read request:</p>
+<p>We can emulate this internal buffer behavior for RAM and ROM by using a temporary field to hold a value from a previous read request:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span>

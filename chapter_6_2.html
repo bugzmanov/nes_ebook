@@ -158,10 +158,10 @@ From a high-level perspective, this means two things:</p>
 <li>CPU can safely access PPU memory to update the state for the next frame.</li>
 </ul>
 <blockquote>
-<p>The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and would cause noticeable graphic glitches on a screen. </p>
+<p>The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and cause noticeable graphic glitches. </p>
 </blockquote>
-<p>Unlike other interrupts, CPU can't ignore the NMI. And the <strong>Disable Interrupt</strong> flag in the <strong>Status register P</strong> has no effect on the way the CPU attends to it.
-The CPU however, might instruct PPU to not trigger NMI by resetting 7th bit in the PPU Control register. </p>
+<p>Unlike other interrupts, CPU can't ignore the NMI. And the <strong>Disable Interrupt</strong> flag in the <strong>Status register P</strong> has no effect on how the CPU attends to it.
+The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit in the PPU Control register. </p>
 <h2><a class="header" href="#clock-cycles" id="clock-cycles">Clock cycles</a></h2>
 <p>The NMI interrupt is tightly connected to PPU clock cycles:</p>
 <ul>
@@ -348,8 +348,30 @@ Upon receiving an interrupt signal the CPU:</p>
    }
 <span class="boring">}
 </span></code></pre></pre>
-<p>//TODO: interrupt after updating control!</p>
-<p>//TODO: break interrupts</p>
+<p>In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met: </p>
+<ul>
+<li>PPU is VBLANK state</li>
+<li>&quot;Generate NMI&quot; bit in the controll Register is updated from 0 to 1.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl PPU for NesPPU {
+// ...    
+    fn write_to_ctrl(&amp;mut self, value: u8) {
+        let before_nmi_status = self.ctrl.generate_vblank_nmi();
+        self.ctrl.update(value);
+        if !before_nmi_status &amp;&amp; self.ctrl.generate_vblank_nmi() &amp;&amp; self.status.is_in_vblank() {
+            self.nmi_interrupt = Some(1);
+        }
+    }
+//..
+}
+<span class="boring">}
+</span></code></pre></pre>
+<h1><a class="header" href="#other-cpu-interrupts" id="other-cpu-interrupts">Other CPU interrupts</a></h1>
+<p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> just as a return from CPU fetch-decode-execute cycle, but in reallity it should trigger BRK interrupt. This is so-called &quot;software interrupt&quot; that a game code can trigger programmatically in response to events.</p>
+<p>NESDEV Wiki provides all neccessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>. </p>
 <br/>
 <hr />
 <blockquote>

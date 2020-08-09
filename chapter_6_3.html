@@ -153,7 +153,7 @@
 <p>Visual data is packed in so-called tiles: an 8 x 8 pixel image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors, and 0b00 is used as an indication that a pixel should be transparent)</p>
 <pre><code class="language-bash">8 * 8 * 2 (2 bits to codify color) = 128 bits  = 16 bytes to codify a single tile
 </code></pre>
-<p>8 KiB / 128 bits = 512 tiles. I.e. each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called &quot;left&quot; and &quot;right&quot;.</p>
+<p>8 KiB / 128 bits = 512 tiles. I.e., each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called &quot;left&quot; and &quot;right&quot;.</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_1_mario_tiles.png" width="50%"/></div>
 <p>8 pixels x 8 pixels is a tiny size, not much can be presented that way. The majority of objects in NES games are composed of multiple tiles. </p>
 <div style="text-align:center"><img src="./images/ch6.3/image_2_8bit_drawings.png" width="30%" ><br/> 8x8 pixel art by <a href="https://twitter.com/johanvinet">Johan Vinet</a> <br/><a href="https://twitter.com/PixelProspector/status/1097565152940044293">[Check it out]</a> </div>
@@ -165,8 +165,8 @@
 <p>By reading just CHR ROM, it is impossible to derive colors, only shapes. </p>
 <div style="text-align:center"><img src="./images/ch6.3/image_3_chr_content.png" width="30%"/></div>
 <div style="text-align:center"><img src="./images/ch6.3/image_4_color_code.png" width="50%"/></div>
-<p>Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row in is encoded using 2 bytes that stands 8 bytes apart from each other. 
-To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same Row we would need to read 6th bits in the same bytes, etc..</p>
+<p>Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row is encoded using 2 bytes that stand 8 bytes apart from each other. 
+To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same row we would need to read 6th bits in the same bytes, etc..</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_5_16bytes_of_a_tile.png" width="50%"/></div>
 <h2><a class="header" href="#pallette" id="pallette">Pallette</a></h2>
 <p>Before rendering CHR ROM content, we need to briefly discuss the colors available to the NES. 
@@ -308,7 +308,7 @@ impl Frame {
 <p>Might it be a Pacman's back..err.. head?  Who knows.</p>
 <p>We can adjust code just a little bit to draw all tiles from CHR ROM:</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_8_pacman_chr_rom.png" width="80%"/></div>
-<p>Aha! Despite colors being clearly off, the shapes are recognizable now. Parts of ghosts, some letters, and numbers.
+<p>Aha! Despite colors being clearly off, the shapes are recognizable now—parts of ghosts, some letters, and numbers.
 I guess that's it. Moving on</p>
 <br/>
 <hr />

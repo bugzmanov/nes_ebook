@@ -148,7 +148,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
-<p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
+<p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished. 
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress: </p>
 <ul>
 <li><a href="https://wiki.nesdev.com/w/index.php?title=PPU_OAM&amp;redirect=no#Sprite_zero_hits">sprite zero hit flag</a></li>
@@ -156,16 +156,16 @@ That's not the whole story. PPU has 2 additional mechanisms to tell its progress
 </ul>
 <p>Both are reported using <a href="https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read">PPU status register <strong>0x2002</strong></a></p>
 <div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
-<p>Sprite overflow is rerally used, because it had a bug that resulted in false positives and false negatives. 
-Sprite 0 hit though is used by the majority of games that has scrolling. <br/>It's the way to get mid frame progress status
+<p>Sprite overflow is rarely used because it had a bug that resulted in false positives and false negatives. 
+Sprite 0 hit though is used by the majority of games that have scrolling. <br/>It's the way to get mid-frame progress status
 of PPU:</p>
 <ul>
-<li>put sprite zero on a specific screen location (X,Y)</li>
+<li>put sprite zero on a specific screen location (X, Y)</li>
 <li>poll status register</li>
-<li>when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU have finished rendering <strong>[0 .. Y]</strong> scanlines, and on the Y scanline, it's done rendering X pixels.</li>
+<li>when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU has finished rendering <strong>[0 .. Y]</strong> scanlines, and on the Y scanline, it's done rendering X pixels.</li>
 </ul>
 <blockquote>
-<p>This is very rough simulation of the behaviour. The accurate one requires checking opaque pixel of a sprite colliding with opaque pixel of background.</p>
+<p>This is a very rough simulation of the behavior. The accurate one requires checking opaque pixels of a sprite colliding with opaque pixels of background.</p>
 </blockquote>
 <p>We need to codify this behavior in PPU <code>tick</code> function:</p>
 <pre><pre class="playpen"><code class="language-rust">
@@ -212,7 +212,7 @@ of PPU:</p>
 <h2><a class="header" href="#scrolling" id="scrolling">Scrolling</a></h2>
 <p>The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
-<p>The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
+<p>The scroll is implemented on the PPU level and only affects the rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
 <p>PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
 That also means that most of the time, the PPU is rendering parts of both nametables. </p>
 <p>Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game. 
@@ -233,7 +233,7 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 <p>2 last notes before jumping into implementation:</p>
 <ul>
-<li>The palette of a tile is defined by the nametable the tile belongs to, <strong>not</strong> byt the base one defined in Control register</li>
+<li>The palette of a tile is defined by the nametable the tile belongs to, <strong>not</strong> by the base nametable specified in the Control register</li>
 <li>For horizontal scrolling the content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)</li>
 </ul>
 <div style="text-align:center;"><img src="./images/ch8/image_5_scroll_caveats.png" width="80%"/></div>
@@ -356,7 +356,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>Implementing vertical scroll is similar, we would reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
+<p>Implementing the vertical scroll is similar; we could reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
 <p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
 <p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
 <p>The final missing piece is APU. </p>

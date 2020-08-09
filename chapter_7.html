@@ -160,7 +160,7 @@
 <div style="text-align:center;"><img src="./images/ch7/image_1_joypad2.png" width="40%"/></div>
 <p>Two joypads are mapped to <strong>0x4016</strong> and <strong>0x4017</strong> CPU address space, respectively.
 The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports a state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
 <p>The order of reported Buttons is as follows: </p>
 <pre><code class="language-bash">A -&gt; B -&gt; Select -&gt; Start -&gt; Up -&gt; Down -&gt; Left -&gt; Right
 </code></pre>
@@ -173,7 +173,7 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 </ul>
 <p>So the most basic cycle to read the state of a joypad for CPU:</p>
 <ol>
-<li>Write <strong>0x1</strong> to <strong>0x4016</strong> (stobe mode on - to reset the pointer to button A)</li>
+<li>Write <strong>0x1</strong> to <strong>0x4016</strong> (strobe mode on - to reset the pointer to button A)</li>
 <li>Write <strong>0x00</strong> to <strong>0x4016</strong> (strobe mode off)</li>
 <li>Read from <strong>0x4016</strong> eight times </li>
 <li>Repeat</li>
@@ -200,9 +200,9 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 </span></code></pre></pre>
 <p>We need to track: </p>
 <ul>
-<li>strobe mode on/off , </li>
+<li>strobe mode - on/off </li>
 <li>the status of all buttons</li>
-<li>an index of a button to be reported on next read.</li>
+<li>an index of a button to be reported on the next read.</li>
 </ul>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]

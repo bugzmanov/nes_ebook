@@ -172,10 +172,10 @@ Each tile is represented by one byte in VRAM in the space called Nametable. </p>
 Control register decides which of two banks should be used for background (and which one should be used for sprites)</p>
 <div style="text-align:left"><img src="./images/ch6.4/image_3_control_register_highlight.png" width="50%"/></div>
 </blockquote>
-<p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total a single frame is defined by 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - state of two frames. </p>
+<p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total, a single frame is defined by 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - state of two frames. </p>
 <p>Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge. 
 More details: http://wiki.nesdev.com/w/index.php/Mirroring</p>
-<p>Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's fully determined by game code. All we need to do is to read the correct part of the VRAM. </p>
+<p>Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's entirely determined by game code. All we need to do is to read the correct part of the VRAM. </p>
 <p>The algorithm to draw current background:</p>
 <ol>
 <li>Determine which nametable being used for the current screen (by reading bit 0 and bit 1 from Control register)</li>
@@ -228,14 +228,14 @@ pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
 <p>Note: We are still using randomly picked colors from a system palette just to see shapes</p>
 </blockquote>
 <p>Again we need to intercept the program execution to read the screen state. 
-On the real console, PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of screen state on each PPU clock tick, we can wait untill the full screen is ready and read it in one go. </p>
+On the real console, PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of the screen state on each PPU clock tick, we can wait until the full screen is ready and read in one go. </p>
 <blockquote>
-<p><strong>WARNING</strong> This is quite a drastic simplification, that limits type of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich gaming experience. 
+<p><strong>WARNING</strong> This is quite a drastic simplification that limits the types of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich the gaming experience. 
 For example, changing scroll in the middle of the frame (so-called <a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
-This simplification wouldn't affect first-gen NES games much. But the majority of NES games would require more accurancy in PPU emulation.</p>
+This simplification wouldn't affect first-gen NES games much. But the majority of NES games would require more accuracy in PPU emulation.</p>
 </blockquote>
-<p>On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines, during scanlines 241 - 262 the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
-<p>One way to intercept is to read the screen state right after NMI interrupt - when PPU is done rendering current frame, but before CPU starts creating next one.</p>
+<p>On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines; during scanlines 241 - 262, the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
+<p>One way to intercept is to read the screen state right after NMI interrupt - when PPU is done rendering the current frame, but before CPU starts creating the next one.</p>
 <p>First lets add callback to the bus, that will be called every time PPU triggers NMI:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -341,7 +341,7 @@ Remember that a pixel in a tile was coded using 2 bits - that's 4 possible value
 <p>A single tile can be drawn using only one palette from the palette table. 
 For background tiles, the last 64 bytes of each nametable are reserved for assigning a specific palette to a part of the background. This section is called an attribute table.</p>
 <p>A byte in an attribute table controls palettes for 4 neighboring meta-tiles. (a meta-tile is a space composed of 2x2 tiles)
-To say it another way, 1 byte controlls which palettes are used for 4x4 tile blocks or 32x32 pixels<br />
+To say it another way, 1 byte controls which palettes are used for 4x4 tile blocks or 32x32 pixels<br />
 A byte is split into four 2bits blocks. And each block is assigning a background palette for four neighboring tiles. </p>
 <div style="text-align:center"><img src="./images/ch6.4/image_6_attribute_table.png" width="70%"/></div>
 <p>First let's extract palette for a background tile specified by its row and column position on a screen:</p>
@@ -405,11 +405,11 @@ A byte is split into four 2bits blocks. And each block is assigning a background
 <h2><a class="header" href="#rendering-sprites" id="rendering-sprites">Rendering sprites.</a></h2>
 <p>Rendering sprites is somewhat similar, yet a bit easier. 
 NES had an internal RAM for storing states of all sprites in the frame, so-called Object Attribute Memory (OAM).</p>
-<p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of atleast 3-4 tiles).</p>
+<p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of at least 3-4 tiles).</p>
 <p>CPU has to option of updating OAM Table: </p>
 <ul>
 <li>using OAM Addr and OAM Data PPUT registers, updating one byte at a time. </li>
-<li>bulk updating the whole table by transfering 256 bytes from CPU RAM using OAM DMA</li>
+<li>bulk updating the whole table by transferring 256 bytes from CPU RAM using OAM DMA</li>
 </ul>
 <p>In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)</p>
 <p>NES Dev Wiki provides a pretty solid specification of <a href="http://wiki.nesdev.com/w/index.php/PPU_OAM">each byte in the OAM record</a></p>

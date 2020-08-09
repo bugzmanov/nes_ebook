@@ -158,13 +158,13 @@
 <li>extra RAM (with a battery) to save and restore a game state</li>
 </ul>
 </blockquote>
-<p>However, we won't be working with cartridges. An emulator with files containing dumps of ROM spaces.</p>
+<p>However, we won't be working with cartridges. Emulators work with files containing dumps of ROM spaces.</p>
 <p>There are several file formats for ROM dumps; the most popular one is iNES designed by <a href="http://fms.komkon.org">Marat Fayzullin</a></p>
 <div style="text-align:center"><img src="./images/ch5/image_2_ines_file_format.png" width="60%"/></div>
 <p>The file contains 3-4 sections:</p>
 <ul>
 <li>16-byte header</li>
-<li>optional 512 of so-called Trainer, a data created by Famicom copiers to keep own mapping. We can skip this section if it is being present.</li>
+<li>optional 512 of so-called Trainer, a data created by Famicom copiers to keep their own mapping. We can skip this section if it is present.</li>
 <li>Section containing PRG ROM code</li>
 <li>Section containing CHR ROM data</li>
 </ul>
@@ -183,7 +183,7 @@ We won't cover and support the iNES 2.0 format as it's not very popular. But you
 <li>Mapper type</li>
 <li>Mirroring type: Horizontal, Vertical, 4 Screen</li>
 </ul>
-<p>Mirroring will be extensively covered in the coming PPU chapters. 
+<p>Mirroring will be extensively covered in the following PPU chapters. 
 For now, we need to figure out which mirroring type the game is using. </p>
 <p>We would support only the iNES 1.0 format and mapper 0. </p>
 <p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is. </p>
@@ -311,7 +311,7 @@ impl Bus {
 <span class="boring">}
 </span></code></pre></pre>
 <p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">github</a>.</p>
-<p>You would need to modify the main method to load binary from a file.</p>
+<p>You would need to modify the <code>main</code> method to load binary from a file.</p>
 <p>Spoiler alert: it's a modification of a snake game with more funk in physics. The game expects the same memory map for the input device, screen output, and random number generator. </p>
 <br/>
 <hr />

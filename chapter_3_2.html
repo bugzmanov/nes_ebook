@@ -200,7 +200,7 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>For now, we just created an array for the whole 64 KiB of address space. As discussed in <LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping. </p>
-<p>We also load program code into memory starting at 0x8000 dddress. We've discusses that [0x8000 .. 0xFFFF] is reserved for Program ROM. And we can assume that the instructions stream would start somewhere in this space, just not necessarily at exact 0x8000.</p>
+<p>We also load program code into memory, starting at 0x8000 address. We've discusses that [0x8000 .. 0xFFFF] is reserved for Program ROM. And we can assume that the instructions stream would start somewhere in this space, just not necessarily exactly at 0x8000.</p>
 <p>NES platform has a special mechanism to notify where should CPU start the execution - upon inserting a new cartridge the CPU received special signal called &quot;Reset interrupt&quot; that instructs CPU to:</p>
 <ul>
 <li>reset the state (registers and flags)</li>
@@ -237,7 +237,7 @@ That means that 8 liest significant bits of an address will be stored before 8 m
 <span class="boring">}
 </span></code></pre></pre>
 <p>Or by using rust lang <a href="https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes">endian support for primitive types</a></p>
-<p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust load and load_and_run functions:</p>
+<p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust <code>load</code> and <code>load_and_run</code> functions:</p>
 <ul>
 <li><strong>load</strong> method should load a program into PRG ROM space and save the reference to the code into 0xFFFC memory cell</li>
 <li><strong>reset</strong> method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC</li>
@@ -276,7 +276,7 @@ That means that 8 liest significant bits of an address will be stored before 8 m
 <li>and <a href="www.obelisk.me.uk/6502/addressing.html">here</a></li>
 </ul>
 <p>In short, the addressing mode is a property of an instruction that defines how CPU would interpret the next 1 or 2 bytes in the instruction stream. </p>
-<p>It's important that different addressing modes have different instruction sizes. 
+<p>Different addressing modes have different instruction sizes. 
 For example, </p>
 <ul>
 <li><strong>Zero Page version</strong> ($A5) has a size of 2 bytes - one for opcode itself, and one for a parameter. That's why zero page addressing can't reference memory above the first 255 bytes.</li>
@@ -403,7 +403,7 @@ impl CPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>NOTE: It's absolutely neccessary to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
+<p>NOTE: It's absolutely necessary to increment <strong>program_counter</strong> after each byte being read from the instructions stream. </p>
 <p>Don't forget the tests.</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -449,9 +449,9 @@ impl CPU {
 <span class="boring">}
 </span></code></pre></pre>
 <p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy.
-First, the requirements to increment program_counter by 1 (or 2) after some of operations is error-prone. And if we introduce an error, it would be tough to spot it. </p>
+First, the requirement to increment program_counter by 1 (or 2) after some of the operations is error-prone. And if we introduce an error, it would be tough to spot it. </p>
 <p>Second, wouldn't it be more readable and convenient if we could group all &quot;LDA&quot; operations under a single <code>match</code> cause? </p>
-<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Keeping the code in some table form looks like a more managable approach. </p>
+<p>Lastly, all we do is hardcoding Instructions spec into Rust code. And the translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach. </p>
 <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 <p>I leave it to you to figure out how to get to this point.</p>
 <br/>
