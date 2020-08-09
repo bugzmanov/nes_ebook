@@ -10,7 +10,7 @@ Upon insertion into the console, PRG ROM got connected to CPU, and CHR ROM got c
 > * mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM 
 > * extra RAM (with a battery) to save and restore a game state
 
-However, we won't be working with cartridges. An emulator with files containing dumps of ROM spaces.
+However, we won't be working with cartridges. Emulators work with files containing dumps of ROM spaces.
 
 There are several file formats for ROM dumps; the most popular one is iNES designed by [Marat Fayzullin](http://fms.komkon.org)
 
@@ -18,7 +18,7 @@ There are several file formats for ROM dumps; the most popular one is iNES desig
 
 The file contains 3-4 sections:
 * 16-byte header
-* optional 512 of so-called Trainer, a data created by Famicom copiers to keep own mapping. We can skip this section if it is being present.
+* optional 512 of so-called Trainer, a data created by Famicom copiers to keep their own mapping. We can skip this section if it is present.
 * Section containing PRG ROM code
 * Section containing CHR ROM data
 
@@ -42,7 +42,7 @@ The bare minimum information we care about:
 * Mapper type
 * Mirroring type: Horizontal, Vertical, 4 Screen
 
-Mirroring will be extensively covered in the coming PPU chapters. 
+Mirroring will be extensively covered in the following PPU chapters. 
 For now, we need to figure out which mirroring type the game is using. 
 
 We would support only the iNES 1.0 format and mapper 0. 
@@ -174,7 +174,7 @@ impl Bus {
 
 You can download your first NES ROM dump file on [github](https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true).
 
-You would need to modify the main method to load binary from a file.
+You would need to modify the `main` method to load binary from a file.
 
 
 Spoiler alert: it's a modification of a snake game with more funk in physics. The game expects the same memory map for the input device, screen output, and random number generator. 

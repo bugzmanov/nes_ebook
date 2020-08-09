@@ -166,7 +166,7 @@ Next, we will create a texture that would be used for rendering:
 //...
 ```
 
-We are instructing SDL that our texture would have size 32x32 and each pixel would be represented by 3 bytes (for *R*, *G* and *B* colors) - i.e. the texture should be represented by an array of 32*32*3 bytes.
+We are instructing SDL that our texture would have size 32x32, and each pixel would be represented by 3 bytes (for *R*, *G* and *B* colors) - i.e., the texture should be represented by an array of 32*32*3 bytes.
 
 2) Handling user input is straightforward:
 

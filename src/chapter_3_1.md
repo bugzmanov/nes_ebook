@@ -22,9 +22,9 @@ Let's interpret what's going on using the opcode specification from [6502 Instru
 It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). 
 
 
-> From the **LDA** spec it follows that the opcode **0xA9** has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. 
+> **LDA** spec shows that the opcode **0xA9** has one parameter - the instruction size is 2 bytes: one byte is for operation code itself (standard for all NES CPU opcodes), and the other is for a parameter. 
 >
-> NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case the machine instruction would occupy 3 bytes.
+> NES Opscodes can have no explicit parameters or one explicit parameter. For some operations, the explicit parameter can take 2 bytes. And in that case, the machine instruction would occupy 3 bytes.
 > 
 > Worth mentioning, that some operations use CPU registers as implicit parameters.  
 
@@ -52,7 +52,7 @@ impl CPU {
 }
 ```
 
-Note, that we introduced a program counter register that would help us track our current position in the program. Also note that the interpret method takes a mutable reference to self as we know that we would need to modify **register_a** during the execution.
+Note that we introduced a program counter register that would help us track our current position in the program. Also, note that the interpret method takes a mutable reference to self as we know that we would need to modify **register_a** during the execution.
 
 The CPU works in a constant cycle:
 * Fetch next execution instruction from the instruction memory
@@ -144,7 +144,7 @@ Alright. Let's try to implement another opcode, shall we?
 
 <div style="text-align:center"><img src="./images/ch3.1/image_3_tax_spec.png" width="50%"/></div>
 
-This one is also straightforward: copy a value from A to X, and update statys register.
+This one is also straightforward: copy a value from A to X, and update status register.
 
 We need to introduce **register_x** in our CPU struct, and then we can implement the **TAX (0xAA)** opcode:
 

@@ -2,7 +2,7 @@
 
 
 The goal of this chapter is to have our first NES game up and running. 
-We are going to play Snake game. The source code with comments can be found [this gist](https://gist.github.com/wkjagt/9043907).
+We are going to play the Snake game. The source code with comments can be found [this gist](https://gist.github.com/wkjagt/9043907).
 
  <div style="text-align:center"><img src="./images/ch3/snk_logo.png" width="40%"/></div>
  <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
@@ -15,7 +15,7 @@ The only two resources the CPU has access to are the Memory Map and Cpu Register
 
 From a programming standpoint, memory map is just a continuous array of 1-byte cells. NES Cpu uses 16bit for memory addressing, which means that it can address 65536 different memory cells. 
 
-As we've seen before, the NES paltform had only 2 KiB of RAM connected to the CPU. 
+As we've seen before, the NES platform had only 2 KiB of RAM connected to the CPU. 
 
  <div style="text-align:center"><img src="./images/ch3/cpu_registers_memory.png" width="80%"/></div>
 
@@ -24,9 +24,9 @@ That RAM is accessible via **[0x0000 … 0x2000]** address space.
 
 Access to **[0x2000 … 0x4020]** is redirected to other available NES hardware modules: PPU, APU, GamePads, etc. (more on this later)
 
-Access to **[0x4020 .. 0x6000]** is a special space that different generations of cartridges used differently. It might be mapped to nothing at all, RAM, ROM, etc. The space is controlled by so-called mappers - special circutry on a cartridge. We would ignore this space.  
+Access to **[0x4020 .. 0x6000]** is a special space that different generations of cartridges used differently. It might be mapped to nothing at all, RAM, ROM, etc. The space is controlled by so-called mappers - special circuitry on a cartridge. We would ignore this space.  
 
-Access to **[0x6000 .. 0x8000]** is reserved to a RAM space on a cartridge, if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We would ignore this space
+Access to **[0x6000 .. 0x8000]** is reserved to a RAM space on a cartridge if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We would ignore this space.
 
 Access to **[0x8000 … 0x10000]** is mapped to Program ROM (PRG ROM) space on a cartridge. 
 
@@ -42,9 +42,9 @@ Memory access is relatively slow, NES CPU has a few internal memory slots called
 
 NES CPU has 7 Registers:
 * Program Counter (*PC*) - holds the address for the next machine language instruction to be executed
-* Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of that space. NES Stack (as all stacks) grows from top to bottom: when a byte got pushed to the stack - SP register decrements  and when an byte is retrieved from the stack - SP register increments
+* Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of that space. NES Stack (as all stacks) grows from top to bottom: when a byte got pushed to the stack - SP register decrements  and when a byte is retrieved from the stack - SP register increments
 
-* Accumulator (*A*) - stores results of arithmetic, logic and memory access operations. Being used as an input parameter for some of the operations.
+* Accumulator (*A*) - stores results of arithmetic, logic, and memory access operations. Being used as an input parameter for some of the operations.
 
 * Index Register X (*X*) - used as an offset in specific memory addressing modes (more on this later). Can be used for auxiliary needs (holding temp values, being used as a counter, etc.)
 

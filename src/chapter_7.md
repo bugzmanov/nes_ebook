@@ -12,7 +12,7 @@ We will emulate joypads as it's the most common one and the easiest device to em
 
 Two joypads are mapped to **0x4016** and **0x4017** CPU address space, respectively.
 The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. 
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports a state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. 
 
 The order of reported Buttons is as follows: 
 
@@ -30,7 +30,7 @@ Controller operates in 2 modes:
 
 
 So the most basic cycle to read the state of a joypad for CPU:
-1) Write **0x1** to **0x4016** (stobe mode on - to reset the pointer to button A)
+1) Write **0x1** to **0x4016** (strobe mode on - to reset the pointer to button A)
 2) Write **0x00** to **0x4016** (strobe mode off)
 3) Read from **0x4016** eight times 
 4) Repeat
@@ -56,9 +56,9 @@ bitflags! {
 ```
 
 We need to track: 
-- strobe mode on/off , 
+- strobe mode - on/off 
 - the status of all buttons  
-- an index of a button to be reported on next read.
+- an index of a button to be reported on the next read.
 
 ```rust
 pub struct Joypad {

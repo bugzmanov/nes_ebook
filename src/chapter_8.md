@@ -1,6 +1,6 @@
 # PPU Scrolling
 
-Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of current frame is finished. 
+Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished. 
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress: 
 * [sprite zero hit flag](https://wiki.nesdev.com/w/index.php?title=PPU_OAM&redirect=no#Sprite_zero_hits)
 * [sprite overflow flag](https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug)
@@ -9,14 +9,14 @@ Both are reported using [PPU status register **0x2002**](https://wiki.nesdev.com
 
 <div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
 
-Sprite overflow is rerally used, because it had a bug that resulted in false positives and false negatives. 
-Sprite 0 hit though is used by the majority of games that has scrolling. <br/>It's the way to get mid frame progress status
+Sprite overflow is rarely used because it had a bug that resulted in false positives and false negatives. 
+Sprite 0 hit though is used by the majority of games that have scrolling. <br/>It's the way to get mid-frame progress status
 of PPU:
-* put sprite zero on a specific screen location (X,Y)
+* put sprite zero on a specific screen location (X, Y)
 * poll status register
-* when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU have finished rendering **[0 .. Y]** scanlines, and on the Y scanline, it's done rendering X pixels.
+* when sprite_zero_hit changes from 0 to 1 - CPU knows that PPU has finished rendering **[0 .. Y]** scanlines, and on the Y scanline, it's done rendering X pixels.
 
-> This is very rough simulation of the behaviour. The accurate one requires checking opaque pixel of a sprite colliding with opaque pixel of background.
+> This is a very rough simulation of the behavior. The accurate one requires checking opaque pixels of a sprite colliding with opaque pixels of background.
 
 We need to codify this behavior in PPU `tick` function:
 
@@ -67,7 +67,7 @@ The scroll is one of the primary mechanisms to simulate movement in space in NES
 
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 
-The scroll is implemented on the PPU level and only affects rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.  
+The scroll is implemented on the PPU level and only affects the rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.  
 
 PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon. 
 That also means that most of the time, the PPU is rendering parts of both nametables. 
@@ -98,7 +98,7 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <div style="text-align:center;"><img src="./images/ch8/image_4_scroll_demo.gif" width="50%"/></div>
 
 2 last notes before jumping into implementation:
-* The palette of a tile is defined by the nametable the tile belongs to, **not** byt the base one defined in Control register
+* The palette of a tile is defined by the nametable the tile belongs to, **not** by the base nametable specified in the Control register
 * For horizontal scrolling the content of the base nametable always goes to the left part of the viewport (or top part in case of vertical scrolling)
 
 
@@ -218,7 +218,7 @@ pub fn render(ppu: &NesPPU, frame: &mut Frame) {
 
 ```
 
-Implementing vertical scroll is similar, we would reuse the same `render_name_table` helper function without changes. Just need to figure out proper *addressing*, *shifts*, and *view_port* parameters.
+Implementing the vertical scroll is similar; we could reuse the same `render_name_table` helper function without changes. Just need to figure out proper *addressing*, *shifts*, and *view_port* parameters.
 
 The fully defined code for scrolling can be found [here](https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8)
 

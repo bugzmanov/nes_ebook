@@ -20,6 +20,6 @@ After the third one it will be possible to play games with static screens:
 - [Donkey Kong](https://en.wikipedia.org/wiki/Donkey_Kong)
 - [Baloon Fight](https://en.wikipedia.org/wiki/Balloon_Fight)
 
-When we are done with the scroll, we could play plaftofmers like [Super Mario Bros](https://en.wikipedia.org/wiki/Super_Mario_Bros). 
+When we are done with the scroll, we could play platformers like [Super Mario Bros](https://en.wikipedia.org/wiki/Super_Mario_Bros). 
 
 So let's start.

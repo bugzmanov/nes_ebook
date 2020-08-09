@@ -15,7 +15,7 @@
 <div id="full-screen" >
 <table style="width:100%; border: none;"> 
 <tr>
-<td style="width:50%; border: none; padding: 0; ">Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in scala, rust and clojure. I usually work on data crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps and functional programming. 
+<td style="width:50%; border: none; padding: 0; ">Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in Scala, Rust and Clojure. I usually work on data-crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps, and functional programming. 
 
 You can find more about me on:
 * [Twitter](https://twitter.com/bugzmanov) 
@@ -36,7 +36,7 @@ You can find more about me on:
 </div>
 
 <div id="mobile">
-Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in scala, rust and clojure. I usually work on data crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps and functional programming. 
+Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in Scala, Rust, and Clojure. I usually work on data-crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps, and functional programming. 
 
 You can find more about me on:
 * [Twitter](https://twitter.com/bugzmanov) 
@@ -45,7 +45,7 @@ You can find more about me on:
 
 <div style="text-align:center"><img src="./images/afterwords/image_2_reviews_bw.png" width="80%"/></div>
 
-I hope you've enjoyed the read and had a great time. <br/> Emulating old hardware is so much fun. Those systems were designed to be read, understood and modified by humans. And despite being very low-level, you don't need ten layers of abstraction to get it and see it working. And that's amazing.<br/><br/>Until next time!
+I hope you've enjoyed the read and had a great time. <br/> Emulating old hardware is so much fun. Those systems were designed to be read, understood, and modified by humans. And despite being very low-level, you don't need ten layers of abstraction to get it and see it working. And that's amazing.<br/><br/>Until next time!
 
 <div style="text-align:center"><img src="./images/afterwords/image_1_bye.png" width="80%"/></div>
 

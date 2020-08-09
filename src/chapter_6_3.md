@@ -10,7 +10,7 @@ Visual data is packed in so-called tiles: an 8 x 8 pixel image that could use up
 8 * 8 * 2 (2 bits to codify color) = 128 bits  = 16 bytes to codify a single tile
 ```
 
-8 KiB / 128 bits = 512 tiles. I.e. each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called "left" and "right".
+8 KiB / 128 bits = 512 tiles. I.e., each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called "left" and "right".
 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_1_mario_tiles.png" width="50%"/></div>
@@ -31,8 +31,8 @@ By reading just CHR ROM, it is impossible to derive colors, only shapes.
 
 <div style="text-align:center"><img src="./images/ch6.3/image_4_color_code.png" width="50%"/></div>
 
-Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row in is encoded using 2 bytes that stands 8 bytes apart from each other. 
-To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same Row we would need to read 6th bits in the same bytes, etc..
+Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row is encoded using 2 bytes that stand 8 bytes apart from each other. 
+To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same row we would need to read 6th bits in the same bytes, etc..
 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_5_16bytes_of_a_tile.png" width="50%"/></div>
@@ -195,7 +195,7 @@ We can adjust code just a little bit to draw all tiles from CHR ROM:
 <div style="text-align:center"><img src="./images/ch6.3/image_8_pacman_chr_rom.png" width="80%"/></div>
 
 
-Aha! Despite colors being clearly off, the shapes are recognizable now. Parts of ghosts, some letters, and numbers.
+Aha! Despite colors being clearly off, the shapes are recognizable now—parts of ghosts, some letters, and numbers.
 I guess that's it. Moving on
 
 

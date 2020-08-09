@@ -1,5 +1,5 @@
 # Emulating PPU Registers
-PPU has its own memory map, composed from PPU RAM, CHR ROM, and address space mirrors.
+PPU has its own memory map, composed of PPU RAM, CHR ROM, and address space mirrors.
 PPU exposes 8 IO Registers that are used by the CPU for communication. Those registers are mapped to **[0x2000 - 0x2007]** CPU memory map (and mirrored every 8 bytes through the region of **[0x2008 .. 0x3FFF]**)
 
  <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="70%"/></div>
@@ -9,7 +9,7 @@ To be precise, PPU has its own bus used to communicate with RAM and cartridge CH
 2 registers are responsible for accessing PPU memory map:
 * Address (0x2006) & Data (0x2006) - provide access to the memory map available for PPU
 
-3 registers controlls internal memory that keeps the state of sprites
+3 registers control internal memory(OAM) that keeps the state of sprites
 * OAM Address (0x2003) & OAM Data (0x2004)  - Object Attribute Memory - the space responsible for sprites
 * Direct Memory Access (0x4014) - for fast copying of 256 bytes from CPU RAM to OAM 
 
@@ -60,7 +60,7 @@ Where
 * and **oam_data** - internal memory to keep state of sprites.
 
 
-mirroring and chr_rom are specific to each game, and provided by a cartridge
+mirroring and chr_rom are specific to each game and provided by a cartridge
 
 ```rust
 impl NesPPU {
@@ -78,11 +78,11 @@ impl NesPPU {
 
 ## Emulating PPU memory access: Address and Data registers
 
-Lets try to emulate two the most complex registers: Address (**0x2006**) and Data(**0x2007**)
+Let's try to emulate two the most complex registers: Address (**0x2006**) and Data(**0x2007**)
 
 There are multiple caveats in the way the CPU can access PPU RAM. Say, CPU wants to access mem cell at 0x0600 PPU memory space:
 
-1) It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1 byte register:<br/><br/> 
+1) It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1-byte register:<br/><br/> 
 
 ```bash
  LDA #$06
@@ -98,7 +98,7 @@ Note: it **doesn't** follow *little-endian* notation.
 LDA $2007
 ```
 
-> Because CHR ROM and RAM are considered external devices to PPU, PPU can't return the value right away. PPU has to fetch the data and keep it in internal buffer.<br/> 
+> Because CHR ROM and RAM are considered external devices to PPU, PPU can't return the value immediately. PPU has to fetch the data and keep it in internal buffer.<br/> 
 > The first read from 0x2007 would return the content of this internal buffer filled during the previous load operation. From the CPU perspective, this is a dummy read. 
 
 3) CPU has to read from 0x2007 one more time to finally get the value from the PPUs internal buffer. 
@@ -287,7 +287,7 @@ impl NesPPU {
 ```
 
 
-We can emulate this internal buffer behavior for RAM and ROM by using temporary field that holds a value from a previous read request:
+We can emulate this internal buffer behavior for RAM and ROM by using a temporary field to hold a value from a previous read request:
 
 ```rust
 

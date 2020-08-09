@@ -9,9 +9,9 @@ They cover pretty much every aspect, including quirks and famous bugs that were 
 We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles. 
 
 The iNES file of the test is located here: [nestest.nes](http://nickmass.com/images/nestest.nes)
-An execution log accompanies the test, that shows how the execution should look like: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
+An execution log accompanies the test, showing how the execution should look like: [nestest.log](https://www.qmtpro.com/~nes/misc/nestest.log)
 
-Next goal is to generate similar execution log for the CPU while its running a program.
+The next goal is to generate a similar execution log for the CPU while running a program.
 
  <div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
 
@@ -19,8 +19,8 @@ Next goal is to generate similar execution log for the CPU while its running a p
 For now, we can ignore the last column and focus on the first five. 
 
 The fourth column ```@ 80 = 0200 = 00``` is somewhat interesting. 
-* The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode and the offset is defined by register X 
-* The second number is a 2-byte target address that was fetched from **[0x80 .. 0x81]**. In this case it's [*0x00*, *0x02*]
+* The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode, and the offset is defined by register X 
+* The second number is a 2-byte target address fetched from **[0x80 .. 0x81]**. In this case it's [*0x00*, *0x02*]
 * The third number is content of address cell 0x0200
 
 We already have a place to intercept CPU execution: 
@@ -157,7 +157,7 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
 
 I.e., everything that our emulator has produced should exactly match the golden standard, up to line **0xC6BC**. If anything is off before the line, we have a mistake in our CPU implementation. And it needs to be fixed.
 
-But that doesn't explain why our program terminated and why we didn't get the perfect match after the line **0xC6BC**. 
+But that doesn't explain why our program got terminated. Why didn't we get the perfect match after the line **0xC6BC**?
 
 The program has failed at 
 ```bash 
@@ -177,13 +177,13 @@ The specs can be found here:
 
 Remember how to draw an owl? ) 
 
-The testing ROM should drive your progress. In the end, the CPU should support 256 instructions. Considering that 1 byte is  for the operation code, we've exhausted all possible values. 
+The testing ROM should drive your progress. In the end, the CPU should support 256 instructions. Considering that 1 byte is for the operation code, we've exhausted all possible values. 
 
 Finally, the first mismatch should happen on this line:
 ```bash
 C68B  8D 15 40  STA $4015 = FF                  A:02 X:FF Y:15 P:25 SP:FB
 ```
-almost at the very end of the nes test log file. 
+almost at the very end of the NES test log file. 
 
 That's a good sign. 4015 is a memory map for the APU register. And we don't have that implemented yet. 
 

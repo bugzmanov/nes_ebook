@@ -12,10 +12,10 @@ From a high-level perspective, this means two things:
 - PPU is done rendering the current frame
 - CPU can safely access PPU memory to update the state for the next frame.
 
-> The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and would cause noticeable graphic glitches on a screen. 
+> The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and cause noticeable graphic glitches. 
 
-Unlike other interrupts, CPU can't ignore the NMI. And the **Disable Interrupt** flag in the **Status register P** has no effect on the way the CPU attends to it.
-The CPU however, might instruct PPU to not trigger NMI by resetting 7th bit in the PPU Control register. 
+Unlike other interrupts, CPU can't ignore the NMI. And the **Disable Interrupt** flag in the **Status register P** has no effect on how the CPU attends to it.
+The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit in the PPU Control register. 
 
 ## Clock cycles
 
@@ -204,10 +204,29 @@ Interrupt handler would have to call RTI operation at the end to finish interrup
    }
 ```
 
-//TODO: interrupt after updating control!
+In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met: 
+* PPU is VBLANK state
+* "Generate NMI" bit in the controll Register is updated from 0 to 1.
 
+```rust
+impl PPU for NesPPU {
+// ...    
+    fn write_to_ctrl(&mut self, value: u8) {
+        let before_nmi_status = self.ctrl.generate_vblank_nmi();
+        self.ctrl.update(value);
+        if !before_nmi_status && self.ctrl.generate_vblank_nmi() && self.status.is_in_vblank() {
+            self.nmi_interrupt = Some(1);
+        }
+    }
+//..
+}
+```
 
-//TODO: break interrupts
+# Other CPU interrupts
+
+In our CPU implementation, we've implemented opcode **0x00** just as a return from CPU fetch-decode-execute cycle, but in reallity it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.
+
+NESDEV Wiki provides all neccessary details about [CPU interrupts](https://wiki.nesdev.com/w/index.php/CPU_interrupts). 
 
 <br/>
 
