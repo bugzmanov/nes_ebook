@@ -155,7 +155,7 @@
 <p>This is somewhat cryptic and isn't designed to be read by humans. But we can more easily decipher what's going on if we represent the program in <a href="https://en.wikipedia.org/wiki/Assembly_language">assembly code</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_1_assembler.png" width="40%"/></div>
 <p>Now it's more readable: it consists of 4 instructions, and the first instruction has a parameter.</p>
-<p>Let's interpret what's going on using the opcode specification from <a href="http://www.obelisk.me.uk/6502/reference.htm">6502 Instruction Reference</a></p>
+<p>Let's interpret what's going on using the opcode specification from <a href="http://www.obelisk.me.uk/6502/reference.html">6502 Instruction Reference</a></p>
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 <p>It looks like that the command loads a hexadecimal value 0xC0 into the accumulator CPU register. And it also has to update some bits in Processor Status register P (namely, bit 1 - Zero Flag and bit 7 - Negative Flag). </p>
 <blockquote>
