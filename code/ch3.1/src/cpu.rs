@@ -27,9 +27,9 @@ impl CPU {
 
     fn update_zero_and_negative_flags(&mut self, result: u8) {
         if result == 0 {
-            self.status = self.status | 0b0000_0001;
+            self.status = self.status | 0b0000_0010;
         } else {
-            self.status = self.status & 0b1111_1110;
+            self.status = self.status & 0b1111_1101;
         }
 
         if result & 0b1000_0000 != 0 {
@@ -80,8 +80,23 @@ mod test {
         let mut cpu = CPU::new();
         cpu.interpret(vec![0xa9, 0x05, 0x00]);
         assert_eq!(cpu.register_a, 5);
-        assert!(cpu.status & 0b0000_0001 == 0);
+        assert!(cpu.status & 0b0000_0010 == 0);
         assert!(cpu.status & 0b1000_0000 == 0);
+    }
+
+    #[test]
+    fn test_0xa9_lda_zero_flag() {
+        let mut cpu = CPU::new();
+        cpu.interpret(vec![0xa9, 0x00, 0x00]);
+        assert!(cpu.status & 0b0000_0010 == 0b10);
+    }
+    
+    #[test]
+    fn test_0xa9_lda_negative_flag() {
+        let mut cpu = CPU::new();
+        cpu.interpret(vec![0xa9, 0xff, 0x00]);
+        assert!(cpu.status & 0b1000_0000 == 0b1000_0000);
+
     }
 
     #[test]
