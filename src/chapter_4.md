@@ -7,45 +7,45 @@ CPU gets access to memory (including memory-mapped spaces) using three buses:
 * control bus notifies if it's a read or write access
 * data bus carries the byte of data being read or written
 
-The bus itself is not a device; it's a wiring between platform components. 
-And we don't need to implement it as an independent module as rust allows us to wire components directly. 
-However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner. 
+A bus itself is not a device; it's a wiring between platform components.
+Therefor, we don't need to implement it as an independent module as Rust allows us to "wire" the components directly.
+However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner.
 
  <div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
 
-In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions. 
+In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions.
 
-By introducing Bus module, we can have a single place for:
+By introducing a Bus module, we can have a single place for:
 * Intra device communication:
     * Data reads/writes
     * Routing hardware interrupts to CPU (more on this later)
 * Handling memory mappings
 * Coordinating PPU and CPU clock cycles (more on this later)
 
-The good news is that we don't need to write full-blown emulation of data, control, and address buses. Because it's not a hardware chip, no logic expects any specific behavior from the BUS. So we can just codify coordination and signal routing. 
+The good news is that we don't need to write a full-blown emulation of data, control, and address buses. Because it's not a hardware chip, no logic expects any specific behavior from the BUS. So we can just codify coordination and signal routing.
 
 For now, we can implement the bare bones of it:
 * Access to CPU RAM
-* Mirroring 
+* Mirroring
 
-Mirroring is a side-effect of NES trying to keep things as cheap as possible. It can be seen as an address space being mapped to another address space. 
+Mirroring is a side-effect of NES trying to keep things as cheap as possible. It can be seen as an address space being mapped to another address space.
 
 For instance, on a CPU memory map RAM address space **[0x000 .. 0x0800]** (2 KiB) is mirrored three times:
 * **[0x800 .. 0x1000]**
 * **[0x1000 .. 0x1800]**
 * **[0x1800 .. 0x2000]**
 
-This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes. 
+This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes.
 
-The reason for mirroring is in the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.
+The reason for mirroring is the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.
 
 
  <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 
-CPU however has **[0x0000 - 0x2000]** addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM. 
-Another way of saying this, when CPU is requesting address at **0b0001_1111_1111_1111** (13 bits) the RAM chip would receive only **0b11_1111_1111** (11 bits) via the address bus. 
+CPU however has **[0x0000 - 0x2000]** addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM.
+Another way of saying this, when CPU is requesting address at **0b0001_1111_1111_1111** (13 bits) the RAM chip would receive only **0b11_1111_1111** (11 bits) via the address bus.
 
-So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior. 
+So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior.
 
 Long story short, the BUS needs to zero out the highest 2 bits if it receives a request in the range of **[0x0000 … 0x2000]**
 
@@ -57,7 +57,7 @@ So let's introduce a new module Bus, that will have direct access to RAM.
 pub struct Bus {
    cpu_vram: [u8; 2048]
 }
- 
+
 impl Bus {
    pub fn new() -> Self{
        Bus {
@@ -67,14 +67,14 @@ impl Bus {
 }
 ```
 
-And it would provide read/write access:
+The bus will also provide read/write access:
 
 ```rust
 const RAM: u16 = 0x0000;
 const RAM_MIRRORS_END: u16 = 0x1FFF;
 const PPU_REGISTERS: u16 = 0x2000;
 const PPU_REGISTERS_MIRRORS_END: u16 = 0x3FFF;
- 
+
 impl Mem for Bus {
    fn mem_read(&self, addr: u16) -> u8 {
        match addr {
@@ -92,7 +92,7 @@ impl Mem for Bus {
            }
        }
    }
- 
+
    fn mem_write(&mut self, addr: u16, data: u8) {
        match addr {
            RAM ..= RAM_MIRRORS_END => {
@@ -123,13 +123,13 @@ pub struct CPU {
    pub stack_pointer: u8,
    pub bus: Bus,
 }
- 
- 
+
+
 impl Mem for CPU {
    fn mem_read(&self, addr: u16) -> u8 {
        self.bus.mem_read(addr)
    }
- 
+
    fn mem_write(&mut self, addr: u16, data: u8) {
        self.bus.mem_write(addr, data)
    }
