@@ -1,5 +1,6 @@
 <div style="text-align:center"><img src="./images/intro.png" width="50%"/></div>
 
+
 # Why NES?
 
 The [NES](https://en.wikipedia.org/wiki/Nintendo_Entertainment_System) (Nintendo Entertainment System) was one of the most popular gaming platforms throughout the 80s and the 90s. The platform and the emergent ecosystem was and still is a huge cultural phenomenon. The device itself had relatively simple hardware (judging from the modern days), and it's incredible how much was made out of it.
@@ -39,6 +40,10 @@ It's also assumed that the reader has a basic understanding of bit arithmetic, b
 4. [I.Am.Error](https://www.goodreads.com/book/show/23461364-i-am-error) - a book full of histories of the Nintendo Entertainment System platform
 5. [The Elements of Computing Systems](https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems) - everything you need to know about computer systems, how to build Tetris starting from logic gates.
 
+
+
 -------
 
 Created by [@bugzmanov](http://twitter.com/bugzmanov), 2020
+
+<em> Special thanks to [Spencer Burris](https://github.com/sburris0) and [Kirill Gusakov](https://github.com/kgusakov/) for reviews, edits and helpfull suggestions! </em>
