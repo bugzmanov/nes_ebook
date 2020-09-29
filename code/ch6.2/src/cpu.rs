@@ -1209,7 +1209,7 @@ mod test {
         let mut cpu = CPU::new(bus);
         cpu.load_and_run(vec![0xa9, 0x05, 0x00]);
         assert_eq!(cpu.register_a, 5);
-        assert!(cpu.status.bits() & 0b0000_0001 == 0);
+        assert!(cpu.status.bits() & 0b0000_0010 == 0b00);
         assert!(cpu.status.bits() & 0b1000_0000 == 0);
     }
 

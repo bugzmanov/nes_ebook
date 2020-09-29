@@ -171,9 +171,9 @@ impl CPU {
                 self.register_x = self.register_a;
             
                 if result == 0 {
-                    self.status = self.status | 0b0000_0001;
+                    self.status = self.status | 0b0000_0010;
                 } else {
-                    self.status = self.status & 0b1111_1110;
+                    self.status = self.status & 0b1111_1101;
                 }
 
                 if result & 0b1000_0000 != 0 {
