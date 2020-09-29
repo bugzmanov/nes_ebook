@@ -149,29 +149,29 @@
                     <main>
                         <h1><a class="header" href="#emulating-interrupts" id="emulating-interrupts">Emulating Interrupts</a></h1>
 <p>Interrupts are the mechanism for the CPU to break the sequential execution flow and react to events that require immediate attention (&quot;attend to an interrupt&quot;).</p>
-<p>We've already implemented one of the supported interrupts - RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and the CPU needs to execute the reset subroutine.</p>
+<p>We've already implemented one of the supported interrupts - the RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and the CPU needs to execute the reset subroutine.</p>
 <div style="text-align:center"><img src="./images/ch6.2/image_4_broadcast_interrupted.png" width="30%"/></div>
-<p>PPU communicates that it's entering the VBLANK phase for the frame via another interrupt signal - NMI (Non-Maskable Interrupt). 
+<p>PPU communicates that it's entering the VBLANK phase for the frame via another interrupt signal - NMI (Non-Maskable Interrupt).
 From a high-level perspective, this means two things:</p>
 <ul>
 <li>PPU is done rendering the current frame</li>
 <li>CPU can safely access PPU memory to update the state for the next frame.</li>
 </ul>
 <blockquote>
-<p>The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and cause noticeable graphic glitches. </p>
+<p>The reason why VBLANK phase is unique is that while PPU is rendering visible scan lines, it's constantly using internal buffers and memory. External access to IO registers can corrupt data in those buffers and cause noticeable graphic glitches.</p>
 </blockquote>
 <p>Unlike other interrupts, CPU can't ignore the NMI. And the <strong>Disable Interrupt</strong> flag in the <strong>Status register P</strong> has no effect on how the CPU attends to it.
-The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit in the PPU Control register. </p>
+The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit in the PPU Control register.</p>
 <h2><a class="header" href="#clock-cycles" id="clock-cycles">Clock cycles</a></h2>
 <p>The NMI interrupt is tightly connected to PPU clock cycles:</p>
 <ul>
-<li>the PPU renders 262 scan lines per frame. </li>
-<li>each scanline lasts for 341 PPU clock cycles </li>
+<li>the PPU renders 262 scan lines per frame</li>
+<li>each scanline lasts for 341 PPU clock cycles</li>
 <li>upon entering scanline 241, PPU triggers NMI interrupt</li>
 <li>PPU clock cycles are 3 times faster than CPU clock cycles</li>
 </ul>
 <p>Nothing beats NESDev wiki in providing <a href="http://wiki.nesdev.com/w/index.php/PPU_rendering#Line-by-line_timing">details on line-by-line timing</a></p>
-<p>But to simplify, </p>
+<p>But to simplify,</p>
 <ul>
 <li>each PPU frame takes <code>341*262=89342 PPU clocks cycles</code></li>
 <li>CPU is guaranteed to receive NMI every interrupt <code>~29780 CPU cycles</code></li>
@@ -179,21 +179,21 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <blockquote>
 <p><strong>NOTE:</strong> PPU Cycles and CPU Cycles are not the same things</p>
 </blockquote>
-<p>On the NES Platform, all components were running independently in parallel. This makes NES a distributed system. The coordination hast to be carefully designed by game developers based on timing specs of the instructions. I can only imagine how tedious this manual process is. </p>
+<p>On the NES Platform, all components were running independently in parallel. This makes NES a distributed system. The coordination hast to be carefully designed by game developers based on timing specs of the instructions. I can only imagine how tedious this manual process is.</p>
 <p>The emulator can take multiple approaches to simulate this behavior:</p>
 <ol>
 <li>
-<p>Allocate a thread per component and simulate proper timing for each instruction. I don't know any emulator that does that. Simulating proper timing is a hell of a task. Second, this approach requires allocating more hardware resources than needed for the job (PPU, CPU, and APU would require 3 threads, and potentially would occupy 3 cores on the host machine)</p>
+<p>Allocate a thread per component and simulate proper timing for each instruction. I don't know of any emulator that does that. Simulating proper timing is a hell of a task. Second, this approach requires allocating more hardware resources than needed for the job (PPU, CPU, and APU would require 3 threads, and potentially would occupy 3 cores on the host machine)</p>
 </li>
 <li>
-<p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime. </p>
+<p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime.</p>
 </li>
 <li>
 <p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">&quot;catch-up&quot;</a> <br/> <br/>For example, CPU takes 2 cycles to execute &quot;LDA #$01&quot; (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
 </li>
 </ol>
-<p>Because we already have CPU loop mostly spec'd out, the third approach would be the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>
-<p>So the flow would look like this: </p>
+<p>Because we already have CPU loop mostly spec'd out, the third approach is the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>
+<p>So the flow would look like this:</p>
 <div style="text-align:center"><img src="./images/ch6.2/image_1_tick_flow.png" width="60%"/></div>
 <p>Starting from the CPU:</p>
 <pre><pre class="playpen"><code class="language-rust">
@@ -208,12 +208,12 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
        loop {
         // …
            self.bus.tick(opcode.cycles);
- 
+
            if program_counter_state == self.program_counter {
                self.program_counter += (opcode.len - 1) as u16;
            }
    }
- 
+
    }
 }
 
@@ -227,14 +227,14 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
    cpu_vram: [u8; 2048],
    prg_rom: Vec&lt;u8&gt;,
    ppu: NesPPU,
- 
+
    cycles: usize,
 }
- 
+
 impl Bus {
    pub fn new(rom: Rom) -&gt; Self {
        let ppu = NesPPU::new(rom.chr_rom, rom.screen_mirroring);
- 
+
        Bus {
            cpu_vram: [0; 2048],
            prg_rom: rom.prg_rom,
@@ -258,9 +258,9 @@ impl Bus {
    scanline: u16,
    cycles: usize,
 }
- 
- 
- 
+
+
+
 impl NesPPU {
 // …
    pub fn tick(&amp;mut self, cycles: u8) -&gt; bool {
@@ -268,14 +268,14 @@ impl NesPPU {
        if self.cycles &gt;= 341 {
            self.cycles = self.cycles - 341;
            self.scanline += 1;
- 
+
            if self.scanline == 241 {
                if self.ctrl.generate_vblank_nmi() {
                    self.status.set_vblank_status(true);
                    todo!(&quot;Should trigger NMI interrupt&quot;)
                }
            }
- 
+
            if self.scanline &gt;= 262 {
                self.scanline = 0;
                self.status.reset_vblank_status();
@@ -288,18 +288,18 @@ impl NesPPU {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>Some crucial details are still missing: some of the CPU operations take variable clock time depending on the execution flow. 
+<p>Some crucial details are still missing: some of the CPU operations take variable clock time depending on the execution flow.
 For example, conditional branch operations (like BNE) take an additional CPU cycle if the comparison is successful. And yet another CPU cycle if the JUMP would result in program counter to be on another memory page</p>
 <blockquote>
 <p>Memory page size is 256 bytes. For example, the range [0x0000 .. 0x00FF]- belongs to page 0, [0x0100 .. 0x01FF] belongs to page 1, etc.
-It's enough to compare the upper byte of the addresses to see if they are on the same page. </p>
+It's enough to compare the upper byte of the addresses to see if they are on the same page.</p>
 </blockquote>
-<p>I leave it up to the reader to figure out how to codify those additional ticks that may or may not happen. </p>
+<p>I leave it up to the reader to figure out how to codify those additional ticks that may or may not happen.</p>
 <h1><a class="header" href="#interrupts" id="interrupts">Interrupts</a></h1>
 <p>So far our dependency graph looks one-directional:</p>
 <div style="text-align:center"><img src="./images/ch6.2/image_2_components_dag.png" width="60%"/></div>
-<p>The problem is that we want to deliver signals from PPU to CPU and Rust doesn't really allow to have dependency cycles easily. </p>
-<p>One way to overcome this is to replace the push model with pull. The CPU can ask if there are interrupts ready at the beginning of the interpret cycle. </p>
+<p>The problem is that we want to deliver signals from PPU to CPU and Rust doesn't really allow to have dependency cycles easily.</p>
+<p>One way to overcome this is to replace the push model with pull. The CPU can ask if there are interrupts ready at the beginning of the interpret cycle.</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -313,7 +313,7 @@ It's enough to compare the upper byte of the addresses to see if they are on the
        loop {
            if let Some(_nmi) = self.bus.poll_nmi_status() {
                self.interrupt_nmi();
-           } 
+           }
            // …
        }
     }
@@ -323,14 +323,14 @@ It's enough to compare the upper byte of the addresses to see if they are on the
 <p>The final piece is to implement interrupt behavior.
 Upon receiving an interrupt signal the CPU:</p>
 <ol>
-<li>finishes execution of current instruction</li>
-<li>Stores Program Counter and Status flag to the stack</li>
+<li>Finishes execution of the current instruction</li>
+<li>Stores Program Counter and Status flag on the stack</li>
 <li>Disables Interrupts by setting <strong>Disable Interrupt</strong> flag in the status register P</li>
 <li>Loads the Address of Interrupt handler routine from 0xFFFA (for NMI)</li>
 <li>Sets <strong>Program Counter</strong> register pointing to that address</li>
 </ol>
 <div style="text-align:center"><img src="./images/ch6.2/image_3_interrupt_mem.png" width="40%"/></div>
-<p>Interrupt handler would have to call RTI operation at the end to finish interrupt attendance. That would restore Status Flag and Program Counter position from the stack. Effectively going back to the execution flow where it was left off. </p>
+<p>Interrupt handler would have to call RTI operation at the end to finish interrupt attendance. That would restore Status Flag and Program Counter position from the stack. Effectively going back to the execution flow where it was left off.</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -339,16 +339,16 @@ Upon receiving an interrupt signal the CPU:</p>
        let mut flag = self.status.clone();
        flag.set(CpuFlags::BREAK, 0);
        flag.set(CpuFlags::BREAK2, 1);
- 
+
        self.stack_push(flag.bits);
        self.status.insert(CpuFlags::INTERRUPT_DISABLE);
- 
+
        self.bus.tick(2);
        self.program_counter = self.mem_read_u16(0xfffA);
    }
 <span class="boring">}
 </span></code></pre></pre>
-<p>In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met: </p>
+<p>In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met:</p>
 <ul>
 <li>PPU is VBLANK state</li>
 <li>&quot;Generate NMI&quot; bit in the controll Register is updated from 0 to 1.</li>
@@ -370,8 +370,8 @@ Upon receiving an interrupt signal the CPU:</p>
 <span class="boring">}
 </span></code></pre></pre>
 <h1><a class="header" href="#other-cpu-interrupts" id="other-cpu-interrupts">Other CPU interrupts</a></h1>
-<p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> just as a return from CPU fetch-decode-execute cycle, but in reallity it should trigger BRK interrupt. This is so-called &quot;software interrupt&quot; that a game code can trigger programmatically in response to events.</p>
-<p>NESDEV Wiki provides all neccessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>. </p>
+<p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called &quot;software interrupt&quot; that a game code can trigger programmatically in response to events.</p>
+<p>NESDEV Wiki provides all neccessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>.</p>
 <br/>
 <hr />
 <blockquote>

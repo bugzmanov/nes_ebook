@@ -149,12 +149,12 @@
                     <main>
                         <h1><a class="header" href="#cartridges" id="cartridges">Cartridges</a></h1>
 <div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
-<p>The first version of the cartridges was relatively simple. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics. </p>
-<p>Upon insertion into the console, PRG ROM got connected to CPU, and CHR ROM got connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM directly, and PPU wasn't able to access PRG ROM. </p>
+<p>The first version of the cartridges was relatively simple. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics.</p>
+<p>Upon insertion into the console, PRG ROM gets connected to CPU, and CHR ROM gets connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM directly, and PPU wasn't able to access PRG ROM.</p>
 <blockquote>
-<p>Later versions of cartridges had additional hardware: </p>
+<p>Later versions of cartridges had additional hardware:</p>
 <ul>
-<li>mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM </li>
+<li>mappers to provide access to extended ROM memory: both CHR ROM and PRG ROM</li>
 <li>extra RAM (with a battery) to save and restore a game state</li>
 </ul>
 </blockquote>
@@ -164,7 +164,7 @@
 <p>The file contains 3-4 sections:</p>
 <ul>
 <li>16-byte header</li>
-<li>optional 512 of so-called Trainer, a data created by Famicom copiers to keep their own mapping. We can skip this section if it is present.</li>
+<li>optional 512 bytes of the so-called Trainer, a data section created by Famicom copiers to keep their own mapping. We can skip this section if it is present.</li>
 <li>Section containing PRG ROM code</li>
 <li>Section containing CHR ROM data</li>
 </ul>
@@ -183,10 +183,10 @@ We won't cover and support the iNES 2.0 format as it's not very popular. But you
 <li>Mapper type</li>
 <li>Mirroring type: Horizontal, Vertical, 4 Screen</li>
 </ul>
-<p>Mirroring will be extensively covered in the following PPU chapters. 
-For now, we need to figure out which mirroring type the game is using. </p>
-<p>We would support only the iNES 1.0 format and mapper 0. </p>
-<p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is. </p>
+<p>Mirroring will be extensively covered in the following PPU chapters.
+For now, we need to figure out which mirroring type the game is using.</p>
+<p>We would support only the iNES 1.0 format and mapper 0.</p>
+<p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is.</p>
 <p>Let's define cartridge Rom data structure:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -197,7 +197,7 @@ pub enum Mirroring {
    HORIZONTAL,
    FOUR_SCREEN,
 }
- 
+
 pub struct Rom {
    pub prg_rom: Vec&lt;u8&gt;,
    pub chr_rom: Vec&lt;u8&gt;,
@@ -216,14 +216,14 @@ pub struct Rom {
        if &amp;raw[0..4] != NES_TAG {
            return Err(&quot;File is not in iNES file format&quot;.to_string());
        }
- 
+
        let mapper = (raw[7] &amp; 0b1111_0000) | (raw[6] &gt;&gt; 4);
- 
+
        let ines_ver = (raw[7] &gt;&gt; 2) &amp; 0b11;
        if ines_ver != 0 {
            return Err(&quot;NES2.0 format is not supported&quot;.to_string());
        }
- 
+
        let four_screen = raw[6] &amp; 0b1000 != 0;
        let vertical_mirroring = raw[6] &amp; 0b1 != 0;
        let screen_mirroring = match (four_screen, vertical_mirroring) {
@@ -231,15 +231,15 @@ pub struct Rom {
            (false, true) =&gt; Mirroring::VERTICAL,
            (false, false) =&gt; Mirroring::HORIZONTAL,
        };
- 
+
        let prg_rom_size = raw[4] as usize * PRG_ROM_PAGE_SIZE;
        let chr_rom_size = raw[5] as usize * CHR_ROM_PAGE_SIZE;
- 
+
        let skip_trainer = raw[6] &amp; 0b100 != 0;
- 
+
        let prg_rom_start = 16 + if skip_trainer { 512 } else { 0 };
        let chr_rom_start = prg_rom_start + prg_rom_size;
- 
+
        Ok(Rom {
            prg_rom: raw[prg_rom_start..(prg_rom_start + prg_rom_size)].to_vec(),
            chr_rom: raw[chr_rom_start..(chr_rom_start + chr_rom_size)].to_vec(),
@@ -251,7 +251,7 @@ pub struct Rom {
 
 <span class="boring">}
 </span></code></pre></pre>
-<p>As always, don't forget the tests!</p>
+<p>As always, don't forget to test!</p>
 <p>Next, connect Rom to the BUS:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -260,7 +260,7 @@ pub struct Rom {
    cpu_vram: [u8; 2048],
    rom: Rom,
 }
- 
+
 impl Bus {
    pub fn new(rom: Rom) -&gt; Self {
        Bus {
@@ -272,9 +272,9 @@ impl Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>And finally, we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG ROM space. </p>
+<p>And finally, we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG ROM space.</p>
 <p>One caveat: PRG Rom Size might be 16 KiB or 32 KiB.
-Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of addressable space, upper 16 KiB needs to be mapped to lower 16 KiB (if a game has only 16 KiB of PRG ROM)</p>
+Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of addressable space, the upper 16 KiB needs to be mapped to the lower 16 KiB (if a game has only 16 KiB of PRG ROM)</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -285,7 +285,7 @@ Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of address
            0x8000..=0xFFFF =&gt; self.read_prg_rom(addr),
        }
    }
- 
+
    fn mem_write(&amp;mut self, addr: u16, data: u8) {
        match addr {
            //...
@@ -298,7 +298,7 @@ Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of address
 
 impl Bus {
   // ...
- 
+
    fn read_prg_rom(&amp;self, mut addr: u16) -&gt; u8 {
        addr -= 0x8000;
        if self.rom.prg_rom.len() == 0x4000 &amp;&amp; addr &gt;= 0x4000 {
@@ -310,9 +310,9 @@ impl Bus {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">github</a>.</p>
-<p>You would need to modify the <code>main</code> method to load binary from a file.</p>
-<p>Spoiler alert: it's a modification of a snake game with more funk in physics. The game expects the same memory map for the input device, screen output, and random number generator. </p>
+<p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">Github</a>.</p>
+<p>You will need to modify the <code>main</code> method to load binary from a file.</p>
+<p>Spoiler alert: it's a modification of a snake game with funkier physics. The game expects the same memory map for the input device, screen output, and random number generator.</p>
 <br/>
 <hr />
 <blockquote>

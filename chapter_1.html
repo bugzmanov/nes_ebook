@@ -149,37 +149,38 @@
                     <main>
                         <div style="text-align:center"><img src="./images/intro.png" width="50%"/></div>
 <h1><a class="header" href="#why-nes" id="why-nes">Why NES?</a></h1>
-<p>NES was one of the most popular gaming platforms through the 80ies and the 90ies. The platform and the emergent ecosystem was and still is a huge cultural phenomenon. The device itself had relatively simple hardware  (judging from the modern days), and it's incredible how much was made out of it. </p>
-<p>This series is about creating an emulator capable of running and playing first-gen NES games, like </p>
+<p>The <a href="https://en.wikipedia.org/wiki/Nintendo_Entertainment_System">NES</a> (Nintendo Entertainment System) was one of the most popular gaming platforms throughout the 80s and the 90s. The platform and the emergent ecosystem was and still is a huge cultural phenomenon. The device itself had relatively simple hardware (judging from the modern days), and it's incredible how much was made out of it.</p>
+<p>This series is about creating an emulator capable of running and playing first-gen NES games, such as:</p>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Pac-Man">PacMan</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Donkey_Kong">Donkey Kong</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Ice_Climber">Ice Climber</a></li>
 <li><a href="https://en.wikipedia.org/wiki/Super_Mario_Bros">Super Mario Bros</a></li>
-<li>etc</li>
+<li>etc.</li>
 </ul>
-<p>We would go with incremental updates, with potentially enjoyable milestones, gradually building a fully capable platform. One of the problems in writing an emulator is that you can't get any feedback until the end. Until the whole thing is done, and that's no fun. I've tried to break the entire exercise into small pieces with visible and playable goals. After all, it's all about having a good time. </p>
+<p>We would go with incremental updates, with potentially enjoyable milestones, gradually building a fully capable platform. One of the problems with writing an emulator is that you don't get any feedback until the very end when the whole thing is done, and that's no fun. I've tried to break the entire exercise into small pieces with visible and playable goals. After all, it's all about having a good time.</p>
 <h1><a class="header" href="#why-rust" id="why-rust">Why Rust?</a></h1>
-<p>Rust is a modern language with modern expressing capabilities and impressive performance characteristics. </p>
+<p>Rust is a modern language with modern expression capabilities and impressive performance characteristics.</p>
 <blockquote>
-<p>For an overview of the language I recommend watching <a href="https://www.youtube.com/watch?v=DnT-LUQgc7s">&quot;Consider Rust&quot;</a> presentation by Jon Gjengse</p>
+<p>For an overview of the language, I recommend watching <a href="https://www.youtube.com/watch?v=DnT-LUQgc7s">&quot;Consider Rust&quot;</a> presentation by Jon Gjengse.</p>
 </blockquote>
-<p>The language allows us to go as low-level as needed in terms of hardware and memory management, which looks like a good fit for the problem of hardware simulation. For example, NES has a Central Processing Unit (CPU), and the majority of supported operations are dealing with unsigned 8bit arithmetic and bits manipulation. Rust provides excellent capabilities for working with signed and unsigned numbers of different sizes without any overhead. And Rust ecosystem offers a plethora of libraries that make working on bit-level data as convenient as it gets. </p>
-<p>The goal is to play NES games on the hardware we have, meaning we have to simulate NES hardware. That alone implies that we are introducing significant performance overhead in comparison to running native applications. 
-By choosing rust, we hope to get some additional performance budget for our needs. NES hardware specs are pretty modest in today's standards. For example, the NES CPU is about 3000 times slower than modern CPUs. Emulating that in any language should not be a problem. Some folks were able to get playable performance on an emulator written in python. But it is still nice to have extra power for free. </p>
+<p>The Rust programming language allows us to go as low-level as needed in terms of hardware and memory management, which is a good fit for the problem of hardware simulation. For example, NES has a Central Processing Unit (CPU), and the majority of supported operations are dealing with unsigned 8-bit arithmetic and bit manipulation. Rust provides excellent capabilities for working with signed and unsigned numbers of different sizes without any overhead. In addition, the Rust ecosystem offers a plethora of libraries that make working on bit-level data as convenient as it gets.</p>
+<p>The goal is to play NES games on the hardware that we have, meaning we have to simulate NES hardware. The process of simulation alone means that we are introducing significant performance overhead in comparison to running native applications.
+By choosing rust, we hope to get some additional performance budget for our needs. NES hardware specs are pretty modest by today's standards. For example, the NES CPU is about 3000 times slower than modern CPUs. Emulating that in any language should not be a problem. Some folks were able to get playable performance on an emulator written in Python. But it is still nice to have extra power for free.</p>
 <h1><a class="header" href="#prerequisites" id="prerequisites">Prerequisites</a></h1>
-<p>I expect the reader to have a basic knowledge of Rust language, understanding primary language constructs, and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
-<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and hexadecimal numbering systems work. Again NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required. </p>
+<p>I expect the reader to have basic knowledge of the Rust language and understanding primary language constructs and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
+<p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and hexadecimal numbering systems work. Again, NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required.</p>
 <h1><a class="header" href="#references" id="references">References</a></h1>
 <ol>
 <li><a href="http://wiki.nesdev.com/w/index.php/Nesdev_Wiki">Nesdev Wiki</a> - nothing would be possible without it. The one-stop-shop.</li>
 <li><a href="http://nesdev.com/NESDoc.pdf">Nintendo Entertainment System Documentation</a> - a short tutorial that covers pretty much everything about NES</li>
 <li><a href="https://nerdy-nights.nes.science/">Nintendo Age Nerdy Nights</a> - a series to help people write games for the NES</li>
 <li><a href="https://www.goodreads.com/book/show/23461364-i-am-error">I.Am.Error</a> - a book full of histories of the Nintendo Entertainment System platform</li>
-<li><a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">The Elements of Computing Systems</a> - everything you need to know about computer systems, how to build Tetris starting from logical gates. </li>
+<li><a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">The Elements of Computing Systems</a> - everything you need to know about computer systems, how to build Tetris starting from logic gates.</li>
 </ol>
 <hr />
 <p>Created by <a href="http://twitter.com/bugzmanov">@bugzmanov</a>, 2020</p>
+<p><em> Special thanks to <a href="https://github.com/sburris0">Spencer Burris</a> and <a href="https://github.com/kgusakov/">Kirill Gusakov</a> for reviews, edits and helpfull suggestions! </em></p>
 
                     </main>
 

@@ -148,22 +148,22 @@
                 <div id="content" class="content">
                     <main>
                         <h1><a class="header" href="#running-our-first-test-rom" id="running-our-first-test-rom">Running our first test ROM</a></h1>
-<p>NES dev community has created <a href="https://wiki.nesdev.com/w/index.php/Emulator_tests">large suites of tests</a> that can be used to check our emulator. </p>
-<p>They cover pretty much every aspect, including quirks and famous bugs that were embedded in the platform. </p>
+<p>The NES dev community has created <a href="https://wiki.nesdev.com/w/index.php/Emulator_tests">large suites of tests</a> that can be used to check our emulator.</p>
+<p>They cover pretty much every aspect of the console, including quirks and notable bugs that were embedded in the platform.</p>
 <div style="text-align:center"><img src="./images/ch5.1/image_1_i_am_error.png" width="40%"/></div>
-<p>We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles. </p>
+<p>We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles.</p>
 <p>The iNES file of the test is located here: <a href="http://nickmass.com/images/nestest.nes">nestest.nes</a>
-An execution log accompanies the test, showing how the execution should look like: <a href="https://www.qmtpro.com/%7Enes/misc/nestest.log">nestest.log</a></p>
+An execution log accompanies the test, showing what the execution should look like: <a href="https://www.qmtpro.com/%7Enes/misc/nestest.log">nestest.log</a></p>
 <p>The next goal is to generate a similar execution log for the CPU while running a program.</p>
 <div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
-<p>For now, we can ignore the last column and focus on the first five. </p>
-<p>The fourth column <code>@ 80 = 0200 = 00</code> is somewhat interesting. </p>
+<p>For now, we can ignore the last column and focus on the first five.</p>
+<p>The fourth column <code>@ 80 = 0200 = 00</code> is somewhat interesting.</p>
 <ul>
-<li>The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the &quot;Indirect X&quot; addressing mode, and the offset is defined by register X </li>
+<li>The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the &quot;Indirect X&quot; addressing mode, and the offset is defined by register X</li>
 <li>The second number is a 2-byte target address fetched from <strong>[0x80 .. 0x81]</strong>. In this case it's [<em>0x00</em>, <em>0x02</em>]</li>
 <li>The third number is content of address cell 0x0200</li>
 </ul>
-<p>We already have a place to intercept CPU execution: </p>
+<p>We already have a place to intercept CPU execution:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -175,7 +175,7 @@ An execution log accompanies the test, showing how the execution should look lik
        F: FnMut(&amp;mut CPU),
    {
        let ref opcodes: HashMap&lt;u8, &amp;'static opcodes::OpCode&gt; = *opcodes::OPCODES_MAP;
- 
+
        loop {
            callback(self);
  // ...
@@ -193,7 +193,7 @@ An execution log accompanies the test, showing how the execution should look lik
 }
 
 </code></pre></pre>
-<p>It's vital to get the execution log format precisely like the one used in the provided log.</p>
+<p>It's vital to get a execution log format precisely like the one used in the provided log.</p>
 <p>Following tests can help you to get it right:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
@@ -204,7 +204,7 @@ mod test {
    use super::*;
    use crate::bus::Bus;
    use crate::cartridge::test::test_rom;
- 
+
    #[test]
    fn test_format_trace() {
        let mut bus = Bus::new(test_rom());
@@ -213,7 +213,7 @@ mod test {
        bus.mem_write(102, 0xca);
        bus.mem_write(103, 0x88);
        bus.mem_write(104, 0x00);
- 
+
        let mut cpu = CPU::new(bus);
        cpu.program_counter = 0x64;
        cpu.register_a = 1;
@@ -236,22 +236,22 @@ mod test {
            result[2]
        );
    }
- 
+
    #[test]
    fn test_format_mem_access() {
        let mut bus = Bus::new(test_rom());
        // ORA ($33), Y
        bus.mem_write(100, 0x11);
        bus.mem_write(101, 0x33);
- 
- 
+
+
        //data
        bus.mem_write(0x33, 00);
        bus.mem_write(0x34, 04);
- 
+
        //target cell
        bus.mem_write(0x400, 0xAA);
- 
+
        let mut cpu = CPU::new(bus);
        cpu.program_counter = 0x64;
        cpu.register_y = 0;
@@ -265,10 +265,10 @@ mod test {
        );
    }
 }
- 
+
 <span class="boring">}
 </span></code></pre></pre>
-<p>Now it's time to compare our execution log with the golden standard.</p>
+<p>Now it's time to compare our execution log to the golden standard.</p>
 <pre><code class="language-bash">cargo run &gt; mynes.log
 diff -y mynes.log nestest.log
 </code></pre>
@@ -284,13 +284,13 @@ C6B5  D0 05     BNE $C6BC                       A:AA X:97 Y:4   C6B5  D0 05     
 C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        PLP                             A:AA X:97 Y:4
                                                               &gt; C6BD  04 A9    *NOP $A9 = 00                    A:AA X:97 Y:4
 </code></pre>
-<p>I.e., everything that our emulator has produced should exactly match the golden standard, up to line <strong>0xC6BC</strong>. If anything is off before the line, we have a mistake in our CPU implementation. And it needs to be fixed.</p>
+<p>I.e., everything that our emulator has produced should exactly match the golden standard, up to line <strong>0xC6BC</strong>. If anything is off before the line, we have a mistake in our CPU implementation and it needs to be fixed.</p>
 <p>But that doesn't explain why our program got terminated. Why didn't we get the perfect match after the line <strong>0xC6BC</strong>?</p>
-<p>The program has failed at </p>
+<p>The program has failed at</p>
 <pre><code class="language-bash">C6BD  04 A9    *NOP $A9 = 00
 </code></pre>
-<p>It looks like our CPU doesn't know how to interpret opcode 0x04. </p>
-<p>Here is the bad news: there are about 110 unofficial CPU instructions. And most of the real NES games do use them a lot. For us to move on, we would need to implement all of them. </p>
+<p>It looks like our CPU doesn't know how to interpret the opcode 0x04.</p>
+<p>Here is the bad news: there are about 110 unofficial CPU instructions. Most of the real NES games use them a lot. For us to move on, we will need to implement all of them.</p>
 <p>The specs can be found here:</p>
 <ul>
 <li><a href="http://nesdev.com/undocumented_opcodes.txt">nesdev.com/undocumented_opcodes.txt</a></li>
@@ -298,13 +298,13 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
 <li><a href="https://wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes">wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes</a></li>
 <li><a href="http://www.oxyron.de/html/opcodes02.html">www.oxyron.de/html/opcodes02.html</a></li>
 </ul>
-<p>Remember how to draw an owl? ) </p>
-<p>The testing ROM should drive your progress. In the end, the CPU should support 256 instructions. Considering that 1 byte is for the operation code, we've exhausted all possible values. </p>
+<p>Remember how to draw an owl?</p>
+<p>The testing ROM should drive your progress. In the end, the CPU should support 256 instructions. Considering that 1 byte is for the operation code, we've exhausted all possible values.</p>
 <p>Finally, the first mismatch should happen on this line:</p>
 <pre><code class="language-bash">C68B  8D 15 40  STA $4015 = FF                  A:02 X:FF Y:15 P:25 SP:FB
 </code></pre>
-<p>almost at the very end of the NES test log file. </p>
-<p>That's a good sign. 4015 is a memory map for the APU register. And we don't have that implemented yet. </p>
+<p>almost at the very end of the NES test log file.</p>
+<p>That's a good sign. 4015 is a memory map for the APU register, which we haven't implemented yet.</p>
 <br/>
 <hr />
 <blockquote>

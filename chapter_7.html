@@ -152,21 +152,21 @@
 <ul>
 <li><a href="https://www.youtube.com/watch?v=UKMO5tlANEU">Joypads</a></li>
 <li><a href="https://www.youtube.com/watch?v=ErzuU78v60M">Power pads</a></li>
-<li><a href="https://www.youtube.com/watch?v=x6u3ek7BXps">Lightgun Zapper</a></li>
-<li><a href="https://www.youtube.com/watch?v=u9k6xoErR4w">Arkanoid controller</a></li>
-<li><a href="https://www.youtube.com/watch?v=j8J58aTxCPM">And even a keyboard</a></li>
+<li><a href="https://www.youtube.com/watch?v=x6u3ek7BXps">Lightgun Zappers</a></li>
+<li><a href="https://www.youtube.com/watch?v=u9k6xoErR4w">Arkanoid controllers</a></li>
+<li><a href="https://www.youtube.com/watch?v=j8J58aTxCPM">And even keyboards</a></li>
 </ul>
-<p>We will emulate joypads as it's the most common one and the easiest device to emulate</p>
+<p>We will emulate joypads as it's the most common and the easiest device to emulate</p>
 <div style="text-align:center;"><img src="./images/ch7/image_1_joypad2.png" width="40%"/></div>
 <p>Two joypads are mapped to <strong>0x4016</strong> and <strong>0x4017</strong> CPU address space, respectively.
-The same register can be used for both reading and writing. 
-Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports a state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times. </p>
-<p>The order of reported Buttons is as follows: </p>
+The same register can be used for both reading and writing.
+Reading from a controller reports the state of a button (1 - pressed, 0 - released). The controller reports a state of one button at a time. To get the state of all buttons, the CPU has to read the controller register 8 times.</p>
+<p>The order of reported Buttons is as follows:</p>
 <pre><code class="language-bash">A -&gt; B -&gt; Select -&gt; Start -&gt; Up -&gt; Down -&gt; Left -&gt; Right
 </code></pre>
 <p>After reporting the state of the button <strong>RIGHT</strong>, the controller would continually return 1s for all following read, until a strobe mode change.</p>
-<p>The CPU can change the mode of a controller by writing a byte to the register. However, only the first bit matters. </p>
-<p>Controller operates in 2 modes:</p>
+<p>The CPU can change the mode of a controller by writing a byte to the register. However, only the first bit matters.</p>
+<p>The controller operates in 2 modes:</p>
 <ul>
 <li>strobe bit on - controller reports only status of the button A on every read</li>
 <li>strobe bit off - controller cycles through all buttons</li>
@@ -175,11 +175,11 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 <ol>
 <li>Write <strong>0x1</strong> to <strong>0x4016</strong> (strobe mode on - to reset the pointer to button A)</li>
 <li>Write <strong>0x00</strong> to <strong>0x4016</strong> (strobe mode off)</li>
-<li>Read from <strong>0x4016</strong> eight times </li>
+<li>Read from <strong>0x4016</strong> eight times</li>
 <li>Repeat</li>
 </ol>
-<p>Ok, so let's sketch it out. </p>
-<p>We would need 1 byte to store the status of all buttons:</p>
+<p>Ok, so let's sketch it out.</p>
+<p>We need 1 byte to store the status of all buttons:</p>
 <pre><pre class="playpen"><code class="language-rust">
 <span class="boring">#![allow(unused_variables)]
 </span><span class="boring">fn main() {
@@ -198,9 +198,9 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>We need to track: </p>
+<p>We need to track:</p>
 <ul>
-<li>strobe mode - on/off </li>
+<li>strobe mode - on/off</li>
 <li>the status of all buttons</li>
 <li>an index of a button to be reported on the next read.</li>
 </ul>
@@ -212,7 +212,7 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
    button_index: u8,
    button_status: JoypadButton,
 }
- 
+
 impl Joypad {
    pub fn new() -&gt; Self {
        Joypad {
@@ -236,7 +236,7 @@ impl Joypad {
            self.button_index = 0
        }
    }
- 
+
    pub fn read(&amp;mut self) -&gt; u8 {
        if self.button_index &gt; 7 {
            return 1;
@@ -250,7 +250,7 @@ impl Joypad {
 }
 <span class="boring">}
 </span></code></pre></pre>
-<p>Don't forget to connect the Joypad to the BUS and map it for address 0x4016. </p>
+<p>Don't forget to connect the joypad to the BUS and map it for address 0x4016.</p>
 <p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released on the host machine:</p>
 <pre><pre class="playpen"><code class="language-rust">fn main() {
    //... init sdl2
@@ -264,15 +264,15 @@ impl Joypad {
    key_map.insert(Keycode::Return, joypad::JoypadButton::START);
    key_map.insert(Keycode::A, joypad::JoypadButton::BUTTON_A);
    key_map.insert(Keycode::S, joypad::JoypadButton::BUTTON_B);
- 
- 
+
+
    // run the game cycle
    let bus = Bus::new(rom, move |ppu: &amp;NesPPU, joypad: &amp;mut joypad::Joypad| {
        render::render(ppu, &amp;mut frame);
        texture.update(None, &amp;frame.data, 256 * 3).unwrap();
- 
+
        canvas.copy(&amp;texture, None, None).unwrap();
- 
+
        canvas.present();
        for event in event_pump.poll_iter() {
            match event {
@@ -281,8 +281,8 @@ impl Joypad {
                    keycode: Some(Keycode::Escape),
                    ..
                } =&gt; std::process::exit(0),
- 
- 
+
+
                Event::KeyDown { keycode, .. } =&gt; {
                    if let Some(key) = key_map.get(&amp;keycode.unwrap_or(Keycode::Ampersand)) {
                        joypad.set_button_pressed_status(*key, true);
@@ -293,23 +293,23 @@ impl Joypad {
                        joypad.set_button_pressed_status(*key, false);
                    }
                }
- 
+
                _ =&gt; { /* do nothing */ }
            }
        }
    });
- 
+
    //...
 }
 </code></pre></pre>
-<p>And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon. </p>
+<p>And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon.</p>
 <p>I'm not affiliated, I got <a href="https://www.amazon.com/gp/product/B07M7SYX11/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&amp;psc=1">these ones</a></p>
-<p>SDL2 fully supports <a href="https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html">joysticks</a>, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience. </p>
+<p>SDL2 fully supports <a href="https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html">joysticks</a>, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience.</p>
 <div style="text-align:center;"><img src="./images/ch7/image_2_rl.png" width="40%"/></div>
-<p>Ok, we've made quite a bit of progress here. Two major pieces left out are: </p>
+<p>Ok, we've made quite a bit of progress here. The two major pieces left are:</p>
 <ul>
 <li>Support for scrolling - we will enable gaming into platformers.</li>
-<li>Audio Processing Unit - to get those sweet NES chiptunes back in our lives. </li>
+<li>Audio Processing Unit - to get those sweet NES chiptunes back in our lives.</li>
 </ul>
 <div style="text-align:center;"><img src="./images/ch7/image_3_progress.png" width="80%"/></div>
 <br/>
