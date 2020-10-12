@@ -7,7 +7,7 @@ PPU exposes 8 I/O Registers that are used by the CPU for communication. Those re
 To be precise, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate the bus.
 
 2 registers are responsible for accessing PPU memory map:
-* Address (0x2006) & Data (0x2006) - provide access to the memory map available for PPU
+* Address (0x2006) & Data (0x2007) - provide access to the memory map available for PPU
 
 3 registers control internal memory(OAM) that keeps the state of sprites
 * OAM Address (0x2003) & OAM Data (0x2004) - Object Attribute Memory - the space responsible for sprites
