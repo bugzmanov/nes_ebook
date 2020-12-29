@@ -86,13 +86,13 @@ So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement th
                 self.program_counter +=1;
                 self.register_a = param;
 
-                if result == 0 {
+                if self.register_a == 0 {
                     self.status = self.status | 0b0000_0010;
                 } else {
                     self.status = self.status & 0b1111_1101;
                 }
 
-                if result & 0b1000_0000 != 0 {
+                if self.register_a & 0b1000_0000 != 0 {
                     self.status = self.status | 0b1000_0000;
                 } else {
                     self.status = self.status & 0b0111_1111;
@@ -170,13 +170,13 @@ impl CPU {
             0xAA =>  {
                 self.register_x = self.register_a;
             
-                if result == 0 {
+                if self.register_x == 0 {
                     self.status = self.status | 0b0000_0010;
                 } else {
                     self.status = self.status & 0b1111_1101;
                 }
 
-                if result & 0b1000_0000 != 0 {
+                if self.register_x & 0b1000_0000 != 0 {
                     self.status = self.status | 0b1000_0000;
                 } else {
                     self.status = self.status & 0b0111_1111;
