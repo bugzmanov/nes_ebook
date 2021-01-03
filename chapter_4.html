@@ -188,7 +188,7 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 <p>The reason for mirroring is the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.</p>
 <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 <p>CPU however has <strong>[0x0000 - 0x2000]</strong> addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM.
-Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b11_1111_1111</strong> (11 bits) via the address bus.</p>
+Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b111_1111_1111</strong> (11 bits) via the address bus.</p>
 <p>So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior.</p>
 <p>Long story short, the BUS needs to zero out the highest 2 bits if it receives a request in the range of <strong>[0x0000 … 0x2000]</strong></p>
 <p>Similarly address space <strong>[0x2008 .. 0x4000]</strong> mirrors memory mapping for PPU registers <strong>[0x2000 .. 0x2008]</strong>. Those are the only two mirrorings the BUS would be responsible for. Let's codify it right away, even though we don't have anything for PPU yet.</p>

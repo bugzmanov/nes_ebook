@@ -182,7 +182,7 @@ By choosing rust, we hope to get some additional performance budget for our need
 </ol>
 <hr />
 <p>Created by <a href="http://twitter.com/bugzmanov">@bugzmanov</a>, 2020</p>
-<p><em> Special thanks to <a href="https://github.com/sburris0">Spencer Burris</a> and <a href="https://github.com/kgusakov/">Kirill Gusakov</a> for reviews, edits and helpfull suggestions! </em></p>
+<p><em> Special thanks to <a href="https://github.com/sburris0">Spencer Burris</a> and <a href="https://github.com/kgusakov/">Kirill Gusakov</a> for reviews, edits and helpfull suggestions!</em></p>
 <h1><a class="header" href="#understanding-the-nes-platform" id="understanding-the-nes-platform">Understanding the NES Platform</a></h1>
 <h2><a class="header" href="#achitecture" id="achitecture">Achitecture</a></h2>
 <p>The simplified architecture of hardware-software interaction looks like this:</p>
@@ -378,13 +378,13 @@ impl CPU {
                 self.program_counter +=1;
                 self.register_a = param;
 
-                if result == 0 {
+                if self.register_a == 0 {
                     self.status = self.status | 0b0000_0010;
                 } else {
                     self.status = self.status &amp; 0b1111_1101;
                 }
 
-                if result &amp; 0b1000_0000 != 0 {
+                if self.register_a &amp; 0b1000_0000 != 0 {
                     self.status = self.status | 0b1000_0000;
                 } else {
                     self.status = self.status &amp; 0b0111_1111;
@@ -462,13 +462,13 @@ impl CPU {
             0xAA =&gt;  {
                 self.register_x = self.register_a;
             
-                if result == 0 {
+                if self.register_x == 0 {
                     self.status = self.status | 0b0000_0010;
                 } else {
                     self.status = self.status &amp; 0b1111_1101;
                 }
 
-                if result &amp; 0b1000_0000 != 0 {
+                if self.register_x &amp; 0b1000_0000 != 0 {
                     self.status = self.status | 0b1000_0000;
                 } else {
                     self.status = self.status &amp; 0b0111_1111;
@@ -1237,7 +1237,7 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 <p>The reason for mirroring is the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.</p>
 <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 <p>CPU however has <strong>[0x0000 - 0x2000]</strong> addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM.
-Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b11_1111_1111</strong> (11 bits) via the address bus.</p>
+Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b111_1111_1111</strong> (11 bits) via the address bus.</p>
 <p>So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior.</p>
 <p>Long story short, the BUS needs to zero out the highest 2 bits if it receives a request in the range of <strong>[0x0000 … 0x2000]</strong></p>
 <p>Similarly address space <strong>[0x2008 .. 0x4000]</strong> mirrors memory mapping for PPU registers <strong>[0x2000 .. 0x2008]</strong>. Those are the only two mirrorings the BUS would be responsible for. Let's codify it right away, even though we don't have anything for PPU yet.</p>
@@ -1723,7 +1723,7 @@ PPU exposes 8 I/O Registers that are used by the CPU for communication. Those re
 <p>To be precise, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate the bus.</p>
 <p>2 registers are responsible for accessing PPU memory map:</p>
 <ul>
-<li>Address (0x2006) &amp; Data (0x2006) - provide access to the memory map available for PPU</li>
+<li>Address (0x2006) &amp; Data (0x2007) - provide access to the memory map available for PPU</li>
 </ul>
 <p>3 registers control internal memory(OAM) that keeps the state of sprites</p>
 <ul>
