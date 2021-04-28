@@ -229,7 +229,7 @@ impl CPU {
 
     pub fn load_and_run(&mut self, program: Vec<u8>) {
         self.load(program);
-        self.reset();
+        self.program_counter = self.mem_read_u16(0xFFFC);
         self.run()
     }
 
