@@ -244,7 +244,6 @@ impl CPU {
         self.register_y = 0;
         self.stack_pointer = STACK_RESET;
         self.status = CpuFlags::from_bits_truncate(0b100100);
-        self.memory = [0; 0xFFFF];
 
         self.program_counter = self.mem_read_u16(0xFFFC);
     }
@@ -846,8 +845,10 @@ mod test {
     #[test]
     fn test_0xaa_tax_move_a_to_x() {
         let mut cpu = CPU::new();
+        cpu.load(vec![0xaa, 0x00]);
+        cpu.reset();
         cpu.register_a = 10;
-        cpu.load_and_run(vec![0xaa, 0x00]);
+        cpu.run();
 
         assert_eq!(cpu.register_x, 10)
     }
@@ -863,8 +864,10 @@ mod test {
     #[test]
     fn test_inx_overflow() {
         let mut cpu = CPU::new();
+        cpu.load(vec![0xe8, 0xe8, 0x00]);
+        cpu.reset();
         cpu.register_x = 0xff;
-        cpu.load_and_run(vec![0xe8, 0xe8, 0x00]);
+        cpu.run();
 
         assert_eq!(cpu.register_x, 1)
     }
