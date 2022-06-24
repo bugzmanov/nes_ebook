@@ -76,7 +76,7 @@ impl ControlRegister {
     }
 
     pub fn master_slave_select(&self) -> u8 {
-        if !self.contains(ControlRegister::SPRITE_SIZE) {
+        if !self.contains(ControlRegister::MASTER_SLAVE_SELECT) {
             0
         } else {
             1
