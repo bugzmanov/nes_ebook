@@ -382,8 +382,9 @@ pub mod test {
         assert_eq!(ppu.read_oam_data(), 0x88);
 
         ppu.write_to_oam_addr(0x10);
-        ppu.write_to_oam_addr(0x77);
+        assert_eq!(ppu.read_oam_data(), 0x77);
+  
         ppu.write_to_oam_addr(0x11);
-        ppu.write_to_oam_addr(0x66);
+        assert_eq!(ppu.read_oam_data(), 0x66);
     }
 }
