@@ -15,7 +15,7 @@ This is somewhat cryptic as it isn't designed to be read by humans. We can decip
 
 Now it's more readable: it consists of 4 instructions, and the first instruction has a parameter.
 
-Let's interpret what's going on by referencing the opcodes from the [6502 Instruction Reference](http://www.obelisk.me.uk/6502/reference.html)
+Let's interpret what's going on by referencing the opcodes from the [6502 Instruction Reference](https://www.nesdev.org/obelisk-6502-guide/reference.html)
 
 <div style="text-align:center"><img src="./images/ch3.1/image_2_lda_spec.png" width="50%"/></div>
 
