@@ -140,7 +140,7 @@ Remember LDA opcodes we implemented last chapter? That single mnemonic (LDA) act
 
 You can read about addressing modes:
 - [here](https://skilldrick.github.io/easy6502/#addressing)
-- and [here](https://www.obelisk.me.uk/6502/addressing.html)
+- and [here](https://www.nesdev.org/obelisk-6502-guide/reference.html)
 
 In short, the addressing mode is a property of an instruction that defines how the CPU should interpret the next 1 or 2 bytes in the instruction stream.
 
