@@ -59,7 +59,7 @@ CPU receives instructions from the application layer in the form of machine code
 
 
 Full lists of the official 6502 instructions:
-* [http://www.obelisk.me.uk/6502/reference.html](http://www.obelisk.me.uk/6502/reference.html)
+* [https://www.nesdev.org/obelisk-6502-guide/reference.html](https://www.nesdev.org/obelisk-6502-guide/reference.html)
 * [http://www.6502.org/tutorials/6502opcodes.html](http://www.6502.org/tutorials/6502opcodes.html)
 
 I tend to use both of the links. The pages provide full specs of available CPU features and their machine codes.
