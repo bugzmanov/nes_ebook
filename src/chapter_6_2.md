@@ -204,7 +204,7 @@ Interrupt handler would have to call RTI operation at the end to finish interrup
    }
 ```
 
-In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met:
+In addition to scanline position, PPU would immediately trigger NMI if both of these conditions are met:
 * PPU is VBLANK state
 * "Generate NMI" bit in the controll Register is updated from 0 to 1.
 
