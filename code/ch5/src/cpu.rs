@@ -863,7 +863,7 @@ mod test {
     use crate::cartridge::test;
 
     #[test]
-    fn test_0xa9_lda_immidiate_load_data() {
+    fn test_0xa9_lda_immediate_load_data() {
         let bus = Bus::new(test::test_rom());
         let mut cpu = CPU::new(bus);
         cpu.load_and_run(vec![0xa9, 0x05, 0x00]);

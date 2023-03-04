@@ -1005,7 +1005,7 @@ impl<'a> CPU<'a> {
 
                 /* SKB */
                 0x80 | 0x82 | 0x89 | 0xc2 | 0xe2 => {
-                    /* 2 byte NOP (immidiate ) */
+                    /* 2 byte NOP (immediate ) */
                     // todo: might be worth doing the read
                 }
 
@@ -1216,7 +1216,7 @@ mod test {
     use crate::ppu::NesPPU;
 
     #[test]
-    fn test_0xa9_lda_immidiate_load_data() {
+    fn test_0xa9_lda_immediate_load_data() {
         let bus = Bus::new(test::test_rom(), |ppu: &NesPPU| {});
         let mut cpu = CPU::new(bus);
         cpu.load_and_run(vec![0xa9, 0x05, 0x00]);
