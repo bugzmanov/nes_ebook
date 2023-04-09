@@ -421,7 +421,7 @@ mod test {
    use super::*;
  
    #[test]
-   fn test_0xa9_lda_immidiate_load_data() {
+   fn test_0xa9_lda_immediate_load_data() {
        let mut cpu = CPU::new();
        cpu.interpret(vec![0xa9, 0x05, 0x00]);
        assert_eq!(cpu.register_a, 0x05);
@@ -962,7 +962,22 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 <tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
 <tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
 <tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
+<tr><td><strong>[0x0600...]</strong></td><td>Game code</td><td>Execution code</td></tr>
 </tbody></table>
+<p><em>Important note:</em> the game expects that the execution code would be located right after the output region. This means that we need to update our <code>CPU.load</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+<span class="boring">#![allow(unused_variables)]
+</span><span class="boring">fn main() {
+</span>impl CPU {
+    // ...   
+    pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
+        self.memory[0x0600..(0x0600 + program.len())].copy_from_slice(&amp;program[..]);
+        self.mem_write_u16(0xFFFC, 0x0600);
+    }
+  
+}
+<span class="boring">}
+</span></code></pre></pre>
 <p>The game executes standard game loop:</p>
 <ul>
 <li>read input from a user</li>
@@ -2378,7 +2393,7 @@ Upon receiving an interrupt signal the CPU:</p>
    }
 <span class="boring">}
 </span></code></pre></pre>
-<p>In addition to scanline position, PPU would immidiately trigger NMI if both of these conditions are met:</p>
+<p>In addition to scanline position, PPU would immediately trigger NMI if both of these conditions are met:</p>
 <ul>
 <li>PPU is VBLANK state</li>
 <li>&quot;Generate NMI&quot; bit in the controll Register is updated from 0 to 1.</li>
