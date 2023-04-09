@@ -47,6 +47,20 @@ The memory mapping that the game uses:
 | **0xFE** | Input | Random Number Generator |
 | **0xFF** | Input | A code of the last pressed Button |
 | **[0x0200..0x0600]**  | Output |  Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> **0x0200** - the color of (0,0) pixel <br/> **0x0201** - (1,0) <br/> **0x0220** - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div> | 
+| **[0x0600...]** | Game code | Execution code
+
+*Important note:* the game expects that the execution code would be located right after the output region. This means that we need to update our `CPU.load` function:
+
+```rust
+impl CPU {
+    // ...   
+    pub fn load(&mut self, program: Vec<u8>) {
+        self.memory[0x0600..(0x0600 + program.len())].copy_from_slice(&program[..]);
+        self.mem_write_u16(0xFFFC, 0x0600);
+    }
+  
+}
+```
 
 The game executes standard game loop:
 * read input from a user
