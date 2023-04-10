@@ -40,7 +40,7 @@ Memory access is relatively slow, NES CPU has a few internal memory slots called
 > | Accessing memory space after the first 255         | 4-7  |
 
 
-NES CPU has 7 Registers:
+NES CPU has 6 Registers:
 * Program Counter (*PC*) - holds the address for the next machine language instruction to be executed.
 * Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of that space. NES Stack (as all stacks) grows from top to bottom: when a byte gets pushed to the stack, SP register decrements. When a byte is retrieved from the stack, SP register increments.
 
