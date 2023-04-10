@@ -259,7 +259,7 @@ We are going to play the Snake game. The source code with comments can be found 
 <tr><td>Accessing memory space after the first 255</td><td>4-7</td></tr>
 </tbody></table>
 </blockquote>
-<p>NES CPU has 7 Registers:</p>
+<p>NES CPU has 6 Registers:</p>
 <ul>
 <li>
 <p>Program Counter (<em>PC</em>) - holds the address for the next machine language instruction to be executed.</p>
@@ -971,7 +971,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 </span>impl CPU {
     // ...   
     pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
-        self.memory[0x0600..(0x0600 + program.len())].copy_from_slice(&amp;program[..]);
+        self.memory[0x0600..(0x0600 + game_code.len())].copy_from_slice(&amp;program[..]);
         self.mem_write_u16(0xFFFC, 0x0600);
     }
   

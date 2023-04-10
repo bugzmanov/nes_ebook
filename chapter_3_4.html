@@ -198,7 +198,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 </span>impl CPU {
     // ...   
     pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
-        self.memory[0x0600..(0x0600 + program.len())].copy_from_slice(&amp;program[..]);
+        self.memory[0x0600..(0x0600 + game_code.len())].copy_from_slice(&amp;program[..]);
         self.mem_write_u16(0xFFFC, 0x0600);
     }
   
