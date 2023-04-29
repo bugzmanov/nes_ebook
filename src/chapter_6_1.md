@@ -33,7 +33,7 @@ Two communication channels exist between CPU and PPU:
 >
 > The PPU renders 262 scanlines per frame. (0 - 240 are visible scanlines, the rest are so-called vertical overscan)<br/>
 > Each scanline lasts for 341 PPU clock cycles, with each clock cycle producing one pixel. (the first 256 pixels are visible, the rest is horizontal overscan)<br/>
-> The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible.
+> The NES screen resolution is 256x240, thus scanlines 241 - 262 are not visible.
 >
 > <div style="text-align:center"><img src="./images/ch6.1/image_7_scanlines_with_viewer.png" width="30%"/></div>
 > Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes no memory accesses during 241-262 scanlines, so PPU memory can be freely accessed by the program. The majority of games play it safe and update the screen state only during this period, essentially preparing the view state for the next frame.
