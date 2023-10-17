@@ -321,7 +321,7 @@ First, the requirement to increment program_counter by 1 (or 2) after some of th
 
 Second, wouldn't it be more readable and convenient if we could group all "LDA" operations under a single `match` statement?
 
-Lastly, all we do is hard-coding Instructions spec into Rust code. The translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach.
+Lastly, all we are doing is hard-coding Instructions spec into Rust code. The translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach.
 
  <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 
