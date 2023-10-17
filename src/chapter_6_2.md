@@ -226,7 +226,7 @@ impl PPU for NesPPU {
 
 In our CPU implementation, we've implemented opcode **0x00** as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.
 
-NESDEV Wiki provides all neccessary details about [CPU interrupts](https://wiki.nesdev.com/w/index.php/CPU_interrupts).
+NESDEV Wiki provides all necessary details about [CPU interrupts](https://wiki.nesdev.com/w/index.php/CPU_interrupts).
 
 <br/>
 
