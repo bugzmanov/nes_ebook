@@ -8,7 +8,7 @@ CPU gets access to memory (including memory-mapped spaces) using three buses:
 * data bus carries the byte of data being read or written
 
 A bus itself is not a device; it's a wiring between platform components.
-Therefor, we don't need to implement it as an independent module as Rust allows us to "wire" the components directly.
+Therefore, we don't need to implement it as an independent module as Rust allows us to "wire" the components directly.
 However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner.
 
  <div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>

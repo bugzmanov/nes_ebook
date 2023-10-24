@@ -56,7 +56,7 @@ impl CPU {
 
 We have just created an array for the whole 64 KiB of address space. As discussed in a future chapter<LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping.
 
-We load program code into memory, starting at 0x8000 address. We've discusses that [0x8000 .. 0xFFFF] is reserved for Program ROM, and we can assume that the instructions stream should start somewhere in this space (not necessarily at 0x8000).
+We load program code into memory, starting at 0x8000 address. We've discussed that [0x8000 .. 0xFFFF] is reserved for Program ROM, and we can assume that the instructions stream should start somewhere in this space (not necessarily at 0x8000).
 
 NES platform has a special mechanism to mark where the CPU should start the execution. Upon inserting a new cartridge, the CPU receives a special signal called "Reset interrupt" that instructs CPU to:
 * reset the state (registers and flags)
@@ -321,7 +321,7 @@ First, the requirement to increment program_counter by 1 (or 2) after some of th
 
 Second, wouldn't it be more readable and convenient if we could group all "LDA" operations under a single `match` statement?
 
-Lastly, all we do is hard-coding Instructions spec into Rust code. The translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach.
+Lastly, all we are doing is hard-coding Instructions spec into Rust code. The translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach.
 
  <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 
