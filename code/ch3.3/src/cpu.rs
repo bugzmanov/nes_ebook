@@ -289,7 +289,8 @@ impl CPU {
     fn sbc(&mut self, mode: &AddressingMode) {
         let addr = self.get_operand_address(&mode);
         let data = self.mem_read(addr);
-        self.add_to_register_a(((data as i8).wrapping_neg().wrapping_sub(1)) as u8);
+        //self.add_to_register_a(((data as i8).wrapping_neg().wrapping_sub(1)) as u8);
+        self.add_to_register_a(!data + 1);
     }
 
     fn adc(&mut self, mode: &AddressingMode) {
@@ -535,7 +536,9 @@ impl CPU {
             self.program_counter += 1;
             let program_counter_state = self.program_counter;
 
-            let opcode = opcodes.get(&code).expect(&format!("OpCode {:x} is not recognized", code));
+            let opcode = opcodes
+                .get(&code)
+                .expect(&format!("OpCode {:x} is not recognized", code));
 
             match code {
                 0xa9 | 0xa5 | 0xb5 | 0xad | 0xbd | 0xb9 | 0xa1 | 0xb1 => {
@@ -830,55 +833,5 @@ impl CPU {
 }
 
 #[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_0xa9_lda_immediate_load_data() {
-        let mut cpu = CPU::new();
-        cpu.load_and_run(vec![0xa9, 0x05, 0x00]);
-        assert_eq!(cpu.register_a, 5);
-        assert!(cpu.status.bits() & 0b0000_0010 == 0b00);
-        assert!(cpu.status.bits() & 0b1000_0000 == 0);
-    }
-
-    #[test]
-    fn test_0xaa_tax_move_a_to_x() {
-        let mut cpu = CPU::new();
-        cpu.load(vec![0xaa, 0x00]);
-        cpu.reset();
-        cpu.register_a = 10;
-        cpu.run();
-
-        assert_eq!(cpu.register_x, 10)
-    }
-
-    #[test]
-    fn test_5_ops_working_together() {
-        let mut cpu = CPU::new();
-        cpu.load_and_run(vec![0xa9, 0xc0, 0xaa, 0xe8, 0x00]);
-
-        assert_eq!(cpu.register_x, 0xc1)
-    }
-
-    #[test]
-    fn test_inx_overflow() {
-        let mut cpu = CPU::new();
-        cpu.load(vec![0xe8, 0xe8, 0x00]);
-        cpu.reset();
-        cpu.register_x = 0xff;
-        cpu.run();
-
-        assert_eq!(cpu.register_x, 1)
-    }
-
-    #[test]
-    fn test_lda_from_memory() {
-        let mut cpu = CPU::new();
-        cpu.mem_write(0x10, 0x55);
-
-        cpu.load_and_run(vec![0xa5, 0x10, 0x00]);
-
-        assert_eq!(cpu.register_a, 0x55);
-    }
-}
+#[path = "./test.rs"]
+mod test;
