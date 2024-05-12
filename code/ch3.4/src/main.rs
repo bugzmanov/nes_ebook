@@ -8,7 +8,6 @@ use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
-use std::time::Duration;
 
 #[macro_use]
 extern crate lazy_static;
@@ -135,7 +134,7 @@ fn main() {
             canvas.present();
         }
 
-        ::std::thread::sleep(std::time::Duration::new(0, 70_000));
+        std::thread::sleep(std::time::Duration::new(0, 70_000));
     });
 
 }
