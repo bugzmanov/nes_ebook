@@ -363,10 +363,10 @@ impl NesPPU {
        let vram_index = mirrored_vram - 0x2000; // to vram vector
        let name_table = vram_index / 0x400; // to the name table index
        match (&self.mirroring, name_table) {
-           (Mirroring::VERTICAL, 2) | (Mirroring::VERTICAL, 3) => vram_index - 0x800,
-           (Mirroring::HORIZONTAL, 2) => vram_index - 0x400,
-           (Mirroring::HORIZONTAL, 1) => vram_index - 0x400,
-           (Mirroring::HORIZONTAL, 3) => vram_index - 0x800,
+           (Mirroring::Vertical, 2) | (Mirroring::Vertical, 3) => vram_index - 0x800,
+           (Mirroring::Horizontal, 2) => vram_index - 0x400,
+           (Mirroring::Horizontal, 1) => vram_index - 0x400,
+           (Mirroring::Horizontal, 3) => vram_index - 0x800,
            _ => vram_index,
        }
    }
