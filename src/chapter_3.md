@@ -28,7 +28,7 @@ Access to **[0x4020 .. 0x6000]** is a special space that different generations o
 
 Access to **[0x6000 .. 0x8000]** is reserved to a RAM space on a cartridge if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We will ignore this space as well.
 
-Access to **[0x8000 … 0x10000]** is mapped to Program ROM (PRG ROM) space on a cartridge.
+Access to **[0x8000 … 0xFFFF]** is mapped to Program ROM (PRG ROM) space on a cartridge.
 
 Memory access is relatively slow, NES CPU has a few internal memory slots called registers with significantly lower access delay.
 
