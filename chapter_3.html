@@ -162,7 +162,7 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>Access to <strong>[0x2000 … 0x4020]</strong> is redirected to other available NES hardware modules: PPU, APU, GamePads, etc. (more on this later)</p>
 <p>Access to <strong>[0x4020 .. 0x6000]</strong> is a special space that different generations of cartridges used differently. It might be mapped to RAM, ROM, or nothing at all. The space is controlled by so-called mappers - special circuitry on a cartridge. We will ignore this space.</p>
 <p>Access to <strong>[0x6000 .. 0x8000]</strong> is reserved to a RAM space on a cartridge if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We will ignore this space as well.</p>
-<p>Access to <strong>[0x8000 … 0x10000]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge.</p>
+<p>Access to <strong>[0x8000 … 0xFFFF]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge.</p>
 <p>Memory access is relatively slow, NES CPU has a few internal memory slots called registers with significantly lower access delay.</p>
 <blockquote>
 <table><thead><tr><th>CPU Operation type</th><th>Execution time (in CPU Cycles)</th></tr></thead><tbody>

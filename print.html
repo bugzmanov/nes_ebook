@@ -250,7 +250,7 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>Access to <strong>[0x2000 … 0x4020]</strong> is redirected to other available NES hardware modules: PPU, APU, GamePads, etc. (more on this later)</p>
 <p>Access to <strong>[0x4020 .. 0x6000]</strong> is a special space that different generations of cartridges used differently. It might be mapped to RAM, ROM, or nothing at all. The space is controlled by so-called mappers - special circuitry on a cartridge. We will ignore this space.</p>
 <p>Access to <strong>[0x6000 .. 0x8000]</strong> is reserved to a RAM space on a cartridge if a cartridge has one. It was used in games like Zelda for storing and retrieving the game state. We will ignore this space as well.</p>
-<p>Access to <strong>[0x8000 … 0x10000]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge.</p>
+<p>Access to <strong>[0x8000 … 0xFFFF]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge.</p>
 <p>Memory access is relatively slow, NES CPU has a few internal memory slots called registers with significantly lower access delay.</p>
 <blockquote>
 <table><thead><tr><th>CPU Operation type</th><th>Execution time (in CPU Cycles)</th></tr></thead><tbody>
@@ -1039,7 +1039,12 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 that's popular in game development, the <a href="https://www.libsdl.org/">Simple DirectMedia Layer library</a>.</p>
 <p>Luckily for us, there is a convenient crate that provides Rust bindings for the library: <a href="https://rust-sdl2.github.io/rust-sdl2/sdl2/">rust-sdl2</a></p>
 <ol start="0">
-<li>Let's add it to Cargo.toml:</li>
+<li>
+<p>Depending on your Operating System you need to install <a href="https://github.com/Rust-SDL2/rust-sdl2?tab=readme-ov-file#sdl20-development-libraries">SDL2.0 development libraries</a></p>
+</li>
+<li>
+<p>Now let's add rust-sdl2 crate to Cargo.toml:</p>
+</li>
 </ol>
 <pre><code class="language-toml"># ...
 
@@ -1050,8 +1055,8 @@ bitflags = &quot;1.2.1&quot;
 sdl2 = &quot;0.34.0&quot;
 rand = &quot;=0.7.3&quot;
 </code></pre>
-<ol>
-<li>First, we need to initialize SDL:</li>
+<ol start="2">
+<li>In code, we need to initialize SDL:</li>
 </ol>
 <pre><pre class="playpen"><code class="language-rust">use sdl2::event::Event;
 use sdl2::EventPump;
@@ -1092,7 +1097,7 @@ There are no other layers that potentially can handle Err values and do somethin
 <span class="boring">}
 </span></code></pre></pre>
 <p>We are telling SDL that our texture has a size of 32x32, and that each pixel is to be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em> colors). This means that the texture will be represented by a 32x32x3 array of bytes.</p>
-<ol start="2">
+<ol start="3">
 <li>Handling user input is straightforward:</li>
 </ol>
 <pre><pre class="playpen"><code class="language-rust">
@@ -1122,7 +1127,7 @@ There are no other layers that potentially can handle Err values and do somethin
 }
 <span class="boring">}
 </span></code></pre></pre>
-<ol start="3">
+<ol start="4">
 <li>Rendering the screen state is a bit trickier.
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
 <br/>From the game point of view it doesn't matter much how we map colors, the only two color maps that are essential are:</li>
@@ -1810,7 +1815,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <span class="boring">}
 </span></code></pre></pre>
 <h2><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers" id="emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
-<p>Let's try to emulate two the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
+<p>Let's try to emulate two of the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
 <p>There are multiple caveats in the way the CPU can access PPU RAM. Say the CPU wants to access memory cell at 0x0600 PPU memory space:</p>
 <ol>
 <li>It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1-byte register:<br/><br/></li>

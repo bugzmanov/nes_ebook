@@ -226,7 +226,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <span class="boring">}
 </span></code></pre></pre>
 <h2><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers" id="emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
-<p>Let's try to emulate two the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
+<p>Let's try to emulate two of the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
 <p>There are multiple caveats in the way the CPU can access PPU RAM. Say the CPU wants to access memory cell at 0x0600 PPU memory space:</p>
 <ol>
 <li>It has to load the requesting address into the Addr register. It has to write to the register twice - to load 2 bytes into 1-byte register:<br/><br/></li>
