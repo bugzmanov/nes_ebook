@@ -78,7 +78,7 @@ impl NesPPU {
 
 ## Emulating PPU memory access: Address and Data registers
 
-Let's try to emulate two the most complex registers: Address (**0x2006**) and Data(**0x2007**)
+Let's try to emulate two of the most complex registers: Address (**0x2006**) and Data(**0x2007**)
 
 There are multiple caveats in the way the CPU can access PPU RAM. Say the CPU wants to access memory cell at 0x0600 PPU memory space:
 

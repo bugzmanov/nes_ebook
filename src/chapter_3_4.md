@@ -126,7 +126,9 @@ that's popular in game development, the [Simple DirectMedia Layer library](https
 
 Luckily for us, there is a convenient crate that provides Rust bindings for the library: [rust-sdl2](https://rust-sdl2.github.io/rust-sdl2/sdl2/)
 
-0) Let's add it to Cargo.toml:
+0) Depending on your Operating System you need to install [SDL2.0 development libraries](https://github.com/Rust-SDL2/rust-sdl2?tab=readme-ov-file#sdl20-development-libraries)
+
+1) Now let's add rust-sdl2 crate to Cargo.toml:
 
 ```toml
 # ...
@@ -139,7 +141,7 @@ sdl2 = "0.34.0"
 rand = "=0.7.3"
 ```
 
-1) First, we need to initialize SDL:
+2) In code, we need to initialize SDL:
 
 ```rust
 use sdl2::event::Event;
@@ -182,7 +184,7 @@ Next, we will create a texture that would be used for rendering:
 
 We are telling SDL that our texture has a size of 32x32, and that each pixel is to be represented by 3 bytes (for *R*, *G* and *B* colors). This means that the texture will be represented by a 32x32x3 array of bytes.
 
-2) Handling user input is straightforward:
+3) Handling user input is straightforward:
 
 ```rust
 fn handle_user_input(cpu: &mut CPU, event_pump: &mut EventPump) {
@@ -209,7 +211,7 @@ fn handle_user_input(cpu: &mut CPU, event_pump: &mut EventPump) {
 }
 ```
 
-3) Rendering the screen state is a bit trickier.
+4) Rendering the screen state is a bit trickier.
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
 <br/>From the game point of view it doesn't matter much how we map colors, the only two color maps that are essential are:
 * 0 - Black
