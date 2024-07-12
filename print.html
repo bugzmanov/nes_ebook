@@ -668,6 +668,10 @@ That means that the 8 least significant bits of an address will be stored before
 
 <span class="boring">}
 </span></code></pre></pre>
+<blockquote>
+<p>Technically, mem_read_u16 doesn't need <code>&amp;mut self</code> and can use immutable reference. However, later in the book, mem read requests
+could be routed to external &quot;devices&quot; (such as PPU and Joypads), where reading does indeed modify the state of the simulated device.</p>
+</blockquote>
 <p>Or by using Rust's <a href="https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes">endian support for primitive types</a>.</p>
 <p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust the <code>load</code> and <code>load_and_run</code> functions:</p>
 <ul>
