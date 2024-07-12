@@ -100,6 +100,9 @@ We can implement this behaviour using some of Rust's bit arithmetic:
 
 ```
 
+> Technically, mem_read_u16 doesn't need `&mut self` and can use immutable reference. However, later in the book, mem read requests
+> could be routed to external "devices" (such as PPU and Joypads), where reading does indeed modify the state of the simulated device.
+
 Or by using Rust's [endian support for primitive types](https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes).
 
 Now we can implement **reset** functionality properly. We will have to adjust the `load` and `load_and_run` functions:
