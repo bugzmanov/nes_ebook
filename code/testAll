@@ -1,0 +1,6 @@
+#for f in $(find . -name Cargo.toml -printf '%h\n' | sort -u); do
+for f in $(find . -name *.toml -print0 | xargs -0 -n1 dirname | sort --unique); do
+  pushd $f > /dev/null;
+  cargo test;
+  popd > /dev/null;
+done
