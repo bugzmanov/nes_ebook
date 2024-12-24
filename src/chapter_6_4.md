@@ -285,7 +285,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 
 It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of at least 3-4 tiles).
 
-CPU has to option of updating OAM Table:
+CPU has two options for updating the OAM Table:
 - using OAM Addr and OAM Data PPUT registers, updating one byte at a time.
 - bulk updating the whole table by transferring 256 bytes from CPU RAM using OAM DMA
 
