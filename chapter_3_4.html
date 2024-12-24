@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Running our first game - Writing NES Emulator in Rust</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
@@ -19,8 +20,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -28,19 +28,21 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="theme/css/custom.css">
 
-        
-    </head>
-    <body>
+
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -56,61 +58,66 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('no-js')
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            html.classList.add("js");
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
+            sidebar_toggle.checked = sidebar === 'visible';
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html" class="active"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="afterwords.html">Afterword</a></li></ol>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Writing NES Emulator in Rust</h1>
@@ -119,14 +126,13 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -134,10 +140,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -147,15 +152,14 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
-<div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
+                        <h1 id="running-our-first-game"><a class="header" href="#running-our-first-game">Running our first game</a></h1>
+ <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 <p>Great, you've made it this far. What we are going to do next is to take a bit of a detour.
 The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a true NES game. It is built with 6502 instructions and uses quite different memory mappings.</p>
 <p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play the first game.</p>
 <p>The majority of logic we are to implement now would be reused some way or another when we will be implementing rendering in PPU, so nothing is wasted effort.</p>
 <p>The machine code of the game:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>let game_code = vec![
@@ -181,19 +185,18 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
     0xea, 0xca, 0xd0, 0xfb, 0x60
 ];
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>You can find assembly code with comments <a href="https://gist.github.com/wkjagt/9043907">here</a>.</p>
 <p>The memory mapping that the game uses:</p>
-<table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
 <tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
 <tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
 <tr><td><strong>[0x0600...]</strong></td><td>Game code</td><td>Execution code</td></tr>
 </tbody></table>
+</div>
 <p><em>Important note:</em> the game expects that the execution code would be located right after the output region. This means that we need to update our <code>CPU.load</code> function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
     // ...   
@@ -203,8 +206,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
     }
   
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The game executes standard game loop:</p>
 <ul>
 <li>read input from a user</li>
@@ -213,8 +215,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 <li>repeat</li>
 </ul>
 <p>We need to intercept this cycle to get user input into the input mapping space and render the state of the screen. Let's modify our CPU run cycle:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
  // ...   
@@ -238,11 +239,10 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now, the client code can provide a callback that will be executed before every opcode interpretation cycle.</p>
 <p>The sketch of the main method:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
    let game_code = vec![
 // ...
    ];
@@ -260,8 +260,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
        // read mem mapped screen state
        // render screen state
    });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>For our input/output, we would be using a cross-platform library
 that's popular in game development, the <a href="https://www.libsdl.org/">Simple DirectMedia Layer library</a>.</p>
 <p>Luckily for us, there is a convenient crate that provides Rust bindings for the library: <a href="https://rust-sdl2.github.io/rust-sdl2/sdl2/">rust-sdl2</a></p>
@@ -276,16 +275,16 @@ that's popular in game development, the <a href="https://www.libsdl.org/">Simple
 <pre><code class="language-toml"># ...
 
 [dependencies]
-lazy_static = &quot;1.4.0&quot;
-bitflags = &quot;1.2.1&quot;
+lazy_static = "1.4.0"
+bitflags = "1.2.1"
 
-sdl2 = &quot;0.34.0&quot;
-rand = &quot;=0.7.3&quot;
+sdl2 = "0.34.0"
+rand = "=0.7.3"
 </code></pre>
 <ol start="2">
 <li>In code, we need to initialize SDL:</li>
 </ol>
-<pre><pre class="playpen"><code class="language-rust">use sdl2::event::Event;
+<pre><pre class="playground"><code class="language-rust">use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -296,7 +295,7 @@ fn main() {
    let sdl_context = sdl2::init().unwrap();
    let video_subsystem = sdl_context.video().unwrap();
    let window = video_subsystem
-       .window(&quot;Snake game&quot;, (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
+       .window("Snake game", (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
        .position_centered()
        .build().unwrap();
 
@@ -305,30 +304,26 @@ fn main() {
    canvas.set_scale(10.0, 10.0).unwrap();
 
    //...
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>Because our game screen is tiny (32x32 pixels), we set the scale factor to 10.</p>
 <blockquote>
 <p>Using <code>.unwrap()</code> is justifiable here because it's the outer layer of our application.
 There are no other layers that potentially can handle Err values and do something about it.</p>
 </blockquote>
 <p>Next, we will create a texture that would be used for rendering:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>//...
    let creator = canvas.texture_creator();
    let mut texture = creator
        .create_texture_target(PixelFormatEnum::RGB24, 32, 32).unwrap();
 //...
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We are telling SDL that our texture has a size of 32x32, and that each pixel is to be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em> colors). This means that the texture will be represented by a 32x32x3 array of bytes.</p>
 <ol start="3">
 <li>Handling user input is straightforward:</li>
 </ol>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn handle_user_input(cpu: &amp;mut CPU, event_pump: &amp;mut EventPump) {
    for event in event_pump.poll_iter() {
@@ -352,8 +347,7 @@ There are no other layers that potentially can handle Err values and do somethin
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <ol start="4">
 <li>Rendering the screen state is a bit trickier.
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
@@ -363,8 +357,7 @@ Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
 <li>0 - Black</li>
 <li>1 - White</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn color(byte: u8) -&gt; Color {
    match byte {
@@ -379,21 +372,17 @@ Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
        _ =&gt; sdl2::pixels::Color::CYAN,
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now we can transform the CPU screen map into 3 bytes like this:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    let color_idx = cpu.mem_read(i as u16);
     let (b1, b2, b3) = color(color_idx).rgb();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>A caveat with this is that we don't want to force updating the SDL canvas if the screen state hasn't changed.
 Remember that the CPU will call our callback after each instruction, and most of the time those instructions have nothing to do with the screen. Meanwhile, updating the canvas is a heavy operation.</p>
 <p>We can keep track of the screen state by creating a temp buffer that will be populated from the screen state. Only in the case of screen changes, we would update SDL canvas.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn read_screen_state(cpu: &amp;CPU, frame: &amp;mut [u8; 32 * 3 * 32]) -&gt; bool {
    let mut frame_idx = 0;
@@ -411,10 +400,9 @@ Remember that the CPU will call our callback after each instruction, and most of
    }
    update
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And the game loop becomes:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
 // ...init sdl
 // ...load program
 
@@ -433,11 +421,10 @@ Remember that the CPU will call our callback after each instruction, and most of
 
        ::std::thread::sleep(std::time::Duration::new(0, 70_000));
    });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>The last sleep statement was added to slow things down so that the game runs at a playable pace.</p>
 <p>And there you have it, the first game running on our emulator.</p>
-<div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
+ <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
 <br/>
 <hr />
 <blockquote>
@@ -448,17 +435,13 @@ Remember that the CPU will call our callback after each instruction, and most of
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="chapter_3_3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="chapter_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="chapter_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -466,26 +449,20 @@ Remember that the CPU will call our callback after each instruction, and most of
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="chapter_3_3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="chapter_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="chapter_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
         <!-- Google Analytics Tag -->
-        <script type="text/javascript">
+        <script>
             var localAddrs = ["localhost", "127.0.0.1", ""];
 
             // make sure we don't activate google analytics if the developer is
@@ -500,32 +477,24 @@ Remember that the CPU will call our callback after each instruction, and most of
                 ga('send', 'pageview');
             }
         </script>
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
 
-        
 
+    </div>
     </body>
 </html>

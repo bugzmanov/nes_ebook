@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Writing NES Emulator in Rust</title>
-        
-        <meta name="robots" content="noindex" />
-        
+        <meta name="robots" content="noindex">
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
@@ -21,8 +21,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -30,19 +29,21 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="theme/css/custom.css">
 
-        
-    </head>
-    <body>
+
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -58,61 +59,66 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('no-js')
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            html.classList.add("js");
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
+            sidebar_toggle.checked = sidebar === 'visible';
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="afterwords.html">Afterword</a></li></ol>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Writing NES Emulator in Rust</h1>
@@ -121,14 +127,13 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -136,10 +141,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -150,7 +154,7 @@
                 <div id="content" class="content">
                     <main>
                         <div style="text-align:center"><img src="./images/intro.png" width="50%"/></div>
-<h1><a class="header" href="#why-nes" id="why-nes">Why NES?</a></h1>
+<h1 id="why-nes"><a class="header" href="#why-nes">Why NES?</a></h1>
 <p>The <a href="https://en.wikipedia.org/wiki/Nintendo_Entertainment_System">NES</a> (Nintendo Entertainment System) was one of the most popular gaming platforms throughout the 80s and the 90s. The platform and the emergent ecosystem was and still is a huge cultural phenomenon. The device itself had relatively simple hardware (judging from the modern days), and it's incredible how much was made out of it.</p>
 <p>This series is about creating an emulator capable of running and playing first-gen NES games, such as:</p>
 <ul>
@@ -161,18 +165,18 @@
 <li>etc.</li>
 </ul>
 <p>We would go with incremental updates, with potentially enjoyable milestones, gradually building a fully capable platform. One of the problems with writing an emulator is that you don't get any feedback until the very end when the whole thing is done, and that's no fun. I've tried to break the entire exercise into small pieces with visible and playable goals. After all, it's all about having a good time.</p>
-<h1><a class="header" href="#why-rust" id="why-rust">Why Rust?</a></h1>
+<h1 id="why-rust"><a class="header" href="#why-rust">Why Rust?</a></h1>
 <p>Rust is a modern language with modern expression capabilities and impressive performance characteristics.</p>
 <blockquote>
-<p>For an overview of the language, I recommend watching <a href="https://www.youtube.com/watch?v=DnT-LUQgc7s">&quot;Consider Rust&quot;</a> presentation by Jon Gjengset.</p>
+<p>For an overview of the language, I recommend watching <a href="https://www.youtube.com/watch?v=DnT-LUQgc7s">"Consider Rust"</a> presentation by Jon Gjengset.</p>
 </blockquote>
 <p>The Rust programming language allows us to go as low-level as needed in terms of hardware and memory management, which is a good fit for the problem of hardware simulation. For example, NES has a Central Processing Unit (CPU), and the majority of supported operations are dealing with unsigned 8-bit arithmetic and bit manipulation. Rust provides excellent capabilities for working with signed and unsigned numbers of different sizes without any overhead. In addition, the Rust ecosystem offers a plethora of libraries that make working on bit-level data as convenient as it gets.</p>
 <p>The goal is to play NES games on the hardware that we have, meaning we have to simulate NES hardware. The process of simulation alone means that we are introducing significant performance overhead in comparison to running native applications.
 By choosing rust, we hope to get some additional performance budget for our needs. NES hardware specs are pretty modest by today's standards. For example, the NES CPU is about 3000 times slower than modern CPUs. Emulating that in any language should not be a problem. Some folks were able to get playable performance on an emulator written in Python. But it is still nice to have extra power for free.</p>
-<h1><a class="header" href="#prerequisites" id="prerequisites">Prerequisites</a></h1>
+<h1 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h1>
 <p>I expect the reader to have basic knowledge of the Rust language and understanding primary language constructs and platform capabilities. I'll introduce some features as we go, but others have to be learned elsewhere.</p>
 <p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and hexadecimal numbering systems work. Again, NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required.</p>
-<h1><a class="header" href="#references" id="references">References</a></h1>
+<h1 id="references"><a class="header" href="#references">References</a></h1>
 <ol>
 <li><a href="http://wiki.nesdev.com/w/index.php/Nesdev_Wiki">Nesdev Wiki</a> - nothing would be possible without it. The one-stop-shop.</li>
 <li><a href="http://nesdev.com/NESDoc.pdf">Nintendo Entertainment System Documentation</a> - a short tutorial that covers pretty much everything about NES</li>
@@ -183,8 +187,8 @@ By choosing rust, we hope to get some additional performance budget for our need
 <hr />
 <p>Created by <a href="http://twitter.com/bugzmanov">@bugzmanov</a>, 2020</p>
 <p><em> Special thanks to <a href="https://github.com/sburris0">Spencer Burris</a> and <a href="https://github.com/kgusakov/">Kirill Gusakov</a> for reviews, edits and helpfull suggestions! </em></p>
-<h1><a class="header" href="#understanding-the-nes-platform" id="understanding-the-nes-platform">Understanding the NES Platform</a></h1>
-<h2><a class="header" href="#achitecture" id="achitecture">Achitecture</a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="understanding-the-nes-platform"><a class="header" href="#understanding-the-nes-platform">Understanding the NES Platform</a></h1>
+<h2 id="achitecture"><a class="header" href="#achitecture">Achitecture</a></h2>
 <p>The simplified architecture of hardware-software interaction looks like this:</p>
 <div style="text-align:center"><img src="./images/ch2/image_1_computer_arch.png" width="30%"/></div>
 <p>From top to bottom:</p>
@@ -195,14 +199,14 @@ By choosing rust, we hope to get some additional performance budget for our need
 <li>Layers below ALU and Memory elements are less of an interest to us. On a hardware level, it all comes down to logic gates and their arrangements.</li>
 </ul>
 <blockquote>
-<p>If you want to get intimate knowledge of how computers are composed, starting from the basic principles of boolean logic, I highly recommend the book:<br/> <a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">&quot;The Elements of Computing Systems. Building a Modern Computer from First Principles&quot;</a> by Noam Nisan, Shimon Schocken.</p>
+<p>If you want to get intimate knowledge of how computers are composed, starting from the basic principles of boolean logic, I highly recommend the book:<br/> <a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">"The Elements of Computing Systems. Building a Modern Computer from First Principles"</a> by Noam Nisan, Shimon Schocken.</p>
 </blockquote>
 <p>Luckily for us, NES doesn't have an Operating System. That means that the Application layer (Gamezzz) communicates with hardware directly using machine language.</p>
 <p>The simplified version of this layered architecture looks like this:</p>
 <div style="text-align:center"><img src="./images/ch2/image_2_nes_emul_arch.png" width="30%"/></div>
 <p>As you can see, machine language is the interface between our emulator and our NES games.</p>
 <p>In the coming emulator, we would need to implement NES Computer Architecture, Arithmetic Logic Unit, and Memory. By using high-level language, we don't need to worry about simulating boolean arithmetic and sequential logic. Instead, we should rely on existing Rust features and language constructs.</p>
-<h2><a class="header" href="#nes-platform-main-components" id="nes-platform-main-components">NES Platform Main Components</a></h2>
+<h2 id="nes-platform-main-components"><a class="header" href="#nes-platform-main-components">NES Platform Main Components</a></h2>
 <div style="text-align:center"><img src="./images/ch2/image_3_nes_components.png" width="50%"/></div>
 <p>The significantly simplified schema of main NES hardware components:</p>
 <ul>
@@ -235,17 +239,17 @@ The later version of cartridges carried additional hardware (ROM and RAM) access
 <p>Roughly estimating the effort required for each component, PPU will be the hardest, and the BUS the easiest.</p>
 <p>Writing a perfect emulator is a never-ending quest. But this quest has a start, and we will start by emulating the CPU.</p>
 <div style="text-align:center"><img src="./images/ch2/image_5_motherboard.png" width="80%"/></div>
-<h1><a class="header" href="#emulating-cpu" id="emulating-cpu">Emulating CPU</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-cpu"><a class="header" href="#emulating-cpu">Emulating CPU</a></h1>
 <p>The goal of this chapter is to get our first NES game up and running.
 We are going to play the Snake game. The source code with comments can be found in <a href="https://gist.github.com/wkjagt/9043907">this gist</a>.</p>
-<div style="text-align:center"><img src="./images/ch3/snk_logo.png" width="40%"/></div>
+ <div style="text-align:center"><img src="./images/ch3/snk_logo.png" width="40%"/></div>
  <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
 <p>CPU is the heart of any computer system. It's the CPUs job to run program instructions and orchestrate all of the available hardware modules to provide the full experience. Despite PPU and APU running their independent circuits, they still have to march under CPUs beat and execute commands issued by the CPU.</p>
 <p>Before jumping into implementation, we need to briefly discuss which resources are available to the CPU to do its work.</p>
 <p>The only two resources that the CPU has access to are the Memory Map and CPU Registers.</p>
 <p>From a programming standpoint, the memory map is just a continuous array of 1-byte cells. NES CPU uses 16-bit for memory addressing, which means that it can address 65536 different memory cells.</p>
 <p>As we've seen before, the NES platform had only 2 KiB of RAM connected to the CPU.</p>
-<div style="text-align:center"><img src="./images/ch3/cpu_registers_memory.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch3/cpu_registers_memory.png" width="80%"/></div>
 <p>That RAM is accessible via <strong>[0x0000 … 0x2000]</strong> address space.</p>
 <p>Access to <strong>[0x2000 … 0x4020]</strong> is redirected to other available NES hardware modules: PPU, APU, GamePads, etc. (more on this later)</p>
 <p>Access to <strong>[0x4020 .. 0x6000]</strong> is a special space that different generations of cartridges used differently. It might be mapped to RAM, ROM, or nothing at all. The space is controlled by so-called mappers - special circuitry on a cartridge. We will ignore this space.</p>
@@ -253,12 +257,12 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>Access to <strong>[0x8000 … 0xFFFF]</strong> is mapped to Program ROM (PRG ROM) space on a cartridge.</p>
 <p>Memory access is relatively slow, NES CPU has a few internal memory slots called registers with significantly lower access delay.</p>
 <blockquote>
-<table><thead><tr><th>CPU Operation type</th><th>Execution time (in CPU Cycles)</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>CPU Operation type</th><th>Execution time (in CPU Cycles)</th></tr></thead><tbody>
 <tr><td>Accessing only registers</td><td>2</td></tr>
 <tr><td>Accessing the first 255 bytes of RAM</td><td>3</td></tr>
 <tr><td>Accessing memory space after the first 255</td><td>4-7</td></tr>
 </tbody></table>
-</blockquote>
+</div></blockquote>
 <p>NES CPU has 6 Registers:</p>
 <ul>
 <li>
@@ -289,7 +293,7 @@ We are going to play the Snake game. The source code with comments can be found 
 </ul>
 <p>I tend to use both of the links. The pages provide full specs of available CPU features and their machine codes.</p>
 <p>I highly recommend reading this <a href="https://skilldrick.github.io/easy6502/">interactive tutorial on 6502 instructions</a> before moving on.</p>
-<div style="text-align:center"><img src="./images/ch3/image_4_opcodes.png" width="80%" /></div>
+ <div style="text-align:center"><img src="./images/ch3/image_4_opcodes.png" width="80%" /></div>
 <p>6502 chip is a relatively simple CPU; it supports only six types of commands and about 64 unique commands. Because some of the instructions have multiple versions for different memory addressing modes, it results in about 150 machine code operations that we are to implement.</p>
 <blockquote>
 <p><strong>NOTE:</strong> NES console had a custom chip 2A03 that is based on 6502, but has noticeable differences:</p>
@@ -301,8 +305,8 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>To keep things simple, we would need to implement support for 256 different machine instructions.</p>
 <p>The good news is that there are a lot of similarities between instructions. Once we have the foundation in place, we will be constantly reusing them to implement the whole set.</p>
 </blockquote>
-<h1><a class="header" href="#lets-get-started" id="lets-get-started">Let's get started.</a></h1>
-<div style="text-align:center"><img src="./images/ch3/chapter_logo.png" width="20%"/></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="lets-get-started"><a class="header" href="#lets-get-started">Let's get started.</a></h1>
+ <div style="text-align:center"><img src="./images/ch3/chapter_logo.png" width="20%"/></div>
 <p>Let's try to interpret our first program. The program looks like this:</p>
 <pre><code>a9 c0 aa e8 00
 </code></pre>
@@ -318,8 +322,7 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>It is worth mentioning that some operations use CPU registers as implicit parameters.</p>
 </blockquote>
 <p>Let's sketch out how our CPU might look like from a high-level perspective:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct CPU {
    pub register_a: u8,
@@ -337,11 +340,10 @@ impl CPU {
    }
  
    pub fn interpret(&amp;mut self, program: Vec&lt;u8&gt;) {
-       todo!(&quot;&quot;)
+       todo!("")
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Note that we introduced a program counter register that will help us track our current position in the program. Also, note that the interpret method takes a mutable reference to self as we know that we will need to modify <strong>register_a</strong> during the execution.</p>
 <p>The CPU works in a constant cycle:</p>
 <ul>
@@ -351,8 +353,7 @@ impl CPU {
 <li>Repeat the cycle</li>
 </ul>
 <p>Lets try to codify exactly that:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub fn interpret(&amp;mut self, program: Vec&lt;u8&gt;) {
     self.program_counter = 0;
@@ -366,11 +367,9 @@ impl CPU {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>So far so good. Endless loop? Nah, it's gonna be alright. Now let's implement the <strong>LDA (0xA9)</strong> opcode:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>        match opscode {
             0xA9 =&gt; {
@@ -393,15 +392,13 @@ impl CPU {
             }
             _ =&gt; todo!()
         }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We are not doing anything crazy here, just following the spec and using rust constructs to do binary arithmetic.</p>
 <blockquote>
 <p>It's essential to set or unset CPU flag status depending on the results.</p>
 </blockquote>
 <p>Because of the endless loop, we won't be able to test this functionality yet. Before moving on, let's quickly implement <strong>BRK (0x00)</strong> opcode:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>        match opcode {
         // ...
@@ -410,11 +407,9 @@ impl CPU {
             }
             _ =&gt; todo!()
         }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now let's write some tests:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[cfg(test)]
 mod test {
@@ -436,8 +431,7 @@ mod test {
         assert!(cpu.status &amp; 0b0000_0010 == 0b10);
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p>Do you think that's enough? What else should we check?</p>
 </blockquote>
@@ -445,8 +439,7 @@ mod test {
 <div style="text-align:center"><img src="./images/ch3.1/image_3_tax_spec.png" width="50%"/></div>
 <p>This one is also straightforward: copy a value from A to X, and update status register.</p>
 <p>We need to introduce <strong>register_x</strong> in our CPU struct, then we can implement the <strong>TAX (0xAA)</strong> opcode:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct CPU {
 //...
@@ -478,11 +471,9 @@ impl CPU {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Don't forget to write tests:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   #[test]
    fn test_0xaa_tax_move_a_to_x() {
@@ -492,16 +483,14 @@ impl CPU {
  
        assert_eq!(cpu.register_x, 10)
    }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Before moving to the next opcode, we have to admit that our code is quite convoluted:</p>
 <ul>
 <li>the interpret method is already complicated and does multiple things</li>
 <li>there is a noticeable duplication between the way <strong>TAX</strong> and <strong>LDA</strong> are implemented.</li>
 </ul>
 <p>Let's fix that:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>// ... 
   fn lda(&amp;mut self, value: u8) {
@@ -546,15 +535,13 @@ impl CPU {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Ok. The code looks more manageable now. Hopefully, all tests are still passing.</p>
 <p>I cannot emphasize enough the importance of writing tests for all of the opcodes we are implementing. The operations themselves are almost trivial, but tiny mistakes can cause unpredictable ripples in game logic.</p>
 <div style="text-align:center"><img src="./images/ch3.1/image_4_pacman_bug.gif" width="30%"/></div>
 <p>Implementing that last opcode from the program should not be a problem, and I'll leave this exercise to you.</p>
 <p>When you are done, these tests should pass:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   #[test]
    fn test_5_ops_working_together() {
@@ -572,20 +559,18 @@ impl CPU {
 
         assert_eq!(cpu.register_x, 1)
     }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.1" target="_blank">GitHub</a>.</p>
 </blockquote>
-<h1><a class="header" href="#memory-addressing-modes" id="memory-addressing-modes">Memory addressing modes</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="memory-addressing-modes"><a class="header" href="#memory-addressing-modes">Memory addressing modes</a></h1>
 <p>In our initial implementation, the CPU receives instructions as a separate input stream, this is not how things work in an actual NES.</p>
 <p>NES implements typical von Neumann architecture: both data and the instructions are stored in memory. The executed code is data from the CPU perspective, and any data can potentially be interpreted as executable code. There is no way CPU can tell the difference. The only mechanism the CPU has is a <strong>program_counter</strong> register that keeps track of a position in the instructions stream.</p>
-<div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch3.2/image_1_von_neuman.png" width="60%"/></div>
 <p>Let's sketch this out in our CPU code:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>pub struct CPU {
@@ -629,11 +614,10 @@ impl CPU {
     }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We have just created an array for the whole 64 KiB of address space. As discussed in a future chapter<LINK TO A CHAPTER>, CPU has only 2 KiB of RAM, and everything else is reserved for memory mapping.</p>
 <p>We load program code into memory, starting at 0x8000 address. We've discussed that [0x8000 .. 0xFFFF] is reserved for Program ROM, and we can assume that the instructions stream should start somewhere in this space (not necessarily at 0x8000).</p>
-<p>NES platform has a special mechanism to mark where the CPU should start the execution. Upon inserting a new cartridge, the CPU receives a special signal called &quot;Reset interrupt&quot; that instructs CPU to:</p>
+<p>NES platform has a special mechanism to mark where the CPU should start the execution. Upon inserting a new cartridge, the CPU receives a special signal called "Reset interrupt" that instructs CPU to:</p>
 <ul>
 <li>reset the state (registers and flags)</li>
 <li>set <strong>program_counter</strong> to the 16-bit address that is stored at 0xFFFC</li>
@@ -641,17 +625,17 @@ impl CPU {
 <p>Before implementing that, I should briefly mention that NES CPU can address 65536 memory cells. It takes 2 bytes to store an address. NES CPU uses Little-Endian addressing rather than Big-Endian.
 That means that the 8 least significant bits of an address will be stored before the 8 most significant bits.</p>
 <p>To illustrate the difference:</p>
-<table><thead><tr><th></th><th align="right"></th></tr></thead><tbody>
-<tr><td>Real Address</td><td align="right"><strong>0x8000</strong></td></tr>
-<tr><td>Address packed in big-endian</td><td align="right"><strong>80 00</strong></td></tr>
-<tr><td>Address packed in little-endian</td><td align="right"><strong>00 80</strong></td></tr>
+<div class="table-wrapper"><table><thead><tr><th></th><th style="text-align: right"></th></tr></thead><tbody>
+<tr><td>Real Address</td><td style="text-align: right"><strong>0x8000</strong></td></tr>
+<tr><td>Address packed in big-endian</td><td style="text-align: right"><strong>80 00</strong></td></tr>
+<tr><td>Address packed in little-endian</td><td style="text-align: right"><strong>00 80</strong></td></tr>
 </tbody></table>
+</div>
 <p>For example, the instruction to read data from memory cell 0x8000 into A register would look like:</p>
 <pre><code>LDA $8000      &lt;=&gt;    ad 00 80
 </code></pre>
 <p>We can implement this behaviour using some of Rust's bit arithmetic:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   fn mem_read_u16(&amp;mut self, pos: u16) -&gt; u16 {
        let lo = self.mem_read(pos) as u16;
@@ -666,11 +650,10 @@ That means that the 8 least significant bits of an address will be stored before
        self.mem_write(pos + 1, hi);
    }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p>Technically, mem_read_u16 doesn't need <code>&amp;mut self</code> and can use immutable reference. However, later in the book, mem read requests
-could be routed to external &quot;devices&quot; (such as PPU and Joypads), where reading does indeed modify the state of the simulated device.</p>
+could be routed to external "devices" (such as PPU and Joypads), where reading does indeed modify the state of the simulated device.</p>
 </blockquote>
 <p>Or by using Rust's <a href="https://doc.rust-lang.org/std/primitive.u16.html#method.from_le_bytes">endian support for primitive types</a>.</p>
 <p>Now we can implement <strong>reset</strong> functionality properly. We will have to adjust the <code>load</code> and <code>load_and_run</code> functions:</p>
@@ -678,8 +661,7 @@ could be routed to external &quot;devices&quot; (such as PPU and Joypads), where
 <li><strong>load</strong> method should load a program into PRG ROM space and save the reference to the code into 0xFFFC memory cell</li>
 <li><strong>reset</strong> method should restore the state of all registers, and initialize program_counter by the 2-byte value stored at 0xFFFC</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   pub fn reset(&amp;mut self) {
        self.register_a = 0;
@@ -700,12 +682,11 @@ could be routed to external &quot;devices&quot; (such as PPU and Joypads), where
        self.run()
    }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Don't forget to fix failing tests now <strong>:trollface:</strong></p>
 <p>Alright, that was the easy part.</p>
 <p>Remember LDA opcodes we implemented last chapter? That single mnemonic (LDA) actually can be translated into 8 different machine instructions depending on the type of the parameter:</p>
-<div style="text-align:center"><img src="./images/ch3.2/image_2_opcodes.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch3.2/image_2_opcodes.png" width="80%"/></div>
 <p>You can read about addressing modes:</p>
 <ul>
 <li><a href="https://skilldrick.github.io/easy6502/#addressing">here</a></li>
@@ -721,8 +702,7 @@ could be routed to external &quot;devices&quot; (such as PPU and Joypads), where
 <p>There are no opcodes that occupy more than 3 bytes. CPU instruction size can be either 1, 2, or 3 bytes.</p>
 <p>The majority of CPU instructions provide more than one addressing alternative. Ideally, we don't want to re-implement the same addressing mode logic for every CPU instruction.</p>
 <p>Let's try to codify how the CPU should interpret different addressing modes:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>#[derive(Debug)]
@@ -792,17 +772,15 @@ impl CPU {
            }
          
            AddressingMode::NoneAddressing =&gt; {
-               panic!(&quot;mode {:?} is not supported&quot;, mode);
+               panic!("mode {:?} is not supported", mode);
            }
        }
 
    }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>That way, we can change our initial <strong>LDA</strong> implementation.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span> fn lda(&amp;mut self, mode: &amp;AddressingMode) {
        let addr = self.get_operand_address(mode);
@@ -836,12 +814,10 @@ impl CPU {
        }
    }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>NOTE: It's absolutely necessary to increment <strong>program_counter</strong> after each byte being read from the instructions stream.</p>
 <p>Don't forget your tests.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   #[test]
    fn test_lda_from_memory() {
@@ -852,11 +828,9 @@ impl CPU {
 
        assert_eq!(cpu.register_a, 0x55);
    }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Using the same foundation, we can quickly implement <strong>STA</strong> instruction, which copies the value from register A to memory.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    fn sta(&amp;mut self, mode: &amp;AddressingMode) {
         let addr = self.get_operand_address(mode);
@@ -881,21 +855,20 @@ impl CPU {
             //..
         }
     }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Before we wrap up, I'd like to mention that the current <strong>run</strong> method is somewhat iffy for a few reasons.
 First, the requirement to increment program_counter by 1 (or 2) after some of the operations is error-prone. If we made an error, it would be tough to spot it.</p>
-<p>Second, wouldn't it be more readable and convenient if we could group all &quot;LDA&quot; operations under a single <code>match</code> statement?</p>
+<p>Second, wouldn't it be more readable and convenient if we could group all "LDA" operations under a single <code>match</code> statement?</p>
 <p>Lastly, all we are doing is hard-coding Instructions spec into Rust code. The translation is a bit hard to compare. Keeping the code in some table form looks like a more manageable approach.</p>
-<div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch3.2/image_3_ideal_state.png" width="80%"/></div>
 <p>I leave it to you to figure out how to get to this point.</p>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.2" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#implementing-the-rest-of-cpu-instructions" id="implementing-the-rest-of-cpu-instructions">Implementing the rest of CPU instructions</a></h1>
-<div style="text-align:center"><img src="./images/ch3.3/image_1_how_to_draw_owl.png" width="60%"/></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="implementing-the-rest-of-cpu-instructions"><a class="header" href="#implementing-the-rest-of-cpu-instructions">Implementing the rest of CPU instructions</a></h1>
+ <div style="text-align:center"><img src="./images/ch3.3/image_1_how_to_draw_owl.png" width="60%"/></div>
 <p>Implementing the rest of the 6502 CPU instructions should be relatively straightforward. I won't go into detail for all of them.</p>
 <p>Just some remarks:</p>
 <ul>
@@ -924,15 +897,14 @@ And <code>-B = !B + 1</code></p>
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.3" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#running-our-first-game" id="running-our-first-game">Running our first game</a></h1>
-<div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="running-our-first-game"><a class="header" href="#running-our-first-game">Running our first game</a></h1>
+ <div style="text-align:center"><img src="./images/ch3.4/image_1_progress.png" width="100%"/></div>
 <p>Great, you've made it this far. What we are going to do next is to take a bit of a detour.
 The snake game was introduced in this article: <a href="https://skilldrick.github.io/easy6502/#snake">Easy 6502</a>. In fact, it is not a true NES game. It is built with 6502 instructions and uses quite different memory mappings.</p>
 <p>However, it's a fun way to validate that our CPU is truly functional, and it's fun to play the first game.</p>
 <p>The majority of logic we are to implement now would be reused some way or another when we will be implementing rendering in PPU, so nothing is wasted effort.</p>
 <p>The machine code of the game:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>let game_code = vec![
@@ -958,19 +930,18 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
     0xea, 0xca, 0xd0, 0xfb, 0x60
 ];
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>You can find assembly code with comments <a href="https://gist.github.com/wkjagt/9043907">here</a>.</p>
 <p>The memory mapping that the game uses:</p>
-<table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>Address space</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong>0xFE</strong></td><td>Input</td><td>Random Number Generator</td></tr>
 <tr><td><strong>0xFF</strong></td><td>Input</td><td>A code of the last pressed Button</td></tr>
 <tr><td><strong>[0x0200..0x0600]</strong></td><td>Output</td><td>Screen.<br/>Each cell represents the color of a pixel in a 32x32 matrix.<br/><br/> The matrix starts from top left corner, i.e.<br/><br/> <strong>0x0200</strong> - the color of (0,0) pixel <br/> <strong>0x0201</strong> - (1,0) <br/> <strong>0x0220</strong> - (0,1) <br/><br/> <div style="text-align:left"><img src="./images/ch3.4/image_2_screen_matrix.png" width="50%"/></div></td></tr>
 <tr><td><strong>[0x0600...]</strong></td><td>Game code</td><td>Execution code</td></tr>
 </tbody></table>
+</div>
 <p><em>Important note:</em> the game expects that the execution code would be located right after the output region. This means that we need to update our <code>CPU.load</code> function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
     // ...   
@@ -980,8 +951,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
     }
   
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The game executes standard game loop:</p>
 <ul>
 <li>read input from a user</li>
@@ -990,8 +960,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
 <li>repeat</li>
 </ul>
 <p>We need to intercept this cycle to get user input into the input mapping space and render the state of the screen. Let's modify our CPU run cycle:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
  // ...   
@@ -1015,11 +984,10 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now, the client code can provide a callback that will be executed before every opcode interpretation cycle.</p>
 <p>The sketch of the main method:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
    let game_code = vec![
 // ...
    ];
@@ -1037,8 +1005,7 @@ The snake game was introduced in this article: <a href="https://skilldrick.githu
        // read mem mapped screen state
        // render screen state
    });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>For our input/output, we would be using a cross-platform library
 that's popular in game development, the <a href="https://www.libsdl.org/">Simple DirectMedia Layer library</a>.</p>
 <p>Luckily for us, there is a convenient crate that provides Rust bindings for the library: <a href="https://rust-sdl2.github.io/rust-sdl2/sdl2/">rust-sdl2</a></p>
@@ -1053,16 +1020,16 @@ that's popular in game development, the <a href="https://www.libsdl.org/">Simple
 <pre><code class="language-toml"># ...
 
 [dependencies]
-lazy_static = &quot;1.4.0&quot;
-bitflags = &quot;1.2.1&quot;
+lazy_static = "1.4.0"
+bitflags = "1.2.1"
 
-sdl2 = &quot;0.34.0&quot;
-rand = &quot;=0.7.3&quot;
+sdl2 = "0.34.0"
+rand = "=0.7.3"
 </code></pre>
 <ol start="2">
 <li>In code, we need to initialize SDL:</li>
 </ol>
-<pre><pre class="playpen"><code class="language-rust">use sdl2::event::Event;
+<pre><pre class="playground"><code class="language-rust">use sdl2::event::Event;
 use sdl2::EventPump;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -1073,7 +1040,7 @@ fn main() {
    let sdl_context = sdl2::init().unwrap();
    let video_subsystem = sdl_context.video().unwrap();
    let window = video_subsystem
-       .window(&quot;Snake game&quot;, (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
+       .window("Snake game", (32.0 * 10.0) as u32, (32.0 * 10.0) as u32)
        .position_centered()
        .build().unwrap();
 
@@ -1082,30 +1049,26 @@ fn main() {
    canvas.set_scale(10.0, 10.0).unwrap();
 
    //...
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>Because our game screen is tiny (32x32 pixels), we set the scale factor to 10.</p>
 <blockquote>
 <p>Using <code>.unwrap()</code> is justifiable here because it's the outer layer of our application.
 There are no other layers that potentially can handle Err values and do something about it.</p>
 </blockquote>
 <p>Next, we will create a texture that would be used for rendering:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>//...
    let creator = canvas.texture_creator();
    let mut texture = creator
        .create_texture_target(PixelFormatEnum::RGB24, 32, 32).unwrap();
 //...
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We are telling SDL that our texture has a size of 32x32, and that each pixel is to be represented by 3 bytes (for <em>R</em>, <em>G</em> and <em>B</em> colors). This means that the texture will be represented by a 32x32x3 array of bytes.</p>
 <ol start="3">
 <li>Handling user input is straightforward:</li>
 </ol>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn handle_user_input(cpu: &amp;mut CPU, event_pump: &amp;mut EventPump) {
    for event in event_pump.poll_iter() {
@@ -1129,8 +1092,7 @@ There are no other layers that potentially can handle Err values and do somethin
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <ol start="4">
 <li>Rendering the screen state is a bit trickier.
 Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
@@ -1140,8 +1102,7 @@ Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
 <li>0 - Black</li>
 <li>1 - White</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn color(byte: u8) -&gt; Color {
    match byte {
@@ -1156,21 +1117,17 @@ Our program assumes 1 byte per pixel, while SDL expects 3 bytes.
        _ =&gt; sdl2::pixels::Color::CYAN,
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now we can transform the CPU screen map into 3 bytes like this:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    let color_idx = cpu.mem_read(i as u16);
     let (b1, b2, b3) = color(color_idx).rgb();
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>A caveat with this is that we don't want to force updating the SDL canvas if the screen state hasn't changed.
 Remember that the CPU will call our callback after each instruction, and most of the time those instructions have nothing to do with the screen. Meanwhile, updating the canvas is a heavy operation.</p>
 <p>We can keep track of the screen state by creating a temp buffer that will be populated from the screen state. Only in the case of screen changes, we would update SDL canvas.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn read_screen_state(cpu: &amp;CPU, frame: &amp;mut [u8; 32 * 3 * 32]) -&gt; bool {
    let mut frame_idx = 0;
@@ -1188,10 +1145,9 @@ Remember that the CPU will call our callback after each instruction, and most of
    }
    update
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And the game loop becomes:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
 // ...init sdl
 // ...load program
 
@@ -1210,18 +1166,17 @@ Remember that the CPU will call our callback after each instruction, and most of
 
        ::std::thread::sleep(std::time::Duration::new(0, 70_000));
    });
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>The last sleep statement was added to slow things down so that the game runs at a playable pace.</p>
 <p>And there you have it, the first game running on our emulator.</p>
-<div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
+ <div style="text-align:center"><img src="./images/ch3/snk_game.gif" width="40%"/></div>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.4" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#emulating-bus" id="emulating-bus">Emulating BUS</a></h1>
-<div style="text-align:center"><img src="./images/ch4/image_1_bus_schema.png" width="60%"/></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-bus"><a class="header" href="#emulating-bus">Emulating BUS</a></h1>
+ <div style="text-align:center"><img src="./images/ch4/image_1_bus_schema.png" width="60%"/></div>
 <p>CPU gets access to memory (including memory-mapped spaces) using three buses:</p>
 <ul>
 <li>address bus carries the address of a required location</li>
@@ -1229,9 +1184,9 @@ Remember that the CPU will call our callback after each instruction, and most of
 <li>data bus carries the byte of data being read or written</li>
 </ul>
 <p>A bus itself is not a device; it's a wiring between platform components.
-Therefore, we don't need to implement it as an independent module as Rust allows us to &quot;wire&quot; the components directly.
+Therefore, we don't need to implement it as an independent module as Rust allows us to "wire" the components directly.
 However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner.</p>
-<div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
+ <div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
 <p>In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions.</p>
 <p>By introducing a Bus module, we can have a single place for:</p>
 <ul>
@@ -1259,15 +1214,14 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 </ul>
 <p>This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes.</p>
 <p>The reason for mirroring is the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.</p>
-<div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
+ <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 <p>CPU however has <strong>[0x0000 - 0x2000]</strong> addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM.
 Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b111_1111_1111</strong> (11 bits) via the address bus.</p>
 <p>So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior.</p>
 <p>Long story short, the BUS needs to zero out the highest 2 bits if it receives a request in the range of <strong>[0x0000 … 0x2000]</strong></p>
 <p>Similarly address space <strong>[0x2008 .. 0x4000]</strong> mirrors memory mapping for PPU registers <strong>[0x2000 .. 0x2008]</strong>. Those are the only two mirrorings the BUS would be responsible for. Let's codify it right away, even though we don't have anything for PPU yet.</p>
 <p>So let's introduce a new module Bus, that will have direct access to RAM.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Bus {
    cpu_vram: [u8; 2048]
@@ -1280,11 +1234,9 @@ impl Bus {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The bus will also provide read/write access:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>const RAM: u16 = 0x0000;
 const RAM_MIRRORS_END: u16 = 0x1FFF;
@@ -1300,10 +1252,10 @@ impl Mem for Bus {
            }
            PPU_REGISTERS ..= PPU_REGISTERS_MIRRORS_END =&gt; {
                let _mirror_down_addr = addr &amp; 0b00100000_00000111;
-               todo!(&quot;PPU is not supported yet&quot;)
+               todo!("PPU is not supported yet")
            }
            _ =&gt; {
-               println!(&quot;Ignoring mem access at {}&quot;, addr);
+               println!("Ignoring mem access at {}", addr);
                0
            }
        }
@@ -1317,19 +1269,17 @@ impl Mem for Bus {
            }
            PPU_REGISTERS ..= PPU_REGISTERS_MIRRORS_END =&gt; {
                let _mirror_down_addr = addr &amp; 0b00100000_00000111;
-               todo!(&quot;PPU is not supported yet&quot;);
+               todo!("PPU is not supported yet");
            }
            _ =&gt; {
-               println!(&quot;Ignoring mem write-access at {}&quot;, addr);
+               println!("Ignoring mem write-access at {}", addr);
            }
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
-<p>The last step is to replace direct access to RAM from CPU with access via BUS</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<span class="boring">}</span></code></pre></pre>
+<p>We then replace direct access to RAM from CPU with access via BUS</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct CPU {
    pub register_a: u8,
@@ -1373,16 +1323,25 @@ impl CPU {
    }
    // ...
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
+<p>If we want our unit tests to still pass, we will temporarily adjust the <code>load</code> function to load our test programs to the new VRAM:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
+        for i in 0..(program.len() as u16) {
+            self.mem_write(0x0000 + i, program[i as usize]);
+        }
+        self.mem_write_u16(0xFFFC, 0x0000);
+    }
+<span class="boring">}</span></code></pre></pre>
 <p>And that's pretty much it for now. Wasn't hard, right?</p>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch4" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#cartridges" id="cartridges">Cartridges</a></h1>
-<div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cartridges"><a class="header" href="#cartridges">Cartridges</a></h1>
+ <div style="text-align:center"><img src="./images/ch5/image_1_a_cartridge.png" width="20%"/></div>
 <p>The first version of the cartridges was relatively simple. They carried two banks of ROM memory: PRG ROM for code and CHR ROM for visual graphics.</p>
 <p>Upon insertion into the console, PRG ROM gets connected to CPU, and CHR ROM gets connected to PPU. So on a hardware level, CPU wasn't able to access CHR ROM directly, and PPU wasn't able to access PRG ROM.</p>
 <blockquote>
@@ -1394,7 +1353,7 @@ impl CPU {
 </blockquote>
 <p>However, we won't be working with cartridges. Emulators work with files containing dumps of ROM spaces.</p>
 <p>There are several file formats for ROM dumps; the most popular one is iNES designed by <a href="http://fms.komkon.org">Marat Fayzullin</a></p>
-<div style="text-align:center"><img src="./images/ch5/image_2_ines_file_format.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch5/image_2_ines_file_format.png" width="60%"/></div>
 <p>The file contains 3-4 sections:</p>
 <ul>
 <li>16-byte header</li>
@@ -1403,12 +1362,12 @@ impl CPU {
 <li>Section containing CHR ROM data</li>
 </ul>
 <p>The header is the most interesting part.</p>
-<div style="text-align:center"><img src="./images/ch5/image_3_ines_header.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch5/image_3_ines_header.png" width="60%"/></div>
 <p>Control Byte 1 and Control Byte 2 (Byte 06 and 07 in the header) contain some additional info about the data in file, but it's packed in bits.</p>
-<table><thead><tr><th></th><th></th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th></th><th></th></tr></thead><tbody>
 <tr><td><div style="text-align:center"><img src="./images/ch5/image_4_control_byte_1.png" width="100%"/></div></td><td><div style="text-align:center"><img src="./images/ch5/image_5_control_byte_2.png" width="100%"/></div></td></tr>
 </tbody></table>
-<br/>
+</div><br/>
 We won't cover and support the iNES 2.0 format as it's not very popular. But you can find  <a href="https://formats.kaitai.io/ines/index.html">the formal specification of both iNES versions</a>.
 <p>The bare minimum information we care about:</p>
 <ul>
@@ -1420,10 +1379,9 @@ We won't cover and support the iNES 2.0 format as it's not very popular. But you
 <p>Mirroring will be extensively covered in the following PPU chapters.
 For now, we need to figure out which mirroring type the game is using.</p>
 <p>We would support only the iNES 1.0 format and mapper 0.</p>
-<p>Mapper 0 essentially means &quot;no mapper&quot; that CPU reads both CHR and PRG ROM as is.</p>
+<p>Mapper 0 essentially means "no mapper" that CPU reads both CHR and PRG ROM as is.</p>
 <p>Let's define cartridge Rom data structure:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[derive(Debug, PartialEq)]
 pub enum Mirroring {
@@ -1439,23 +1397,21 @@ pub struct Rom {
    pub screen_mirroring: Mirroring,
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then we need to write the code to parse binary data:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Rom {
    pub fn new(raw: &amp;Vec&lt;u8&gt;) -&gt; Result&lt;Rom, String&gt; {
        if &amp;raw[0..4] != NES_TAG {
-           return Err(&quot;File is not in iNES file format&quot;.to_string());
+           return Err("File is not in iNES file format".to_string());
        }
 
        let mapper = (raw[7] &amp; 0b1111_0000) | (raw[6] &gt;&gt; 4);
 
        let ines_ver = (raw[7] &gt;&gt; 2) &amp; 0b11;
        if ines_ver != 0 {
-           return Err(&quot;NES2.0 format is not supported&quot;.to_string());
+           return Err("NES2.0 format is not supported".to_string());
        }
 
        let four_screen = raw[6] &amp; 0b1000 != 0;
@@ -1483,12 +1439,10 @@ pub struct Rom {
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>As always, don't forget to test!</p>
 <p>Next, connect Rom to the BUS:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Bus {
    cpu_vram: [u8; 2048],
@@ -1504,13 +1458,11 @@ impl Bus {
    }
    //....
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And finally, we need to map address space <strong>[0x8000 … 0x10000]</strong> to cartridge PRG ROM space.</p>
 <p>One caveat: PRG Rom Size might be 16 KiB or 32 KiB.
 Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of addressable space, the upper 16 KiB needs to be mapped to the lower 16 KiB (if a game has only 16 KiB of PRG ROM)</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Mem for Bus {
    fn mem_read(&amp;self, addr: u16) -&gt; u8 {
@@ -1524,7 +1476,7 @@ Because <strong>[0x8000 … 0x10000]</strong> mapped region is 32 KiB of address
        match addr {
            //...
            0x8000..=0xFFFF =&gt; {
-               panic!(&quot;Attempt to write to Cartridge ROM space&quot;)
+               panic!("Attempt to write to Cartridge ROM space")
            }
        }
    }
@@ -1542,8 +1494,7 @@ impl Bus {
        self.rom.prg_rom[addr as usize]
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>You can download your first NES ROM dump file on <a href="https://github.com/bugzmanov/nes_ebook/blob/master/code/ch5/snake.nes?raw=true">Github</a>.</p>
 <p>You will need to modify the <code>main</code> method to load binary from a file.</p>
 <p>Spoiler alert: it's a modification of a snake game with funkier physics. The game expects the same memory map for the input device, screen output, and random number generator.</p>
@@ -1552,25 +1503,24 @@ impl Bus {
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#running-our-first-test-rom" id="running-our-first-test-rom">Running our first test ROM</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="running-our-first-test-rom"><a class="header" href="#running-our-first-test-rom">Running our first test ROM</a></h1>
 <p>The NES dev community has created <a href="https://wiki.nesdev.com/w/index.php/Emulator_tests">large suites of tests</a> that can be used to check our emulator.</p>
 <p>They cover pretty much every aspect of the console, including quirks and notable bugs that were embedded in the platform.</p>
-<div style="text-align:center"><img src="./images/ch5.1/image_1_i_am_error.png" width="40%"/></div>
+ <div style="text-align:center"><img src="./images/ch5.1/image_1_i_am_error.png" width="40%"/></div>
 <p>We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles.</p>
 <p>The iNES file of the test is located here: <a href="http://nickmass.com/images/nestest.nes">nestest.nes</a>
-An execution log accompanies the test, showing what the execution should look like: <a href="https://www.qmtpro.com/%7Enes/misc/nestest.log">nestest.log</a></p>
+An execution log accompanies the test, showing what the execution should look like: <a href="https://www.qmtpro.com/~nes/misc/nestest.log">nestest.log</a></p>
 <p>The next goal is to generate a similar execution log for the CPU while running a program.</p>
-<div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
+ <div style="text-align:center"><img src="./images/ch5.1/image_2_log_structure.png" width="80%"/></div>
 <p>For now, we can ignore the last column and focus on the first five.</p>
 <p>The fourth column <code>@ 80 = 0200 = 00</code> is somewhat interesting.</p>
 <ul>
-<li>The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the &quot;Indirect X&quot; addressing mode, and the offset is defined by register X</li>
+<li>The first number is the actual mem reference that we get if we apply an offset to the requesting address. 0xE1 is using the "Indirect X" addressing mode, and the offset is defined by register X</li>
 <li>The second number is a 2-byte target address fetched from <strong>[0x80 .. 0x81]</strong>. In this case it's [<em>0x00</em>, <em>0x02</em>]</li>
 <li>The third number is content of address cell 0x0200</li>
 </ul>
 <p>We already have a place to intercept CPU execution:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU  {
 
@@ -1587,21 +1537,18 @@ An execution log accompanies the test, showing what the execution should look li
       }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>All we need to do is to create a callback function that will trace CPU state:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
 //...
     cpu.run_with_callback(move |cpu| {
-       println!(&quot;{}&quot;, trace(cpu));
+       println!("{}", trace(cpu));
    }
 }
-
 </code></pre></pre>
 <p>It's vital to get a execution log format precisely like the one used in the provided log.</p>
 <p>Following tests can help you to get it right:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>#[cfg(test)]
@@ -1629,15 +1576,15 @@ mod test {
            result.push(trace(cpu));
        });
        assert_eq!(
-           &quot;0064  A2 01     LDX #$01                        A:01 X:02 Y:03 P:24 SP:FD&quot;,
+           "0064  A2 01     LDX #$01                        A:01 X:02 Y:03 P:24 SP:FD",
            result[0]
        );
        assert_eq!(
-           &quot;0066  CA        DEX                             A:01 X:01 Y:03 P:24 SP:FD&quot;,
+           "0066  CA        DEX                             A:01 X:01 Y:03 P:24 SP:FD",
            result[1]
        );
        assert_eq!(
-           &quot;0067  88        DEY                             A:01 X:00 Y:03 P:26 SP:FD&quot;,
+           "0067  88        DEY                             A:01 X:00 Y:03 P:26 SP:FD",
            result[2]
        );
    }
@@ -1665,14 +1612,13 @@ mod test {
            result.push(trace(cpu));
        });
        assert_eq!(
-           &quot;0064  11 33     ORA ($33),Y = 0400 @ 0400 = AA  A:00 X:00 Y:00 P:24 SP:FD&quot;,
+           "0064  11 33     ORA ($33),Y = 0400 @ 0400 = AA  A:00 X:00 Y:00 P:24 SP:FD",
            result[0]
        );
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now it's time to compare our execution log to the golden standard.</p>
 <pre><code class="language-bash">cargo run &gt; mynes.log
 diff -y mynes.log nestest.log
@@ -1715,10 +1661,10 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5.1" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#emulating-picture-processing-unit" id="emulating-picture-processing-unit">Emulating Picture Processing Unit</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-picture-processing-unit"><a class="header" href="#emulating-picture-processing-unit">Emulating Picture Processing Unit</a></h1>
 <p>Picture Processing Unit is the hardest one to emulate because it deals with the most complicated aspect of gaming: rendering the state of the screen. The NES PPU has fair number of quirks. While emulating some of them is not necessarily required, others are crucially important to have a playable environment.
 64KiB is not a hell of a lot of space, and NES platform designers tried to squeeze as much out of it as possible. Working with CHR ROM data means pretty much working with compressed data format; it requires a lot of bit arithmetic, uncompressing, and parsing.</p>
-<div style="text-align:center"><img src="./images/ch6/image_1_ppu_failures.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch6/image_1_ppu_failures.png" width="60%"/></div>
 <p>We will create the PPU emulator using four main steps:</p>
 <ul>
 <li>Emulating Registers and NMI Interruption</li>
@@ -1740,10 +1686,10 @@ After the third one it will be possible to play games with static screens:</p>
 </ul>
 <p>When we are done with the scroll, we could play platformers such as <a href="https://en.wikipedia.org/wiki/Super_Mario_Bros">Super Mario Bros</a>.</p>
 <p>So let's start.</p>
-<h1><a class="header" href="#emulating-ppu-registers" id="emulating-ppu-registers">Emulating PPU Registers</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-ppu-registers"><a class="header" href="#emulating-ppu-registers">Emulating PPU Registers</a></h1>
 <p>PPU has its own memory map, composed of PPU RAM, CHR ROM, and address space mirrors.
 PPU exposes 8 I/O Registers that are used by the CPU for communication. Those registers are mapped to <strong>[0x2000 - 0x2007]</strong> in the CPU memory map (and mirrored every 8 bytes through the region of <strong>[0x2008 .. 0x3FFF]</strong>)</p>
-<div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="70%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_1_ppu_registers_memory.png" width="70%"/></div>
 <p>To be precise, PPU has its own bus used to communicate with RAM and cartridge CHR ROM. But we don't necessarily need to emulate the bus.</p>
 <p>2 registers are responsible for accessing PPU memory map:</p>
 <ul>
@@ -1765,7 +1711,7 @@ PPU exposes 8 I/O Registers that are used by the CPU for communication. Those re
 <li>Status 0x2002</li>
 </ul>
 <p>The full spec of the registers can be found on <a href="http://wiki.nesdev.com/w/index.php/PPU_registers">NES Dev wiki</a>.</p>
-<div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 <p>Two communication channels exist between CPU and PPU:</p>
 <ul>
 <li>CPU is driving communication through IO registers</li>
@@ -1779,10 +1725,9 @@ The NES screen resolution is 320x240, thus scanlines 241 - 262 are not visible.<
 <div style="text-align:center"><img src="./images/ch6.1/image_7_scanlines_with_viewer.png" width="30%"/></div>
 Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes no memory accesses during 241-262 scanlines, so PPU memory can be freely accessed by the program. The majority of games play it safe and update the screen state only during this period, essentially preparing the view state for the next frame.
 </blockquote>
-<h2><a class="header" href="#ppu-sketch" id="ppu-sketch">PPU sketch</a></h2>
+<h2 id="ppu-sketch"><a class="header" href="#ppu-sketch">PPU sketch</a></h2>
 <p>Initial sketch of out PPU would look like this:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct NesPPU {
    pub chr_rom: Vec&lt;u8&gt;,
@@ -1792,8 +1737,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 
    pub mirroring: Mirroring,
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Where:</p>
 <ul>
 <li><strong>chr_rom</strong> - visuals of a game stored on a cartridge</li>
@@ -1802,8 +1746,7 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
 <li>and <strong>oam_data</strong> - internal memory to keep state of sprites</li>
 </ul>
 <p>Mirroring and chr_rom are specific to each game and provided by a cartridge</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl NesPPU {
    pub fn new(chr_rom: Vec&lt;u8&gt;, mirroring: Mirroring) -&gt; Self {
@@ -1816,9 +1759,8 @@ Upon entering the 241st scanline, PPU triggers VBlank NMI on the CPU. PPU makes 
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
-<h2><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers" id="emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
+<span class="boring">}</span></code></pre></pre>
+<h2 id="emulating-ppu-memory-access-address-and-data-registers"><a class="header" href="#emulating-ppu-memory-access-address-and-data-registers">Emulating PPU memory access: Address and Data registers</a></h2>
 <p>Let's try to emulate two of the most complex registers: Address (<strong>0x2006</strong>) and Data(<strong>0x2007</strong>)</p>
 <p>There are multiple caveats in the way the CPU can access PPU RAM. Say the CPU wants to access memory cell at 0x0600 PPU memory space:</p>
 <ol>
@@ -1846,7 +1788,7 @@ The first read from 0x2007 would return the content of this internal buffer fill
 </code></pre>
 <blockquote>
 <p>Also note that read or write access to 0x2007 increments the PPU Address (0x2006). The increment size is determined by the state of the Control register (0x2000):</p>
-<div style="text-align:left"><img src="./images/ch6.1/image_3_controller_register_spec.png" width="60%"/></div>
+ <div style="text-align:left"><img src="./images/ch6.1/image_3_controller_register_spec.png" width="60%"/></div>
 </blockquote>
 <p>The sequence of requests can be illustrated in this diagram:</p>
 <div style="text-align:center"><img src="./images/ch6.1/image_4_ppu_ram_sequence.png" width="60%"/></div>
@@ -1855,8 +1797,7 @@ The first read from 0x2007 would return the content of this internal buffer fill
 Reading palette data from $3F00-$3FFF works differently. The palette data is placed immediately on the data bus, and hence no dummy read is required.</p>
 </blockquote>
 <p>Lets model Address register first:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct AddrRegister {
    value: (u8, u8),
@@ -1907,11 +1848,9 @@ impl AddrRegister {
        ((self.value.0 as u16) &lt;&lt; 8) | (self.value.1 as u16)
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Next, we need to expose this register as being writable:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct NesPPU {
    //...
@@ -1924,11 +1863,9 @@ impl NesPPU {
        self.addr.update(value);
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Next, we can sketch out Controller Register:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>bitflags! {
 
@@ -1977,11 +1914,9 @@ impl ControlRegister {
        self.bits = data;
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And also expose it as being writable:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct NesPPU {
    pub ctrl: ControlRegister,
@@ -1994,11 +1929,9 @@ impl NesPPU {
        self.ctrl.update(value);
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now we can try to implement reading PPU memory:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl NesPPU {
    //...
@@ -2014,22 +1947,20 @@ impl NesPPU {
 
 
        match addr {
-           0..=0x1fff =&gt; todo!(&quot;read from chr_rom&quot;),
-           0x2000..=0x2fff =&gt; todo!(&quot;read from RAM&quot;),
-           0x3000..=0x3eff =&gt; panic!(&quot;addr space 0x3000..0x3eff is not expected to be used, requested = {} &quot;, addr),
+           0..=0x1fff =&gt; todo!("read from chr_rom"),
+           0x2000..=0x2fff =&gt; todo!("read from RAM"),
+           0x3000..=0x3eff =&gt; panic!("addr space 0x3000..0x3eff is not expected to be used, requested = {} ", addr),
            0x3f00..=0x3fff =&gt;
            {
                self.palette_table[(addr - 0x3f00) as usize]
            }
-           _ =&gt; panic!(&quot;unexpected access to mirrored space {}&quot;, addr),
+           _ =&gt; panic!("unexpected access to mirrored space {}", addr),
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We can emulate this internal buffer behavior for RAM and ROM by using a temporary field to hold a value from a previous read request:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>pub struct NesPPU {
@@ -2059,17 +1990,16 @@ impl NesPPU {
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Writing to PPU memory can be implemented in a similar way, just don't forget that writes to 0x2007 also increments Address Register.</p>
-<h2><a class="header" href="#mirroring" id="mirroring">Mirroring</a></h2>
+<h2 id="mirroring"><a class="header" href="#mirroring">Mirroring</a></h2>
 <p>One thing that isn't covered is how <code>mirror_vram_addr</code> is implemented.</p>
 <p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="http://wiki.nesdev.com/w/index.php/Mirroring">Mirroring</a>.</p>
 <p>VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll.
 For now, we can just code the mirroring behavior.</p>
 <p>NES uses 1 KiB of VRAM to represent a single screen state. Having 2 KiB of VRAM onboard means that NES can keep a state of 2 screens.</p>
-<p>On the PPU memory map, the range <em><strong>[0x2000...0x3F00]</strong></em> is reserved for Nametables (screens states)- 4 KiB of addressable space. Two &quot;additional&quot; screens have to be mapped to existing ones.
+<p>On the PPU memory map, the range <em><strong>[0x2000...0x3F00]</strong></em> is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
 The way they are mapped depends on the mirroring type, specified by a game (iNES files have this info in the header)</p>
 <div style="text-align:center"><img src="./images/ch6.1/image_5_mirroring.png" width="60%"/></div>
 <p>For example, for <em>Horizontal Mirroring</em>:</p>
@@ -2078,8 +2008,7 @@ The way they are mapped depends on the mirroring type, specified by a game (iNES
 <li>Address spaces <strong>[0x2800 .. 0x2C00]</strong> and <strong>[0x2C00 .. 0x3F00]</strong> should be mapped to the second 1 KiB of VRAM.</li>
 </ul>
 <p>One way to codify that:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl NesPPU {
    //...  
@@ -2105,12 +2034,10 @@ The way they are mapped depends on the mirroring type, specified by a game (iNES
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
-<h2><a class="header" href="#connecting-ppu-to-the-bus" id="connecting-ppu-to-the-bus">Connecting PPU to the BUS</a></h2>
+<span class="boring">}</span></code></pre></pre>
+<h2 id="connecting-ppu-to-the-bus"><a class="header" href="#connecting-ppu-to-the-bus">Connecting PPU to the BUS</a></h2>
 <p>One last step is to connect PPU to the BUS:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Bus {
     cpu_vram: [u8; 2048],
@@ -2131,11 +2058,9 @@ impl Bus {
 //..
 
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And provide memory mapping for the registers we've implemented so far:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>impl Bus {
@@ -2147,7 +2072,7 @@ impl Bus {
                 self.cpu_vram[mirror_down_addr as usize]
             }
             0x2000 | 0x2001 | 0x2003 | 0x2005 | 0x2006 | 0x4014 =&gt; {
-                panic!(&quot;Attempt to read from write-only PPU address {:x}&quot;, addr);
+                panic!("Attempt to read from write-only PPU address {:x}", addr);
             }
             0x2007 =&gt; self.ppu.read_data(),
 
@@ -2158,7 +2083,7 @@ impl Bus {
             0x8000..=0xFFFF =&gt; self.read_prg_rom(addr),
 
             _ =&gt; {
-                println!(&quot;Ignoring mem access at {}&quot;, addr);
+                println!("Ignoring mem access at {}", addr);
                 0
             }
         }
@@ -2185,26 +2110,25 @@ impl Bus {
                 let mirror_down_addr = addr &amp; 0b00100000_00000111;
                 self.mem_write(mirror_down_addr, data);
             }
-            0x8000..=0xFFFF =&gt; panic!(&quot;Attempt to write to Cartridge ROM space: {:x}&quot;, addr),
+            0x8000..=0xFFFF =&gt; panic!("Attempt to write to Cartridge ROM space: {:x}", addr),
 
             _ =&gt; {
-                println!(&quot;Ignoring mem write-access at {}&quot;, addr);
+                println!("Ignoring mem write-access at {}", addr);
             }
         }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The communication with the rest of the registers is similar. I leave this exercise to the reader.</p>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.1" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#emulating-interrupts" id="emulating-interrupts">Emulating Interrupts</a></h1>
-<p>Interrupts are the mechanism for the CPU to break the sequential execution flow and react to events that require immediate attention (&quot;attend to an interrupt&quot;).</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-interrupts"><a class="header" href="#emulating-interrupts">Emulating Interrupts</a></h1>
+<p>Interrupts are the mechanism for the CPU to break the sequential execution flow and react to events that require immediate attention ("attend to an interrupt").</p>
 <p>We've already implemented one of the supported interrupts - the RESET signal. This interrupt notifies the CPU that a new cartridge was inserted and the CPU needs to execute the reset subroutine.</p>
-<div style="text-align:center"><img src="./images/ch6.2/image_4_broadcast_interrupted.png" width="30%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.2/image_4_broadcast_interrupted.png" width="30%"/></div>
 <p>PPU communicates that it's entering the VBLANK phase for the frame via another interrupt signal - NMI (Non-Maskable Interrupt).
 From a high-level perspective, this means two things:</p>
 <ul>
@@ -2216,7 +2140,7 @@ From a high-level perspective, this means two things:</p>
 </blockquote>
 <p>Unlike other interrupts, CPU can't ignore the NMI. And the <strong>Disable Interrupt</strong> flag in the <strong>Status register P</strong> has no effect on how the CPU attends to it.
 The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit in the PPU Control register.</p>
-<h2><a class="header" href="#clock-cycles" id="clock-cycles">Clock cycles</a></h2>
+<h2 id="clock-cycles"><a class="header" href="#clock-cycles">Clock cycles</a></h2>
 <p>The NMI interrupt is tightly connected to PPU clock cycles:</p>
 <ul>
 <li>the PPU renders 262 scan lines per frame</li>
@@ -2243,15 +2167,14 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime.</p>
 </li>
 <li>
-<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">&quot;catch-up&quot;</a> <br/> <br/>For example, CPU takes 2 cycles to execute &quot;LDA #$01&quot; (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
+<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">"catch-up"</a> <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
 </li>
 </ol>
 <p>Because we already have CPU loop mostly spec'd out, the third approach is the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>
 <p>So the flow would look like this:</p>
-<div style="text-align:center"><img src="./images/ch6.2/image_1_tick_flow.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.2/image_1_tick_flow.png" width="60%"/></div>
 <p>Starting from the CPU:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
    pub fn run_with_callback&lt;F&gt;(&amp;mut self, mut callback: F)
@@ -2271,11 +2194,9 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The Bus should keep track of executed cycles and propagate tick call to PPU, but because PPU clock is 3 times faster than CPU clock, it would multiply the value:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Bus {
    cpu_vram: [u8; 2048],
@@ -2301,11 +2222,9 @@ impl Bus {
        self.ppu.tick(cycles * 3);
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The PPU would track cycles and calculate which scanline is should be drawing:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct NesPPU {
    // ...
@@ -2326,7 +2245,7 @@ impl NesPPU {
            if self.scanline == 241 {
                if self.ctrl.generate_vblank_nmi() {
                    self.status.set_vblank_status(true);
-                   todo!(&quot;Should trigger NMI interrupt&quot;)
+                   todo!("Should trigger NMI interrupt")
                }
            }
 
@@ -2340,8 +2259,7 @@ impl NesPPU {
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Some crucial details are still missing: some of the CPU operations take variable clock time depending on the execution flow.
 For example, conditional branch operations (like BNE) take an additional CPU cycle if the comparison is successful. And yet another CPU cycle if the JUMP would result in program counter to be on another memory page</p>
 <blockquote>
@@ -2349,13 +2267,12 @@ For example, conditional branch operations (like BNE) take an additional CPU cyc
 It's enough to compare the upper byte of the addresses to see if they are on the same page.</p>
 </blockquote>
 <p>I leave it up to the reader to figure out how to codify those additional ticks that may or may not happen.</p>
-<h1><a class="header" href="#interrupts" id="interrupts">Interrupts</a></h1>
+<h1 id="interrupts"><a class="header" href="#interrupts">Interrupts</a></h1>
 <p>So far our dependency graph looks one-directional:</p>
-<div style="text-align:center"><img src="./images/ch6.2/image_2_components_dag.png" width="60%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.2/image_2_components_dag.png" width="60%"/></div>
 <p>The problem is that we want to deliver signals from PPU to CPU and Rust doesn't really allow to have dependency cycles easily.</p>
 <p>One way to overcome this is to replace the push model with pull. The CPU can ask if there are interrupts ready at the beginning of the interpret cycle.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl CPU {
 //...
@@ -2372,8 +2289,7 @@ It's enough to compare the upper byte of the addresses to see if they are on the
        }
     }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The final piece is to implement interrupt behavior.
 Upon receiving an interrupt signal the CPU:</p>
 <ol>
@@ -2383,10 +2299,9 @@ Upon receiving an interrupt signal the CPU:</p>
 <li>Loads the Address of Interrupt handler routine from 0xFFFA (for NMI)</li>
 <li>Sets <strong>Program Counter</strong> register pointing to that address</li>
 </ol>
-<div style="text-align:center"><img src="./images/ch6.2/image_3_interrupt_mem.png" width="40%"/></div>
+ <div style="text-align:center"><img src="./images/ch6.2/image_3_interrupt_mem.png" width="40%"/></div>
 <p>Interrupt handler would have to call RTI operation at the end to finish interrupt attendance. That would restore Status Flag and Program Counter position from the stack. Effectively going back to the execution flow where it was left off.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   fn interrupt_nmi(&amp;mut self) {
        self.stack_push_u16(self.program_counter);
@@ -2400,15 +2315,13 @@ Upon receiving an interrupt signal the CPU:</p>
        self.bus.tick(2);
        self.program_counter = self.mem_read_u16(0xfffA);
    }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>In addition to scanline position, PPU would immediately trigger NMI if both of these conditions are met:</p>
 <ul>
 <li>PPU is VBLANK state</li>
-<li>&quot;Generate NMI&quot; bit in the controll Register is updated from 0 to 1.</li>
+<li>"Generate NMI" bit in the controll Register is updated from 0 to 1.</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl PPU for NesPPU {
 // ...    
@@ -2421,26 +2334,25 @@ Upon receiving an interrupt signal the CPU:</p>
     }
 //..
 }
-<span class="boring">}
-</span></code></pre></pre>
-<h1><a class="header" href="#other-cpu-interrupts" id="other-cpu-interrupts">Other CPU interrupts</a></h1>
-<p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called &quot;software interrupt&quot; that a game code can trigger programmatically in response to events.</p>
+<span class="boring">}</span></code></pre></pre>
+<h1 id="other-cpu-interrupts"><a class="header" href="#other-cpu-interrupts">Other CPU interrupts</a></h1>
+<p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.</p>
 <p>NESDEV Wiki provides all necessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>.</p>
 <br/>
 <hr />
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.2" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#rendering-chr-rom-tiles" id="rendering-chr-rom-tiles">Rendering CHR ROM Tiles</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rendering-chr-rom-tiles"><a class="header" href="#rendering-chr-rom-tiles">Rendering CHR ROM Tiles</a></h1>
 <p>The address space <strong>[0x0 .. 0x2000]</strong> on PPU is reserved for CHR ROM, which contains the visual graphics data of a game.</p>
 <p>That's <em>8 KiB</em> worth of data. And that's all there was in the first versions of NES cartridges.</p>
 <p>Visual data is packed in so-called tiles: an 8 x 8 pixel image that could use up to 4 colors. (to be precise, background tile can have 4 colors, a sprite tile can have 3 colors, and 0b00 is used as an indication that a pixel should be transparent)</p>
 <pre><code class="language-bash">8 * 8 * 2 (2 bits to codify color) = 128 bits = 16 bytes to codify a single tile
 </code></pre>
-<p>8 KiB / 128 bits = 512 tiles. I.e., each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called &quot;left&quot; and &quot;right&quot;.</p>
+<p>8 KiB / 128 bits = 512 tiles. I.e., each cartridge contained 512 tiles in total, divided into 2 pages/banks. The banks did not really have a name, historically they are called "left" and "right".</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_1_mario_tiles.png" width="50%"/></div>
 <p>8 pixels x 8 pixels is a tiny size, not much can be presented that way. The majority of objects in NES games are composed of multiple tiles.</p>
-<div style="text-align:center"><img src="./images/ch6.3/image_2_8bit_drawings.png" width="30%" ><br/> 8x8 pixel art by <a href="https://twitter.com/johanvinet">Johan Vinet</a> <br/><a href="https://twitter.com/PixelProspector/status/1097565152940044293">[Check it out]</a> </div>
+ <div style="text-align:center"><img src="./images/ch6.3/image_2_8bit_drawings.png" width="30%" ><br/> 8x8 pixel art by <a href="https://twitter.com/johanvinet">Johan Vinet</a> <br/><a href="https://twitter.com/PixelProspector/status/1097565152940044293">[Check it out]</a> </div>
 <p>What makes the CHR format tricky is that tiles themselves don't hold any color information. Each pixel in a tile is codified using 2 bits, declaring a color index in a palette, not a color itself.</p>
 <blockquote>
 <p>If NES were using popular RGB format for each pixel, a single tile would occupy 8<em>8</em>24 = 192 bytes. And it would require 96 KiB of CHR ROM space to hold 512 tiles.</p>
@@ -2452,7 +2364,7 @@ Upon receiving an interrupt signal the CPU:</p>
 <p>Surprisingly, 2 bits of a pixel are not codified in the same byte. A tile is described using 16 bytes. And each row is encoded using 2 bytes that stand 8 bytes apart from each other.
 To figure out the color index of the top-left pixel, we need to read the 7th bit of byte 0x0000 and the 7th bit of byte 0x0008, to get the next pixel in the same row we would need to read 6th bits in the same bytes, etc.</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_5_16bytes_of_a_tile.png" width="50%"/></div>
-<h2><a class="header" href="#palette" id="palette">Palette</a></h2>
+<h2 id="palette"><a class="header" href="#palette">Palette</a></h2>
 <p>Before rendering CHR ROM content, we need to briefly discuss the colors available to the NES.
 Different versions of the PPU chip had slightly different system-level palettes of 52 hardwired colors.</p>
 <p>All necessary details can be found on corresponding <a href="http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes">NesDev wiki page</a>.</p>
@@ -2460,8 +2372,7 @@ Different versions of the PPU chip had slightly different system-level palettes 
 <p>There are multiple variations used in emulators. Some make the picture more visually appealing, while others keep it closer to the original picture NES generated on a TV.</p>
 <p>It doesn't matter much which one we would choose, most of them get us good enough results.</p>
 <p>However, we still need to codify that table in a RGB format that is recognized by the SDL2 library:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>#[rustfmt::skip]
 
@@ -2480,19 +2391,17 @@ pub static SYSTEM_PALLETE: [(u8,u8,u8); 64] = [
    (0xFF, 0xEF, 0xA6), (0xFF, 0xF7, 0x9C), (0xD7, 0xE8, 0x95), (0xA6, 0xED, 0xAF), (0xA2, 0xF2, 0xDA),
    (0x99, 0xFF, 0xFC), (0xDD, 0xDD, 0xDD), (0x11, 0x11, 0x11), (0x11, 0x11, 0x11)
 ];
-<span class="boring">}
-</span></code></pre></pre>
-<h2><a class="header" href="#rendering-chr-rom" id="rendering-chr-rom">Rendering CHR Rom</a></h2>
+<span class="boring">}</span></code></pre></pre>
+<h2 id="rendering-chr-rom"><a class="header" href="#rendering-chr-rom">Rendering CHR Rom</a></h2>
 <p>To render tiles from a CHR ROM, we need to get a ROM file of a game.
 Google would help you find a lot of ROM dumps of the well-known classics. However, downloading such ROMs if you don't own a cartridge would be illegal (wink-wink).
 There is a site that listed legit homebrew games that were recently developed. And some of them are pretty good, most of them are free.
 Check it out: <a href="http://www.nesworld.com/article.php?system=nes&amp;data=neshomebrew">www.nesworld.com</a></p>
 <p>The caveat here that our emulator supports only NES 1.0 format. And homebrew developed games tend to use NES 2.0.
-Games like &quot;Alter Ego&quot; would do.</p>
+Games like "Alter Ego" would do.</p>
 <p>I would use Pac-Man, mostly because it's recognizable and I happen to own a cartridge of this game.</p>
 <p>First, let's create an abstraction layer for a frame, so we don't need to work with SDL directly:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Frame {
    pub data: Vec&lt;u8&gt;,
@@ -2517,11 +2426,9 @@ impl Frame {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Now we are ready to render a tile on a frame:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn show_tile(chr_rom: &amp;Vec&lt;u8&gt;, bank: usize, tile_n: usize) -&gt;Frame {
    assert!(bank &lt;= 1);
@@ -2544,7 +2451,7 @@ impl Frame {
                1 =&gt; palette::SYSTEM_PALLETE[0x23],
                2 =&gt; palette::SYSTEM_PALLETE[0x27],
                3 =&gt; palette::SYSTEM_PALLETE[0x30],
-               _ =&gt; panic!(&quot;can't be&quot;),
+               _ =&gt; panic!("can't be"),
            };
            frame.set_pixel(x, y, rgb)
        }
@@ -2552,18 +2459,17 @@ impl Frame {
 
    frame
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p><strong>Note:</strong> For now, we're interpreting color indices randomly. Just pick 4 random colors from the system palette for each index value to see how it would look like.</p>
 </blockquote>
 <p>Tying it all together in the main loop:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
    // ….init sdl2
    // ....
 
    //load the game
-   let bytes: Vec&lt;u8&gt; = std::fs::read(&quot;pacman.nes&quot;).unwrap();
+   let bytes: Vec&lt;u8&gt; = std::fs::read("pacman.nes").unwrap();
    let rom = Rom::new(&amp;bytes).unwrap();
 
    let tile_frame = show_tile(&amp;rom.chr_rom, 1,0);
@@ -2584,8 +2490,7 @@ impl Frame {
          }
       }
    }
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>And the result is not that impressive:</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_7_tile_1.png" width="50%"/></div>
 <p>Might it be a Pac-Man's back... err... head? Who knows.</p>
@@ -2598,7 +2503,7 @@ I guess that's it. Moving on...</p>
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.3" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#rendering-static-screen" id="rendering-static-screen">Rendering Static Screen</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="rendering-static-screen"><a class="header" href="#rendering-static-screen">Rendering Static Screen</a></h1>
 <p>At this point, the CPU and PPU are fully functional and working in coordination with each other.
 If we were to load a game into our emulator, the game would execute and most likely run into demo mode.</p>
 <p>The problem is that we can't see what's going on inside. Remember how we had intercepted the execution of the snake game to read the game screen state? And then had it rendered via SDL2 canvas? We will have to do something similar here. It's just the data format used by NES is slightly more complicated.</p>
@@ -2607,7 +2512,7 @@ If we were to load a game into our emulator, the game would execute and most lik
 <p>Both of those are constructed using CHR tiles, we've discussed in the previous chapter.
 In fact, the same tiles can be used both for background and for sprites.</p>
 <p>NES uses different memory spaces to hold those categories. The set of possible transformations is also different.</p>
-<h2><a class="header" href="#rendering-background" id="rendering-background">Rendering Background</a></h2>
+<h2 id="rendering-background"><a class="header" href="#rendering-background">Rendering Background</a></h2>
 <!-- <div style="text-align:center"><img src="./images/ch6.4/image_1_pacman_bg.png" width="30%"/></div> -->
 <p>Three main memory sections are responsible for the state of a background:</p>
 <ul>
@@ -2634,8 +2539,7 @@ Control register decides which of two banks should be used for background (and w
 <li>Read 960 bytes from the specified nametable and draw a 32x30 tile-based screen</li>
 </ol>
 <p>Let's add <code>render</code> function to a new <code>render</code> module:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub mod frame;
 pub mod palette;
@@ -2665,7 +2569,7 @@ pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
                    1 =&gt; palette::SYSTEM_PALLETE[0x23],
                    2 =&gt; palette::SYSTEM_PALLETE[0x27],
                    3 =&gt; palette::SYSTEM_PALLETE[0x30],
-                   _ =&gt; panic!(&quot;can't be&quot;),
+                   _ =&gt; panic!("can't be"),
                };
                frame.set_pixel(tile_x*8 + x, tile_y*8 + y, rgb)
            }
@@ -2673,8 +2577,7 @@ pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
    }
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <blockquote>
 <p>Note: We are still using randomly picked colors from a system palette just to see shapes</p>
 </blockquote>
@@ -2688,8 +2591,7 @@ This simplification wouldn't affect first-gen NES games much. The majority of NE
 <p>On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines; during scanlines 241 - 262, the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
 <p>One way to intercept is to read the screen state right after NMI interrupt - when PPU is done rendering the current frame, but before CPU starts creating the next one.</p>
 <p>First lets add callback to the bus, that will be called every time PPU triggers NMI:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>ub struct Bus&lt;'call&gt; {
    cpu_vram: [u8; 2048],
@@ -2717,11 +2619,9 @@ impl&lt;'a&gt; Bus&lt;'a&gt; {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then lets tweak the <code>tick</code> function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl&lt;'a&gt; Bus&lt;'a&gt; {
 //..
@@ -2737,14 +2637,13 @@ impl&lt;'a&gt; Bus&lt;'a&gt; {
         }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then we can connect gameloop, interrupt callback and render function:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
    // init sdl2…
 
    //load the game
-   let bytes: Vec&lt;u8&gt; = std::fs::read(&quot;game.nes&quot;).unwrap();
+   let bytes: Vec&lt;u8&gt; = std::fs::read("game.nes").unwrap();
    let rom = Rom::new(&amp;bytes).unwrap();
 
    let mut frame = Frame::new();
@@ -2773,12 +2672,11 @@ impl&lt;'a&gt; Bus&lt;'a&gt; {
 
    cpu.reset();
    cpu.run();
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>It's working! Beau·ti·ful.</p>
 <div style="text-align:center"><img src="./images/ch6.4/image_4_pacman_result.png" width="30%"/></div>
 <p>Now let's fix the colors.</p>
-<h2><a class="header" href="#working-with-colors" id="working-with-colors">Working with Colors</a></h2>
+<h2 id="working-with-colors"><a class="header" href="#working-with-colors">Working with Colors</a></h2>
 <p>NES Console could generate 52 different colors on a TV screen. Those colors constitute the hardwired System Palette of the console.</p>
 <p>However, a single screen can use only 25 colors simultaneously: 13 background colors and 12 for sprites.</p>
 <p>NES had internal memory RAM to store palette settings.
@@ -2796,8 +2694,7 @@ To say it another way, 1 byte controls which palettes are used for 4x4 tile bloc
 A byte is split into four 2-bit blocks and each block is assigning a background palette for four neighboring tiles.</p>
 <div style="text-align:center"><img src="./images/ch6.4/image_6_attribute_table.png" width="70%"/></div>
 <p>First let's extract the palette for a background tile specified by its row and column position on the screen:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn bg_pallette(ppu: &amp;NesPPU, tile_column: usize, tile_row : usize) -&gt; [u8;4] {
    let attr_table_idx = tile_row / 4 * 8 +  tile_column / 4;
@@ -2808,17 +2705,15 @@ A byte is split into four 2-bit blocks and each block is assigning a background 
        (1,0) =&gt; (attr_byte &gt;&gt; 2) &amp; 0b11,
        (0,1) =&gt; (attr_byte &gt;&gt; 4) &amp; 0b11,
        (1,1) =&gt; (attr_byte &gt;&gt; 6) &amp; 0b11,
-       (_,_) =&gt; panic!(&quot;should not happen&quot;),
+       (_,_) =&gt; panic!("should not happen"),
    };
 
    let pallete_start: usize = 1 + (pallet_idx as usize)*4;
    [ppu.palette_table[0], ppu.palette_table[pallete_start], ppu.palette_table[pallete_start+1], ppu.palette_table[pallete_start+2]]
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>And just rewire our color lookup in <code>render</code> function from using randomly picked colors to the actual ones:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
    let bank = ppu.ctrl.bknd_pattern_addr();
@@ -2843,21 +2738,20 @@ A byte is split into four 2-bit blocks and each block is assigning a background 
                    1 =&gt; palette::SYSTEM_PALLETE[palette[1] as usize],
                    2 =&gt; palette::SYSTEM_PALLETE[palette[2] as usize],
                    3 =&gt; palette::SYSTEM_PALLETE[palette[3] as usize],
-                   _ =&gt; panic!(&quot;can't be&quot;),
+                   _ =&gt; panic!("can't be"),
                };
                frame.set_pixel(tile_column * 8 + x, tile_row * 8 + y, rgb)
            }
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>That's it.</p>
-<h2><a class="header" href="#rendering-sprites" id="rendering-sprites">Rendering sprites.</a></h2>
+<h2 id="rendering-sprites"><a class="header" href="#rendering-sprites">Rendering sprites.</a></h2>
 <p>Rendering sprites is somewhat similar, but a bit easier.
 NES had an internal RAM for storing states of all sprites in the frame, so-called Object Attribute Memory (OAM).</p>
 <p>It had 256 bytes of RAM and reserved 4 bytes for each sprite. This gives an option of having 64 tiles on a screen simultaneously (but keep in mind that a single object on a screen usually consists of at least 3-4 tiles).</p>
-<p>CPU has to option of updating OAM Table:</p>
+<p>CPU has two options for updating the OAM Table:</p>
 <ul>
 <li>using OAM Addr and OAM Data PPUT registers, updating one byte at a time.</li>
 <li>bulk updating the whole table by transferring 256 bytes from CPU RAM using OAM DMA</li>
@@ -2865,8 +2759,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 <p>In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)</p>
 <p>NES Dev Wiki provides a pretty solid specification of <a href="http://wiki.nesdev.com/w/index.php/PPU_OAM">each byte in the OAM record</a></p>
 <p>To render all visible sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 <span class="boring">fn main() {
 </span>pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
@@ -2908,7 +2801,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
                    1 =&gt; palette::SYSTEM_PALLETE[sprite_palette[1] as usize],
                    2 =&gt; palette::SYSTEM_PALLETE[sprite_palette[2] as usize],
                    3 =&gt; palette::SYSTEM_PALLETE[sprite_palette[3] as usize],
-                   _ =&gt; panic!(&quot;can't be&quot;),
+                   _ =&gt; panic!("can't be"),
                };
                match (flip_horizontal, flip_vertical) {
                    (false, false) =&gt; frame.set_pixel(tile_x + x, tile_y + y, rgb),
@@ -2919,11 +2812,9 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
            }
        }
    }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The sprite palette lookup is very easy:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn sprite_palette(ppu: &amp;NesPPU, pallete_idx: u8) -&gt; [u8; 4] {
     let start = 0x11 + (pallete_idx * 4) as usize;
@@ -2934,8 +2825,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
         ppu.palette_table[start + 2],
     ]
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <div style="text-align:center"><img src="./images/ch6.4/image_7_pacman_chrs.png" width="30%"/></div>
 <p>Alright. Looks better now.</p>
 <br/>
@@ -2943,7 +2833,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch6.4" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#emulating-joypads" id="emulating-joypads">Emulating joypads</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="emulating-joypads"><a class="header" href="#emulating-joypads">Emulating joypads</a></h1>
 <p>NES and Famicom supported a variety of controllers:</p>
 <ul>
 <li><a href="https://www.youtube.com/watch?v=UKMO5tlANEU">Joypads</a></li>
@@ -2976,8 +2866,7 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 </ol>
 <p>Ok, so let's sketch it out.</p>
 <p>We need 1 byte to store the status of all buttons:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>bitflags! {
        // https://wiki.nesdev.com/w/index.php/Controller_reading_code
@@ -2992,16 +2881,14 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
            const BUTTON_A          = 0b00000001;
        }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>We need to track:</p>
 <ul>
 <li>strobe mode - on/off</li>
 <li>the status of all buttons</li>
 <li>an index of a button to be reported on the next read.</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Joypad {
    strobe: bool,
@@ -3018,11 +2905,9 @@ impl Joypad {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then we can implement reading from and writing to a controller:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>impl Joypad {
   //...
@@ -3044,11 +2929,10 @@ impl Joypad {
        response
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Don't forget to connect the joypad to the BUS and map it for address 0x4016.</p>
 <p>One last step is to adjust our game loop to update the status of the joypad depending of a keyboard button being pressed or released on the host machine:</p>
-<pre><pre class="playpen"><code class="language-rust">fn main() {
+<pre><pre class="playground"><code class="language-rust">fn main() {
    //... init sdl2
    //... load the game
    let mut key_map = HashMap::new();
@@ -3096,8 +2980,7 @@ impl Joypad {
    });
 
    //...
-}
-</code></pre></pre>
+}</code></pre></pre>
 <p>And here we are. Now we can play NES classics, using a keyboard. If you want to have a little bit of geeky fun, I highly recommend buying USB replicas of original NES controllers on Amazon.</p>
 <p>I'm not affiliated, I got <a href="https://www.amazon.com/gp/product/B07M7SYX11/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&amp;psc=1">these ones</a></p>
 <p>SDL2 fully supports <a href="https://docs.rs/sdl2/0.34.2/sdl2/joystick/struct.Joystick.html">joysticks</a>, and with just a tiny adjustment in our game loop, we can have almost perfect NES experience.</p>
@@ -3113,7 +2996,7 @@ impl Joypad {
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch7" target="_blank">GitHub</a></p>
 </blockquote>
-<h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ppu-scrolling"><a class="header" href="#ppu-scrolling">PPU Scrolling</a></h1>
 <p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished.
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress:</p>
 <ul>
@@ -3134,8 +3017,7 @@ of PPU:</p>
 <p>This is a very rough simulation of the behavior. The accurate one requires checking opaque pixels of a sprite colliding with opaque pixels of background.</p>
 </blockquote>
 <p>We need to codify this behavior in PPU <code>tick</code> function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    pub fn tick(&amp;mut self, cycles: u8) -&gt; bool {
         self.cycles += cycles as usize;
@@ -3172,17 +3054,16 @@ of PPU:</p>
         (y == self.scanline as usize) &amp;&amp; x &lt;= cycle &amp;&amp; self.mask.show_sprites()
     }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Note: the sprite zero hit flag should be erased upon entering VBLANK state.</p>
-<h2><a class="header" href="#scrolling" id="scrolling">Scrolling</a></h2>
+<h2 id="scrolling"><a class="header" href="#scrolling">Scrolling</a></h2>
 <p>The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 <p>The scroll is implemented on the PPU level and only affects the rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
 <p>PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon.
 That also means that most of the time, the PPU is rendering parts of both nametables.</p>
 <p>Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game.
-Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can &quot;move&quot; in all 4 directions.</p>
+Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can "move" in all 4 directions.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_2_scroll_mirroring.png" width="60%"/></div>
 <p>Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level.</p>
 <p>For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:</p>
@@ -3208,8 +3089,7 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <li>For each frame, we would scan through both nametables.</li>
 <li>For each nametable we would specify visible part of the nametable:</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Rect {
    x1: usize,
@@ -3228,8 +3108,7 @@ impl Rect {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <ul>
 <li>And apply shift transformation for each visible pixel - shift_x, shift_y</li>
 </ul>
@@ -3240,8 +3119,7 @@ impl Rect {
 For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 240)</strong> and the shift is <strong>(56, 0)</strong></p>
 </blockquote>
 <p>So, to draw a nametable we need to create a helper function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn render_name_table(ppu: &amp;NesPPU, frame: &amp;mut Frame, name_table: &amp;[u8],
    view_port: Rect, shift_x: isize, shift_y: isize) {
@@ -3269,7 +3147,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
                    1 =&gt; palette::SYSTEM_PALLETE[palette[1] as usize],
                    2 =&gt; palette::SYSTEM_PALLETE[palette[2] as usize],
                    3 =&gt; palette::SYSTEM_PALLETE[palette[3] as usize],
-                   _ =&gt; panic!(&quot;can't be&quot;),
+                   _ =&gt; panic!("can't be"),
                };
                let pixel_x = tile_column * 8 + x;
                let pixel_y = tile_row * 8 + y;
@@ -3281,11 +3159,9 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then rendering background becomes relatively simple:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 
 <span class="boring">fn main() {
@@ -3301,7 +3177,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
            ( &amp;ppu.vram[0x400..0x800], &amp;ppu.vram[0..0x400])
        }
        (_,_) =&gt; {
-           panic!(&quot;Not supported mirroring type {:?}&quot;, ppu.mirroring);
+           panic!("Not supported mirroring type {:?}", ppu.mirroring);
        }
    };
 
@@ -3320,8 +3196,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 // … render sprites
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Implementing the vertical scroll is similar; we could reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
 <p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
 <p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
@@ -3331,9 +3206,9 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 <blockquote>
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8" target="_blank">GitHub</a></p>
 </blockquote>
-<p><br/> <br/> <br/> <br/></p>
+<div style="break-before: page; page-break-before: always;"></div><p><br/> <br/> <br/> <br/></p>
 <div style="text-align:center;"><img src="./images/ch9/image_1_coming_soon_3.png" width="30%"/></div>
-<h1><a class="header" href="#afterword" id="afterword">Afterword</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="afterword"><a class="header" href="#afterword">Afterword</a></h1>
 <style type="text/css">
     @media screen and (min-width: 651px) {
         #full-screen { display: block }
@@ -3351,7 +3226,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 <td style="width:50%; border: none; padding: 0; ">Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in Scala, Rust and Clojure. I usually work on data-crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps, and functional programming. 
 <p>You can find more about me on:</p>
 <ul>
-<li><a href="https://twitter.com/bugzmanov">Twitter</a> </li>
+<li><a href="https://twitter.com/bugzmanov">Twitter</a></li>
 <li><a href="https://github.com/bugzmanov/">Github</a></li>
 <li><a href="https://www.linkedin.com/in/bugzmanov/">LinkedIn</a></li>
 </ul>
@@ -3370,7 +3245,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in Scala, Rust, and Clojure. I usually work on data-crunching software in the coal mines of backend engineering. <br/><br/>And I’m a big fan of distributed systems, data-intensive apps, and functional programming. 
 <p>You can find more about me on:</p>
 <ul>
-<li><a href="https://twitter.com/bugzmanov">Twitter</a> </li>
+<li><a href="https://twitter.com/bugzmanov">Twitter</a></li>
 <li><a href="https://github.com/bugzmanov/">GitHub</a></li>
 <li><a href="https://www.linkedin.com/in/bugzmanov/">LinkedIn</a></li>
 </ul>
@@ -3382,9 +3257,7 @@ Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in S
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
 
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -3392,18 +3265,14 @@ Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in S
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
 
-                
             </nav>
 
         </div>
 
-        
 
-        
         <!-- Google Analytics Tag -->
-        <script type="text/javascript">
+        <script>
             var localAddrs = ["localhost", "127.0.0.1", ""];
 
             // make sure we don't activate google analytics if the developer is
@@ -3418,40 +3287,29 @@ Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in S
                 ga('send', 'pageview');
             }
         </script>
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
 
-        
-        
-        <script type="text/javascript">
+        <script>
         window.addEventListener('load', function() {
             window.setTimeout(window.print, 100);
         });
         </script>
-        
-        
 
+    </div>
     </body>
 </html>

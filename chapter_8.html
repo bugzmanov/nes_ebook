@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>PPU Scrolling - Writing NES Emulator in Rust</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
@@ -19,8 +20,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -28,19 +28,21 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="theme/css/custom.css">
 
-        
-    </head>
-    <body>
+
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -56,61 +58,66 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('no-js')
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            html.classList.add("js");
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
+            sidebar_toggle.checked = sidebar === 'visible';
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html" class="active"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="afterwords.html">Afterword</a></li></ol>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Writing NES Emulator in Rust</h1>
@@ -119,14 +126,13 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -134,10 +140,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -147,7 +152,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#ppu-scrolling" id="ppu-scrolling">PPU Scrolling</a></h1>
+                        <h1 id="ppu-scrolling"><a class="header" href="#ppu-scrolling">PPU Scrolling</a></h1>
 <p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished.
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress:</p>
 <ul>
@@ -168,8 +173,7 @@ of PPU:</p>
 <p>This is a very rough simulation of the behavior. The accurate one requires checking opaque pixels of a sprite colliding with opaque pixels of background.</p>
 </blockquote>
 <p>We need to codify this behavior in PPU <code>tick</code> function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>    pub fn tick(&amp;mut self, cycles: u8) -&gt; bool {
         self.cycles += cycles as usize;
@@ -206,17 +210,16 @@ of PPU:</p>
         (y == self.scanline as usize) &amp;&amp; x &lt;= cycle &amp;&amp; self.mask.show_sprites()
     }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Note: the sprite zero hit flag should be erased upon entering VBLANK state.</p>
-<h2><a class="header" href="#scrolling" id="scrolling">Scrolling</a></h2>
+<h2 id="scrolling"><a class="header" href="#scrolling">Scrolling</a></h2>
 <p>The scroll is one of the primary mechanisms to simulate movement in space in NES games. It's an old idea of moving the viewport against the static background to create an illusion of movement through space.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_1_scroll_basics.png" width="80%"/></div>
 <p>The scroll is implemented on the PPU level and only affects the rendering of background tiles (those stored in nametables). Sprites (OAM data) are not affected by this.</p>
 <p>PPU can keep two screens in memory simultaneously (remember one name table - 1024 bytes, and PPU has 2 KiB of VRAM). This doesn't look like a lot, but this is enough to do the trick. During the scroll the viewport cycles through those two nametables, while the CPU is busy updating the part of the screen that's not yet visible, but will be soon.
 That also means that most of the time, the PPU is rendering parts of both nametables.</p>
 <p>Because this exhausts all available console resources, early games had only 2 options for scrolling: horizontal or vertical. Old games were settled on the type of scroll for the whole game.
-Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can &quot;move&quot; in all 4 directions.</p>
+Games that came later on had a mechanism to alternate scrolling between stages. And the most advanced games (like Zelda) provided the experience where a user can "move" in all 4 directions.</p>
 <div style="text-align:center;"><img src="./images/ch8/image_2_scroll_mirroring.png" width="60%"/></div>
 <p>Initially, the scroll was tightly coupled with mirroring - mostly because of the way NES handled overflow of a viewport from one nametable to another on hardware level.</p>
 <p>For games like Super Mario Bros (Horizontal Scroll) or Ice Climber (Vertical Scroll), the mechanism is entirely defined by:</p>
@@ -242,8 +245,7 @@ If we render parts of the nametables that are not yet visible, we can see how th
 <li>For each frame, we would scan through both nametables.</li>
 <li>For each nametable we would specify visible part of the nametable:</li>
 </ul>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>struct Rect {
    x1: usize,
@@ -262,8 +264,7 @@ impl Rect {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <ul>
 <li>And apply shift transformation for each visible pixel - shift_x, shift_y</li>
 </ul>
@@ -274,8 +275,7 @@ impl Rect {
 For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 240)</strong> and the shift is <strong>(56, 0)</strong></p>
 </blockquote>
 <p>So, to draw a nametable we need to create a helper function:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn render_name_table(ppu: &amp;NesPPU, frame: &amp;mut Frame, name_table: &amp;[u8],
    view_port: Rect, shift_x: isize, shift_y: isize) {
@@ -303,7 +303,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
                    1 =&gt; palette::SYSTEM_PALLETE[palette[1] as usize],
                    2 =&gt; palette::SYSTEM_PALLETE[palette[2] as usize],
                    3 =&gt; palette::SYSTEM_PALLETE[palette[3] as usize],
-                   _ =&gt; panic!(&quot;can't be&quot;),
+                   _ =&gt; panic!("can't be"),
                };
                let pixel_x = tile_column * 8 + x;
                let pixel_y = tile_row * 8 + y;
@@ -315,11 +315,9 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Then rendering background becomes relatively simple:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
 
 <span class="boring">fn main() {
@@ -335,7 +333,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
            ( &amp;ppu.vram[0x400..0x800], &amp;ppu.vram[0..0x400])
        }
        (_,_) =&gt; {
-           panic!(&quot;Not supported mirroring type {:?}&quot;, ppu.mirroring);
+           panic!("Not supported mirroring type {:?}", ppu.mirroring);
        }
    };
 
@@ -354,8 +352,7 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 // … render sprites
 }
 
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>Implementing the vertical scroll is similar; we could reuse the same <code>render_name_table</code> helper function without changes. Just need to figure out proper <em>addressing</em>, <em>shifts</em>, and <em>view_port</em> parameters.</p>
 <p>The fully defined code for scrolling can be found <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch8">here</a></p>
 <p>Support for scrolling means that now we can play old platformers like Super Mario Bros and Ice Climber.</p>
@@ -370,17 +367,13 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="chapter_7.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="chapter_9.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="chapter_9.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -388,26 +381,20 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="chapter_7.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="chapter_9.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="chapter_9.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
         <!-- Google Analytics Tag -->
-        <script type="text/javascript">
+        <script>
             var localAddrs = ["localhost", "127.0.0.1", ""];
 
             // make sure we don't activate google analytics if the developer is
@@ -422,32 +409,24 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
                 ga('send', 'pageview');
             }
         </script>
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
 
-        
 
+    </div>
     </body>
 </html>

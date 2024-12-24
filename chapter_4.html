@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Emulating BUS - Writing NES Emulator in Rust</title>
-        
 
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+        <!-- Custom HTML head -->
+
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff">
 
         <link rel="shortcut icon" href="favicon.png">
         <link rel="stylesheet" href="css/variables.css">
@@ -19,8 +20,7 @@
 
         <!-- Fonts -->
         <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
@@ -28,19 +28,21 @@
         <link rel="stylesheet" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        
+        <link rel="stylesheet" href="theme/css/custom.css">
 
-        
-    </head>
-    <body>
+
         <!-- Provide site root to javascript -->
-        <script type="text/javascript">
+        <script>
             var path_to_root = "";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
         </script>
-
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script type="text/javascript">
+        <script>
             try {
                 var theme = localStorage.getItem('mdbook-theme');
                 var sidebar = localStorage.getItem('mdbook-sidebar');
@@ -56,61 +58,66 @@
         </script>
 
         <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
+        <script>
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('no-js')
+            const html = document.documentElement;
             html.classList.remove('light')
             html.classList.add(theme);
-            html.classList.add('js');
+            html.classList.add("js");
         </script>
 
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var html = document.querySelector('html');
-            var sidebar = 'hidden';
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
+            sidebar_toggle.checked = sidebar === 'visible';
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> NES Platform</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Emulating CPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_3_1.html"><strong aria-hidden="true">3.1.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="chapter_3_2.html"><strong aria-hidden="true">3.2.</strong> Memory addressing modes</a></li><li class="chapter-item expanded "><a href="chapter_3_3.html"><strong aria-hidden="true">3.3.</strong> The rest of the instructions</a></li><li class="chapter-item expanded "><a href="chapter_3_4.html"><strong aria-hidden="true">3.4.</strong> Running our first game</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_4.html" class="active"><strong aria-hidden="true">4.</strong> Emulating BUS</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Cartridges</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_5_1.html"><strong aria-hidden="true">5.1.</strong> Test ROM</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_6.html"><strong aria-hidden="true">6.</strong> Emulating PPU</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="chapter_6_1.html"><strong aria-hidden="true">6.1.</strong> Emulating PPU Registers</a></li><li class="chapter-item expanded "><a href="chapter_6_2.html"><strong aria-hidden="true">6.2.</strong> Emulating NMI Interrupt</a></li><li class="chapter-item expanded "><a href="chapter_6_3.html"><strong aria-hidden="true">6.3.</strong> Rendering CHR Rom Tiles</a></li><li class="chapter-item expanded "><a href="chapter_6_4.html"><strong aria-hidden="true">6.4.</strong> Rendering Static Screen</a></li></ol></li><li class="chapter-item expanded "><a href="chapter_7.html"><strong aria-hidden="true">7.</strong> Emulating Joypads</a></li><li class="chapter-item expanded "><a href="chapter_8.html"><strong aria-hidden="true">8.</strong> PPU Scrolling</a></li><li class="chapter-item expanded "><a href="chapter_9.html"><strong aria-hidden="true">9.</strong> Emulating APU</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="afterwords.html">Afterword</a></li></ol>
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                
                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
-                        </button>
+                        </label>
                         <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
-                        
                     </div>
 
                     <h1 class="menu-title">Writing NES Emulator in Rust</h1>
@@ -119,14 +126,13 @@
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
-                        
+
                     </div>
                 </div>
 
-                
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -134,10 +140,9 @@
                         </ul>
                     </div>
                 </div>
-                
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script type="text/javascript">
+                <script>
                     document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
                     document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
                     Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
@@ -147,8 +152,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#emulating-bus" id="emulating-bus">Emulating BUS</a></h1>
-<div style="text-align:center"><img src="./images/ch4/image_1_bus_schema.png" width="60%"/></div>
+                        <h1 id="emulating-bus"><a class="header" href="#emulating-bus">Emulating BUS</a></h1>
+ <div style="text-align:center"><img src="./images/ch4/image_1_bus_schema.png" width="60%"/></div>
 <p>CPU gets access to memory (including memory-mapped spaces) using three buses:</p>
 <ul>
 <li>address bus carries the address of a required location</li>
@@ -156,9 +161,9 @@
 <li>data bus carries the byte of data being read or written</li>
 </ul>
 <p>A bus itself is not a device; it's a wiring between platform components.
-Therefore, we don't need to implement it as an independent module as Rust allows us to &quot;wire&quot; the components directly.
+Therefore, we don't need to implement it as an independent module as Rust allows us to "wire" the components directly.
 However, it's a convenient abstraction where we can offload quite a bit of responsibility to keep the CPU code cleaner.</p>
-<div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
+ <div style="text-align:center"><img src="./images/ch4/image_2_cpu_pinout_2.png" width="50%"/></div>
 <p>In our current code, the CPU has direct access to RAM space, and it is oblivious to memory-mapped regions.</p>
 <p>By introducing a Bus module, we can have a single place for:</p>
 <ul>
@@ -186,15 +191,14 @@ However, it's a convenient abstraction where we can offload quite a bit of respo
 </ul>
 <p>This means that there is no difference in accessing memory addresses at 0x0000 or 0x0800 or 0x1000 or 0x1800 for reads or writes.</p>
 <p>The reason for mirroring is the fact that CPU RAM has only 2 KiB of ram space, and only 11 bits is enough for addressing RAM space. Naturally, the NES motherboard had only 11 addressing tracks from CPU to RAM.</p>
-<div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
+ <div style="text-align:center"><img src="./images/ch4/image_3_cpu_ram_connection.png" width="70%"/></div>
 <p>CPU however has <strong>[0x0000 - 0x2000]</strong> addressing space reserved for RAM space - and that's 13 bits. As a result, the 2 highest bits have no effect when accessing RAM.
 Another way of saying this, when CPU is requesting address at <strong>0b0001_1111_1111_1111</strong> (13 bits) the RAM chip would receive only <strong>0b111_1111_1111</strong> (11 bits) via the address bus.</p>
 <p>So despite mirroring looking wasteful, it was a side-effect of the wiring, and on real hardware it cost nothing. Emulators, on the other hand, have to do extra work to provide the same behavior.</p>
 <p>Long story short, the BUS needs to zero out the highest 2 bits if it receives a request in the range of <strong>[0x0000 … 0x2000]</strong></p>
 <p>Similarly address space <strong>[0x2008 .. 0x4000]</strong> mirrors memory mapping for PPU registers <strong>[0x2000 .. 0x2008]</strong>. Those are the only two mirrorings the BUS would be responsible for. Let's codify it right away, even though we don't have anything for PPU yet.</p>
 <p>So let's introduce a new module Bus, that will have direct access to RAM.</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct Bus {
    cpu_vram: [u8; 2048]
@@ -207,11 +211,9 @@ impl Bus {
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
 <p>The bus will also provide read/write access:</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>const RAM: u16 = 0x0000;
 const RAM_MIRRORS_END: u16 = 0x1FFF;
@@ -227,10 +229,10 @@ impl Mem for Bus {
            }
            PPU_REGISTERS ..= PPU_REGISTERS_MIRRORS_END =&gt; {
                let _mirror_down_addr = addr &amp; 0b00100000_00000111;
-               todo!(&quot;PPU is not supported yet&quot;)
+               todo!("PPU is not supported yet")
            }
            _ =&gt; {
-               println!(&quot;Ignoring mem access at {}&quot;, addr);
+               println!("Ignoring mem access at {}", addr);
                0
            }
        }
@@ -244,19 +246,17 @@ impl Mem for Bus {
            }
            PPU_REGISTERS ..= PPU_REGISTERS_MIRRORS_END =&gt; {
                let _mirror_down_addr = addr &amp; 0b00100000_00000111;
-               todo!(&quot;PPU is not supported yet&quot;);
+               todo!("PPU is not supported yet");
            }
            _ =&gt; {
-               println!(&quot;Ignoring mem write-access at {}&quot;, addr);
+               println!("Ignoring mem write-access at {}", addr);
            }
        }
    }
 }
-<span class="boring">}
-</span></code></pre></pre>
-<p>The last step is to replace direct access to RAM from CPU with access via BUS</p>
-<pre><pre class="playpen"><code class="language-rust">
-<span class="boring">#![allow(unused_variables)]
+<span class="boring">}</span></code></pre></pre>
+<p>We then replace direct access to RAM from CPU with access via BUS</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>pub struct CPU {
    pub register_a: u8,
@@ -300,8 +300,17 @@ impl CPU {
    }
    // ...
 }
-<span class="boring">}
-</span></code></pre></pre>
+<span class="boring">}</span></code></pre></pre>
+<p>If we want our unit tests to still pass, we will temporarily adjust the <code>load</code> function to load our test programs to the new VRAM:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    pub fn load(&amp;mut self, program: Vec&lt;u8&gt;) {
+        for i in 0..(program.len() as u16) {
+            self.mem_write(0x0000 + i, program[i as usize]);
+        }
+        self.mem_write_u16(0xFFFC, 0x0000);
+    }
+<span class="boring">}</span></code></pre></pre>
 <p>And that's pretty much it for now. Wasn't hard, right?</p>
 <br/>
 <hr />
@@ -313,17 +322,13 @@ impl CPU {
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                        
                             <a rel="prev" href="chapter_3_4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                        
 
-                        
-                            <a rel="next" href="chapter_5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="chapter_5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -331,26 +336,20 @@ impl CPU {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                
                     <a rel="prev" href="chapter_3_4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                
 
-                
-                    <a rel="next" href="chapter_5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="chapter_5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
-                
             </nav>
 
         </div>
 
-        
 
-        
         <!-- Google Analytics Tag -->
-        <script type="text/javascript">
+        <script>
             var localAddrs = ["localhost", "127.0.0.1", ""];
 
             // make sure we don't activate google analytics if the developer is
@@ -365,32 +364,24 @@ impl CPU {
                 ga('send', 'pageview');
             }
         </script>
-        
 
-        
-        
-        
-        <script type="text/javascript">
-            window.playpen_copyable = true;
+
+        <script>
+            window.playground_copyable = true;
         </script>
-        
 
-        
 
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
-        
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
-        
 
-        
 
+    </div>
     </body>
 </html>

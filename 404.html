@@ -3,7 +3,8 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>NES Platform - Writing NES Emulator in Rust</title>
+        <title>Page not found - Writing NES Emulator in Rust</title>
+        <base href="/">
 
 
         <!-- Custom HTML head -->
@@ -152,70 +153,14 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="understanding-the-nes-platform"><a class="header" href="#understanding-the-nes-platform">Understanding the NES Platform</a></h1>
-<h2 id="achitecture"><a class="header" href="#achitecture">Achitecture</a></h2>
-<p>The simplified architecture of hardware-software interaction looks like this:</p>
-<div style="text-align:center"><img src="./images/ch2/image_1_computer_arch.png" width="30%"/></div>
-<p>From top to bottom:</p>
-<ul>
-<li>Applications are running business logic and interact with hardware through an Operating System.</li>
-<li>The Operating System communicates with the hardware using machine language.</li>
-<li>On a hardware level, each device can be seen as an array of memory elements, processing units, or both. From this perspective, NES joypad is nothing more than an array of eight 1-bit items, each representing a pressed/released state of a button</li>
-<li>Layers below ALU and Memory elements are less of an interest to us. On a hardware level, it all comes down to logic gates and their arrangements.</li>
-</ul>
-<blockquote>
-<p>If you want to get intimate knowledge of how computers are composed, starting from the basic principles of boolean logic, I highly recommend the book:<br/> <a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">"The Elements of Computing Systems. Building a Modern Computer from First Principles"</a> by Noam Nisan, Shimon Schocken.</p>
-</blockquote>
-<p>Luckily for us, NES doesn't have an Operating System. That means that the Application layer (Gamezzz) communicates with hardware directly using machine language.</p>
-<p>The simplified version of this layered architecture looks like this:</p>
-<div style="text-align:center"><img src="./images/ch2/image_2_nes_emul_arch.png" width="30%"/></div>
-<p>As you can see, machine language is the interface between our emulator and our NES games.</p>
-<p>In the coming emulator, we would need to implement NES Computer Architecture, Arithmetic Logic Unit, and Memory. By using high-level language, we don't need to worry about simulating boolean arithmetic and sequential logic. Instead, we should rely on existing Rust features and language constructs.</p>
-<h2 id="nes-platform-main-components"><a class="header" href="#nes-platform-main-components">NES Platform Main Components</a></h2>
-<div style="text-align:center"><img src="./images/ch2/image_3_nes_components.png" width="50%"/></div>
-<p>The significantly simplified schema of main NES hardware components:</p>
-<ul>
-<li>
-<p>Central Processing Unit (<strong>CPU</strong>) - the NES's 2A03 is a modified version of the <a href="https://en.wikipedia.org/wiki/MOS_Technology_6502">6502 chip</a>. As with any CPU, the goal of this module is to execute the main program instructions.</p>
-</li>
-<li>
-<p>Picture Processing Unit (<strong>PPU</strong>) - was based on the 2C02 chip made by Ricoh, the same company that made CPU. This module's primary goal is to draw the current state of a game on a TV Screen.</p>
-</li>
-<li>
-<p>Both CPU and PPU have access to their 2 KiB (2048 bytes) banks of Random Access Memory (<strong>RAM</strong>)</p>
-</li>
-<li>
-<p>Audio Processing Unit (<strong>APU</strong>) - the module is a part of 2A03 chip and is responsible for generating specific five-channel based sounds, that made NES chiptunes so recognizable.</p>
-</li>
-<li>
-<p>Cartridges - were an essential part of the platform because the console didn't have an operating system. Each cartridge carried at least two large ROM chips - the Character ROM (CHR ROM) and the Program ROM (PRG ROM). The former stored a game's video graphics data, the latter stored CPU instructions - the game's code.
-(in reality, when a cartridge is inserted into the slot CHR Rom is connected directly to PPU, while PRG Rom is connected directly to CPU)
-The later version of cartridges carried additional hardware (ROM and RAM) accessible through so-called mappers. That explains why later games had provided significantly better gameplay and visuals despite running on the same console hardware.</p>
-</li>
-</ul>
-<div style="text-align:center"><img src="./images/ch2/image_4_cartridge.png" width="50%"/></div>
-<ul>
-<li>Gamepads - have a distinct goal to read inputs from a gamer and make it available for game logic. As we will see later, the fact that the gamepad for the 8-bit platform has only eight buttons is not a coincidence.</li>
-</ul>
-<p>What's interesting is that CPU, PPU, and APU are independent of each other. This fact makes NES a distributed system in which separate components have to coordinate to generate one seamless gaming experience.</p>
-<p>We can use the schema of the main NES components as an implementation plan for our emulator.</p>
-<div style="text-align:center"><img src="./images/ch2/image_6_impl_plan.png" width="80%"/></div>
-<p>We have to build a simulation of all of these modules. The goal is to have something playable as soon as possible. Using an iterative approach, we will incrementally add features to achieve this goal.</p>
-<p>Roughly estimating the effort required for each component, PPU will be the hardest, and the BUS the easiest.</p>
-<p>Writing a perfect emulator is a never-ending quest. But this quest has a start, and we will start by emulating the CPU.</p>
-<div style="text-align:center"><img src="./images/ch2/image_5_motherboard.png" width="80%"/></div>
+                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
+<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="chapter_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
 
-                            <a rel="next prefetch" href="chapter_3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -223,13 +168,7 @@ The later version of cartridges carried additional hardware (ROM and RAM) access
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="chapter_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
 
-                    <a rel="next prefetch" href="chapter_3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
