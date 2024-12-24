@@ -84,12 +84,19 @@ pub mod test {
     }
 
     pub fn test_rom() -> Rom {
+        test_rom_containing(vec![])
+    }
+
+    pub fn test_rom_containing(program: Vec<u8>) -> Rom {
+        let mut pgp_rom_contents = program;
+        pgp_rom_contents.resize(2 * PRG_ROM_PAGE_SIZE, 0);
+
         let test_rom = create_rom(TestRom {
             header: vec![
                 0x4E, 0x45, 0x53, 0x1A, 0x02, 0x01, 0x31, 00, 00, 00, 00, 00, 00, 00, 00, 00,
             ],
             trainer: None,
-            pgp_rom: vec![1; 2 * PRG_ROM_PAGE_SIZE],
+            pgp_rom: pgp_rom_contents,
             chr_rom: vec![2; 1 * CHR_ROM_PAGE_SIZE],
         });
 

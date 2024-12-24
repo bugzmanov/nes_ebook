@@ -111,7 +111,7 @@ impl Mem for Bus {
 }
 ```
 
-The last step is to replace direct access to RAM from CPU with access via BUS
+We then replace direct access to RAM from CPU with access via BUS
 
 ```rust
 pub struct CPU {
@@ -156,6 +156,17 @@ impl CPU {
    }
    // ...
 }
+```
+
+If we want our unit tests to still pass, we will temporarily adjust the `load` function to load our test programs to the new VRAM:
+
+```rust
+    pub fn load(&mut self, program: Vec<u8>) {
+        for i in 0..(program.len() as u16) {
+            self.mem_write(0x0000 + i, program[i as usize]);
+        }
+        self.mem_write_u16(0xFFFC, 0x0000);
+    }
 ```
 
 And that's pretty much it for now. Wasn't hard, right?

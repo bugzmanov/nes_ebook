@@ -209,7 +209,7 @@ mod test {
 
     #[test]
     fn test_mem_read_write_to_ram() {
-        let mut bus = Bus::new(test::test_rom(), |ppu: &NesPPU, &mut Joypad| {});
+        let mut bus = Bus::new(test::test_rom(), |_ppu, _joypad| {});
         bus.mem_write(0x01, 0x55);
         assert_eq!(bus.mem_read(0x01), 0x55);
     }
