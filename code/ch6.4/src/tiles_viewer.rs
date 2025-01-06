@@ -13,7 +13,6 @@ use cpu::CPU;
 use trace::trace;
 use render::frame::Frame;
 use render::palette;
-// use rand::Rng;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
