@@ -981,7 +981,7 @@ impl CPU {
                 0x04 | 0x44 | 0x64 | 0x14 | 0x34 | 0x54 | 0x74 | 0xd4 | 0xf4 | 0x0c | 0x1c
                 | 0x3c | 0x5c | 0x7c | 0xdc | 0xfc => {
                     let addr = self.get_operand_address(&opcode.mode);
-                    let data = self.mem_read(addr);
+                    let _data = self.mem_read(addr);
                     /* do nothing */
                 }
 
