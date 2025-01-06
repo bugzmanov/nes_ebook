@@ -1059,7 +1059,7 @@ impl CPU {
                     self.lsr_accumulator();
                 }
 
-                //todo: test for everything bellow
+                //todo: test for everything below
 
                 /* NOP read */
                 0x04 | 0x44 | 0x64 | 0x14 | 0x34 | 0x54 | 0x74 | 0xd4 | 0xf4 | 0x0c | 0x1c
