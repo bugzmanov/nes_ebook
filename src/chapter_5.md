@@ -54,9 +54,9 @@ Let's define cartridge Rom data structure:
 ```rust
 #[derive(Debug, PartialEq)]
 pub enum Mirroring {
-   VERTICAL,
-   HORIZONTAL,
-   FOUR_SCREEN,
+   Vertical,
+   Horizontal,
+   FourScreen,
 }
 
 pub struct Rom {
@@ -87,9 +87,9 @@ impl Rom {
        let four_screen = raw[6] & 0b1000 != 0;
        let vertical_mirroring = raw[6] & 0b1 != 0;
        let screen_mirroring = match (four_screen, vertical_mirroring) {
-           (true, _) => Mirroring::FOUR_SCREEN,
-           (false, true) => Mirroring::VERTICAL,
-           (false, false) => Mirroring::HORIZONTAL,
+           (true, _) => Mirroring::FourScreen,
+           (false, true) => Mirroring::Vertical,
+           (false, false) => Mirroring::Horizontal,
        };
 
        let prg_rom_size = raw[4] as usize * PRG_ROM_PAGE_SIZE;

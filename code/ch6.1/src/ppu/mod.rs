@@ -41,7 +41,7 @@ pub trait PPU {
 
 impl NesPPU {
     pub fn new_empty_rom() -> Self {
-        NesPPU::new(vec![0; 2048], Mirroring::HORIZONTAL)
+        NesPPU::new(vec![0; 2048], Mirroring::Horizontal)
     }
 
     pub fn new(chr_rom: Vec<u8>, mirroring: Mirroring) -> Self {
@@ -73,10 +73,10 @@ impl NesPPU {
         let vram_index = mirrored_vram - 0x2000; // to vram vector
         let name_table = vram_index / 0x400;
         match (&self.mirroring, name_table) {
-            (Mirroring::VERTICAL, 2) | (Mirroring::VERTICAL, 3) => vram_index - 0x800,
-            (Mirroring::HORIZONTAL, 2) => vram_index - 0x400,
-            (Mirroring::HORIZONTAL, 1) => vram_index - 0x400,
-            (Mirroring::HORIZONTAL, 3) => vram_index - 0x800,
+            (Mirroring::Vertical, 2) | (Mirroring::Vertical, 3) => vram_index - 0x800,
+            (Mirroring::Horizontal, 2) => vram_index - 0x400,
+            (Mirroring::Horizontal, 1) => vram_index - 0x400,
+            (Mirroring::Horizontal, 3) => vram_index - 0x800,
             _ => vram_index,
         }
     }
@@ -282,7 +282,7 @@ pub mod test {
     //   [0x2800 a ] [0x2C00 b ]
     #[test]
     fn test_vram_vertical_mirror() {
-        let mut ppu = NesPPU::new(vec![0; 2048], Mirroring::VERTICAL);
+        let mut ppu = NesPPU::new(vec![0; 2048], Mirroring::Vertical);
 
         ppu.write_to_ppu_addr(0x20);
         ppu.write_to_ppu_addr(0x05);

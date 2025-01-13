@@ -1059,13 +1059,13 @@ impl<'a> CPU<'a> {
                     self.lsr_accumulator();
                 }
 
-                //todo: test for everything bellow
+                //todo: test for everything below
 
                 /* NOP read */
                 0x04 | 0x44 | 0x64 | 0x14 | 0x34 | 0x54 | 0x74 | 0xd4 | 0xf4 | 0x0c | 0x1c
                 | 0x3c | 0x5c | 0x7c | 0xdc | 0xfc => {
                     let (addr, page_cross) = self.get_operand_address(&opcode.mode);
-                    let data = self.mem_read(addr);
+                    let _data = self.mem_read(addr);
                     if page_cross {
                         self.bus.tick(1);
                     }
@@ -1178,8 +1178,6 @@ impl<'a> CPU<'a> {
                     let data = self.register_y & ((mem_address >> 8) as u8 + 1);
                     self.mem_write(mem_address, data)
                 }
-
-                _ => todo!(),
             }
 
             self.bus.tick(opcode.cycles);

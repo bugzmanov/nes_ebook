@@ -9,19 +9,14 @@ pub mod trace;
 
 use bus::Bus;
 use cartridge::Rom;
-use cpu::Mem;
 use cpu::CPU;
 use ppu::NesPPU;
 use render::frame::Frame;
-use render::palette;
-use trace::trace;
+// use trace::trace;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
-use sdl2::EventPump;
-// use std::time::Duration;
 use std::collections::HashMap;
 
 #[macro_use]
@@ -102,8 +97,10 @@ fn main() {
 
     let mut cpu = CPU::new(bus);
     cpu.reset();
-    // cpu.run();
+    cpu.run();
+    /*
     cpu.run_with_callback(|cpu| {
-        // println!("{}", trace(cpu));
+        println!("{}", trace(cpu));
     });
+    */
 }

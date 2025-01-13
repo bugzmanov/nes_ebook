@@ -13,14 +13,12 @@ use cpu::CPU;
 use trace::trace;
 use render::frame::Frame;
 use render::palette;
-// use rand::Rng;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::pixels::PixelFormatEnum;
 use sdl2::EventPump;
-// use std::time::Duration;
 
 #[macro_use]
 extern crate lazy_static;
