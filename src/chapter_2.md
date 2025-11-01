@@ -1,5 +1,5 @@
 # Understanding the NES Platform
-## Achitecture
+## Architecture
 
 The simplified architecture of hardware-software interaction looks like this:
 

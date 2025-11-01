@@ -335,15 +335,16 @@ For now, we can just code the mirroring behavior.
 NES uses 1 KiB of VRAM to represent a single screen state. Having 2 KiB of VRAM onboard means that NES can keep a state of 2 screens.
 
 
-On the PPU memory map, the range ***[0x2000...0x3F00]*** is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
+On the PPU memory map, the range ***[0x2000...0x3000]*** is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
 The way they are mapped depends on the mirroring type, specified by a game (iNES files have this info in the header)
-
 
 <div style="text-align:center"><img src="./images/ch6.1/image_5_mirroring.png" width="60%"/></div>
 
 For example, for *Horizontal Mirroring*:
 * Address spaces **[0x2000 .. 0x2400]** and **[0x2400 .. 0x2800]** should be mapped to the first 1 KiB of VRAM.
-* Address spaces **[0x2800 .. 0x2C00]** and **[0x2C00 .. 0x3F00]** should be mapped to the second 1 KiB of VRAM.
+* Address spaces **[0x2800 .. 0x2C00]** and **[0x2C00 .. 0x3000]** should be mapped to the second 1 KiB of VRAM.
+
+The region **[0x3000 .. 0x3EFF]** is a mirror from **[0x2000 .. 0x2EFF]**. 
 
 One way to codify that:
 
