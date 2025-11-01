@@ -24,29 +24,41 @@
         <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="theme/css/custom.css">
 
 
-        <!-- Provide site root to javascript -->
+        <!-- Provide site root and default themes to javascript -->
         <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc.js"></script>
     </head>
     <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
     <div id="body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
 
                 if (theme.startsWith('"') && theme.endsWith('"')) {
                     localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
@@ -60,7 +72,8 @@
 
         <!-- Set the theme before any content is loaded, prevents flash -->
         <script>
-            var theme;
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
@@ -73,17 +86,20 @@
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
             } else {
                 sidebar = 'hidden';
+                sidebar_toggle.checked = false;
             }
-            sidebar_toggle.checked = sidebar === 'visible';
-            html.classList.remove('sidebar-visible');
-            html.classList.add("sidebar-" + sidebar);
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
@@ -110,13 +126,14 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
@@ -133,7 +150,12 @@
 
                 <div id="search-wrapper" class="hidden">
                     <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                        <div class="search-wrapper">
+                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
                     </form>
                     <div id="searchresults-outer" class="searchresults-outer hidden">
                         <div id="searchresults-header" class="searchresults-header"></div>
@@ -188,7 +210,7 @@ By choosing rust, we hope to get some additional performance budget for our need
 <p>Created by <a href="http://twitter.com/bugzmanov">@bugzmanov</a>, 2020</p>
 <p><em> Special thanks to <a href="https://github.com/sburris0">Spencer Burris</a> and <a href="https://github.com/kgusakov/">Kirill Gusakov</a> for reviews, edits and helpfull suggestions! </em></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="understanding-the-nes-platform"><a class="header" href="#understanding-the-nes-platform">Understanding the NES Platform</a></h1>
-<h2 id="achitecture"><a class="header" href="#achitecture">Achitecture</a></h2>
+<h2 id="architecture"><a class="header" href="#architecture">Architecture</a></h2>
 <p>The simplified architecture of hardware-software interaction looks like this:</p>
 <div style="text-align:center"><img src="./images/ch2/image_1_computer_arch.png" width="30%"/></div>
 <p>From top to bottom:</p>
@@ -1164,7 +1186,7 @@ Remember that the CPU will call our callback after each instruction, and most of
            canvas.present();
        }
 
-       ::std::thread::sleep(std::time::Duration::new(0, 70_000));
+       std::thread::sleep(std::time::Duration::new(0, 70_000));
    });
 }</code></pre></pre>
 <p>The last sleep statement was added to slow things down so that the game runs at a playable pace.</p>
@@ -1385,9 +1407,9 @@ For now, we need to figure out which mirroring type the game is using.</p>
 </span><span class="boring">fn main() {
 </span>#[derive(Debug, PartialEq)]
 pub enum Mirroring {
-   VERTICAL,
-   HORIZONTAL,
-   FOUR_SCREEN,
+   Vertical,
+   Horizontal,
+   FourScreen,
 }
 
 pub struct Rom {
@@ -1417,9 +1439,9 @@ pub struct Rom {
        let four_screen = raw[6] &amp; 0b1000 != 0;
        let vertical_mirroring = raw[6] &amp; 0b1 != 0;
        let screen_mirroring = match (four_screen, vertical_mirroring) {
-           (true, _) =&gt; Mirroring::FOUR_SCREEN,
-           (false, true) =&gt; Mirroring::VERTICAL,
-           (false, false) =&gt; Mirroring::HORIZONTAL,
+           (true, _) =&gt; Mirroring::FourScreen,
+           (false, true) =&gt; Mirroring::Vertical,
+           (false, false) =&gt; Mirroring::Horizontal,
        };
 
        let prg_rom_size = raw[4] as usize * PRG_ROM_PAGE_SIZE;
@@ -1999,14 +2021,15 @@ impl NesPPU {
 We would spend enough time discussing this in the chapter about Scroll.
 For now, we can just code the mirroring behavior.</p>
 <p>NES uses 1 KiB of VRAM to represent a single screen state. Having 2 KiB of VRAM onboard means that NES can keep a state of 2 screens.</p>
-<p>On the PPU memory map, the range <em><strong>[0x2000...0x3F00]</strong></em> is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
+<p>On the PPU memory map, the range <em><strong>[0x2000...0x3000]</strong></em> is reserved for Nametables (screens states)- 4 KiB of addressable space. Two "additional" screens have to be mapped to existing ones.
 The way they are mapped depends on the mirroring type, specified by a game (iNES files have this info in the header)</p>
 <div style="text-align:center"><img src="./images/ch6.1/image_5_mirroring.png" width="60%"/></div>
 <p>For example, for <em>Horizontal Mirroring</em>:</p>
 <ul>
 <li>Address spaces <strong>[0x2000 .. 0x2400]</strong> and <strong>[0x2400 .. 0x2800]</strong> should be mapped to the first 1 KiB of VRAM.</li>
-<li>Address spaces <strong>[0x2800 .. 0x2C00]</strong> and <strong>[0x2C00 .. 0x3F00]</strong> should be mapped to the second 1 KiB of VRAM.</li>
+<li>Address spaces <strong>[0x2800 .. 0x2C00]</strong> and <strong>[0x2C00 .. 0x3000]</strong> should be mapped to the second 1 KiB of VRAM.</li>
 </ul>
+<p>The region <strong>[0x3000 .. 0x3EFF]</strong> is a mirror from <strong>[0x2000 .. 0x2EFF]</strong>.</p>
 <p>One way to codify that:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -2025,10 +2048,10 @@ The way they are mapped depends on the mirroring type, specified by a game (iNES
        let vram_index = mirrored_vram - 0x2000; // to vram vector
        let name_table = vram_index / 0x400; // to the name table index
        match (&amp;self.mirroring, name_table) {
-           (Mirroring::VERTICAL, 2) | (Mirroring::VERTICAL, 3) =&gt; vram_index - 0x800,
-           (Mirroring::HORIZONTAL, 2) =&gt; vram_index - 0x400,
-           (Mirroring::HORIZONTAL, 1) =&gt; vram_index - 0x400,
-           (Mirroring::HORIZONTAL, 3) =&gt; vram_index - 0x800,
+           (Mirroring::Vertical, 2) | (Mirroring::Vertical, 3) =&gt; vram_index - 0x800,
+           (Mirroring::Horizontal, 2) =&gt; vram_index - 0x400,
+           (Mirroring::Horizontal, 1) =&gt; vram_index - 0x400,
+           (Mirroring::Horizontal, 3) =&gt; vram_index - 0x800,
            _ =&gt; vram_index,
        }
    }
@@ -3170,10 +3193,10 @@ For nametable <strong>0x2000</strong>: the visible area is <strong>(0,0, 200, 24
    let scroll_y = (ppu.scroll.scroll_y) as usize;
 
    let (main_nametable, second_nametable) = match (&amp;ppu.mirroring, ppu.ctrl.nametable_addr()) {
-       (Mirroring::VERTICAL, 0x2000) | (Mirroring::VERTICAL, 0x2800) =&gt; {
+       (Mirroring::Vertical, 0x2000) | (Mirroring::Vertical, 0x2800) =&gt; {
            (&amp;ppu.vram[0..0x400], &amp;ppu.vram[0x400..0x800])
        }
-       (Mirroring::VERTICAL, 0x2400) | (Mirroring::VERTICAL, 0x2C00) =&gt; {
+       (Mirroring::Vertical, 0x2400) | (Mirroring::Vertical, 0x2C00) =&gt; {
            ( &amp;ppu.vram[0x400..0x800], &amp;ppu.vram[0..0x400])
        }
        (_,_) =&gt; {
@@ -3273,7 +3296,7 @@ Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in S
 
         <!-- Google Analytics Tag -->
         <script>
-            var localAddrs = ["localhost", "127.0.0.1", ""];
+            const localAddrs = ["localhost", "127.0.0.1", ""];
 
             // make sure we don't activate google analytics if the developer is
             // inspecting the book locally...
@@ -3309,6 +3332,7 @@ Hey there! I’m Rafael Bagmanov, software developer from NYC. <br/>I write in S
             window.setTimeout(window.print, 100);
         });
         </script>
+
 
     </div>
     </body>
