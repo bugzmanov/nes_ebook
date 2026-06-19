@@ -170,7 +170,7 @@ Here is the bad news: there are about 110 unofficial CPU instructions. Most of t
 
 The specs can be found here:
 * [nesdev.com/undocumented_opcodes.txt](http://nesdev.com/undocumented_opcodes.txt)
-* [wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes](https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes)
+* [wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes](https://www.nesdev.org/wiki/Programming_with_unofficial_opcodes)
 * [wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes](https://www.nesdev.org/wiki/CPU_unofficial_opcodes)
 * [www.oxyron.de/html/opcodes02.html](http://www.oxyron.de/html/opcodes02.html)
 
