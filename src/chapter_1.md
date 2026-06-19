@@ -35,7 +35,7 @@ It's also assumed that the reader has a basic understanding of bit arithmetic, b
 # References
 
 1. [Nesdev Wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) - nothing would be possible without it. The one-stop-shop.
-2. [Nintendo Entertainment System Documentation](http://nesdev.com/NESDoc.pdf) - a short tutorial that covers pretty much everything about NES
+2. [Nintendo Entertainment System Documentation](https://www.nesdev.org/NESDoc.pdf) - a short tutorial that covers pretty much everything about NES
 3. [Nintendo Age Nerdy Nights](https://nerdy-nights.nes.science/) - a series to help people write games for the NES
 4. [I.Am.Error](https://www.goodreads.com/book/show/23461364-i-am-error) - a book full of histories of the Nintendo Entertainment System platform
 5. [The Elements of Computing Systems](https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems) - everything you need to know about computer systems, how to build Tetris starting from logic gates.

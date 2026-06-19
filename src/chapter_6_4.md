@@ -92,7 +92,7 @@ Again, we need to intercept the program execution to read the screen state.
 On the real console the PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of the screen state on each PPU clock tick, we can wait until the full screen is ready and read in one go.
 
 > **WARNING** This is quite a drastic simplification that limits the types of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich the gaming experience.
-> For example, changing scroll in the middle of the frame (<a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
+> For example, changing scroll in the middle of the frame (<a href="https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
 > This simplification wouldn't affect first-gen NES games much. The majority of NES games would require more accuracy in PPU emulation, however.
 
 On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines; during scanlines 241 - 262, the CPU is updating the state of PPU for the next frame, then the cycle repeats.
