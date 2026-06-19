@@ -21,7 +21,7 @@ To be precise, PPU has its own bus used to communicate with RAM and cartridge CH
 One read-only register is used for reporting PPU status:
 * Status 0x2002
 
-The full spec of the registers can be found on [NES Dev wiki](http://wiki.nesdev.com/w/index.php/PPU_registers).
+The full spec of the registers can be found on [NES Dev wiki](https://www.nesdev.org/wiki/PPU_registers).
 
  <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 
