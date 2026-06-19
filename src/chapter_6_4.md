@@ -291,7 +291,7 @@ CPU has two options for updating the OAM Table:
 
 In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)
 
-NES Dev Wiki provides a pretty solid specification of [each byte in the OAM record](http://wiki.nesdev.com/w/index.php/PPU_OAM)
+NES Dev Wiki provides a pretty solid specification of [each byte in the OAM record](https://www.nesdev.org/wiki/PPU_OAM)
 
 To render all visible sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:
 
