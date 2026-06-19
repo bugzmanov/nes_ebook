@@ -15,7 +15,7 @@ Just some remarks:
 `A - B = A + (-B)`.
 And `-B = !B + 1`
 
-* **PHP**, **PLP** and **RTI** have to deal with [2 bit B-flag](http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag). Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) the 5th bit of **Status register P**
+* **PHP**, **PLP** and **RTI** have to deal with [2 bit B-flag](https://www.nesdev.org/wiki/Status_flags#The_B_flag). Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) the 5th bit of **Status register P**
 
 * The majority of the branching and jumping operations can be implemented by simply modifying the **program_counter** register. However, be careful not to increment the register within the same instruction interpret cycle.
 

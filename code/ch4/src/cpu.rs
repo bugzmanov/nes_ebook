@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::bus::Bus;
 
 bitflags! {
-    /// # Status Register (P) http://wiki.nesdev.com/w/index.php/Status_flags
+    /// # Status Register (P) https://www.nesdev.org/wiki/Status_flags
     ///
     ///  7 6 5 4 3 2 1 0
     ///  N V _ B D I Z C
