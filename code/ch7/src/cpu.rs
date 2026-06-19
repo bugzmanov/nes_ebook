@@ -576,7 +576,7 @@ impl<'a> CPU<'a> {
     }
 
     fn php(&mut self) {
-        //http://wiki.nesdev.com/w/index.php/CPU_status_flag_behavior
+        //https://www.nesdev.org/wiki/Status_flags
         let mut flags = self.status.clone();
         flags.insert(CpuFlags::BREAK);
         flags.insert(CpuFlags::BREAK2);
