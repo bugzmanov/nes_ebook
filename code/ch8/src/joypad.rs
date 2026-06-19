@@ -1,5 +1,5 @@
 bitflags! {
-    // https://wiki.nesdev.com/w/index.php/Controller_reading_code
+    // https://www.nesdev.org/wiki/Controller_reading_code
     pub struct JoypadButton: u8 {
         const RIGHT             = 0b10000000;
         const LEFT              = 0b01000000;
