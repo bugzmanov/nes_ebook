@@ -36,7 +36,7 @@ Each tile is represented by one byte in VRAM in the space called Nametable.
 In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total, a single frame is defined as 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - the states of two frames.
 
 Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge.
-[More details](http://wiki.nesdev.com/w/index.php/Mirroring).
+[More details](https://www.nesdev.org/wiki/Mirroring).
 
 Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's entirely determined by game code. All we need to do is to read the correct part of the VRAM.
 

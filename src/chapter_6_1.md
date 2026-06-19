@@ -326,7 +326,7 @@ Writing to PPU memory can be implemented in a similar way, just don't forget tha
 
 One thing that isn't covered is how ```mirror_vram_addr``` is implemented.
 
-Again the NESDEV wiki provides excellent coverage of this topic: [Mirroring](http://wiki.nesdev.com/w/index.php/Mirroring).
+Again the NESDEV wiki provides excellent coverage of this topic: [Mirroring](https://www.nesdev.org/wiki/Mirroring).
 
 VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll.
