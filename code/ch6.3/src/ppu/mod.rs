@@ -291,7 +291,7 @@ pub mod test {
         assert_eq!(ppu.read_data(), 0x88);
     }
 
-    // Horizontal: https://wiki.nesdev.com/w/index.php/Mirroring
+    // Horizontal: https://www.nesdev.org/wiki/Mirroring
     //   [0x2000 A ] [0x2400 a ]
     //   [0x2800 B ] [0x2C00 b ]
     #[test]
@@ -320,7 +320,7 @@ pub mod test {
         assert_eq!(ppu.read_data(), 0x77); //read from b
     }
 
-    // Vertical: https://wiki.nesdev.com/w/index.php/Mirroring
+    // Vertical: https://www.nesdev.org/wiki/Mirroring
     //   [0x2000 A ] [0x2400 B ]
     //   [0x2800 a ] [0x2C00 b ]
     #[test]
