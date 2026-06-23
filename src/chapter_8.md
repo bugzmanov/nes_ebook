@@ -2,10 +2,10 @@
 
 Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished.
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress:
-* [sprite zero hit flag](https://wiki.nesdev.com/w/index.php?title=PPU_OAM&redirect=no#Sprite_zero_hits)
-* [sprite overflow flag](https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug)
+* [sprite zero hit flag](https://www.nesdev.org/wiki/PPU_OAM#Sprite_zero_hits)
+* [sprite overflow flag](https://www.nesdev.org/wiki/PPU_sprite_evaluation#Sprite_overflow_bug)
 
-Both are reported using [PPU status register **0x2002**](https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read)
+Both are reported using [PPU status register **0x2002**](https://www.nesdev.org/wiki/PPU_registers#PPUSTATUS_-_Rendering_events_($2002_read))
 
 <div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
 

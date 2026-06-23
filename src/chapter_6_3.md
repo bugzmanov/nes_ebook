@@ -43,7 +43,7 @@ To figure out the color index of the top-left pixel, we need to read the 7th bit
 Before rendering CHR ROM content, we need to briefly discuss the colors available to the NES.
 Different versions of the PPU chip had slightly different system-level palettes of 52 hardwired colors.
 
-All necessary details can be found on corresponding [NesDev wiki page](http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes).
+All necessary details can be found on corresponding [NesDev wiki page](https://www.nesdev.org/wiki/PPU_palettes#Palettes).
 
 
 <div style="text-align:center"><img src="./images/ch6.3/image_6_system_palette.png" width="50%"/></div>

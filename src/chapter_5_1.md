@@ -1,6 +1,6 @@
 # Running our first test ROM
 
-The NES dev community has created [large suites of tests](https://wiki.nesdev.com/w/index.php/Emulator_tests) that can be used to check our emulator.
+The NES dev community has created [large suites of tests](https://www.nesdev.org/wiki/Emulator_tests) that can be used to check our emulator.
 
 They cover pretty much every aspect of the console, including quirks and notable bugs that were embedded in the platform.
 
@@ -169,9 +169,9 @@ It looks like our CPU doesn't know how to interpret the opcode 0x04.
 Here is the bad news: there are about 110 unofficial CPU instructions. Most of the real NES games use them a lot. For us to move on, we will need to implement all of them.
 
 The specs can be found here:
-* [nesdev.com/undocumented_opcodes.txt](http://nesdev.com/undocumented_opcodes.txt)
-* [wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes](https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes)
-* [wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes](https://wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes)
+* [nesdev.org/undocumented_opcodes.txt](https://www.nesdev.org/undocumented_opcodes.txt)
+* [nesdev.org/wiki/Programming_with_unofficial_opcodes](https://www.nesdev.org/wiki/Programming_with_unofficial_opcodes)
+* [nesdev.org/wiki/CPU_unofficial_opcodes](https://www.nesdev.org/wiki/CPU_unofficial_opcodes)
 * [www.oxyron.de/html/opcodes02.html](http://www.oxyron.de/html/opcodes02.html)
 
 

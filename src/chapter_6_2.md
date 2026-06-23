@@ -25,7 +25,7 @@ The NMI interrupt is tightly connected to PPU clock cycles:
 * upon entering scanline 241, PPU triggers NMI interrupt
 * PPU clock cycles are 3 times faster than CPU clock cycles
 
-Nothing beats NESDev wiki in providing [details on line-by-line timing](http://wiki.nesdev.com/w/index.php/PPU_rendering#Line-by-line_timing)
+Nothing beats NESDev wiki in providing [details on line-by-line timing](https://www.nesdev.org/wiki/PPU_rendering#Line-by-line_timing)
 
 But to simplify,
  * each PPU frame takes ```341*262=89342 PPU clocks cycles```
@@ -40,7 +40,7 @@ The emulator can take multiple approaches to simulate this behavior:
 
 2) Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime.
 
-3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called ["catch-up"](http://wiki.nesdev.com/w/index.php/Catch-up) <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)
+3) Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called ["catch-up"](https://www.nesdev.org/wiki/Catch-up) <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)
 
 Because we already have CPU loop mostly spec'd out, the third approach is the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.
 
@@ -226,7 +226,7 @@ impl PPU for NesPPU {
 
 In our CPU implementation, we've implemented opcode **0x00** as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.
 
-NESDEV Wiki provides all necessary details about [CPU interrupts](https://wiki.nesdev.com/w/index.php/CPU_interrupts).
+NESDEV Wiki provides all necessary details about [CPU interrupts](https://www.nesdev.org/wiki/CPU_interrupts).
 
 <br/>
 

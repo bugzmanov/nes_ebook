@@ -36,7 +36,7 @@ Each tile is represented by one byte in VRAM in the space called Nametable.
 In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total, a single frame is defined as 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - the states of two frames.
 
 Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge.
-[More details](http://wiki.nesdev.com/w/index.php/Mirroring).
+[More details](https://www.nesdev.org/wiki/Mirroring).
 
 Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's entirely determined by game code. All we need to do is to read the correct part of the VRAM.
 
@@ -92,7 +92,7 @@ Again, we need to intercept the program execution to read the screen state.
 On the real console the PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of the screen state on each PPU clock tick, we can wait until the full screen is ready and read in one go.
 
 > **WARNING** This is quite a drastic simplification that limits the types of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich the gaming experience.
-> For example, changing scroll in the middle of the frame (<a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
+> For example, changing scroll in the middle of the frame (<a href="https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
 > This simplification wouldn't affect first-gen NES games much. The majority of NES games would require more accuracy in PPU emulation, however.
 
 On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines; during scanlines 241 - 262, the CPU is updating the state of PPU for the next frame, then the cycle repeats.
@@ -291,7 +291,7 @@ CPU has two options for updating the OAM Table:
 
 In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)
 
-NES Dev Wiki provides a pretty solid specification of [each byte in the OAM record](http://wiki.nesdev.com/w/index.php/PPU_OAM)
+NES Dev Wiki provides a pretty solid specification of [each byte in the OAM record](https://www.nesdev.org/wiki/PPU_OAM)
 
 To render all visible sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:
 

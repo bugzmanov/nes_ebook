@@ -21,7 +21,7 @@ To be precise, PPU has its own bus used to communicate with RAM and cartridge CH
 One read-only register is used for reporting PPU status:
 * Status 0x2002
 
-The full spec of the registers can be found on [NES Dev wiki](http://wiki.nesdev.com/w/index.php/PPU_registers).
+The full spec of the registers can be found on [NES Dev wiki](https://www.nesdev.org/wiki/PPU_registers).
 
  <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 
@@ -326,7 +326,7 @@ Writing to PPU memory can be implemented in a similar way, just don't forget tha
 
 One thing that isn't covered is how ```mirror_vram_addr``` is implemented.
 
-Again the NESDEV wiki provides excellent coverage of this topic: [Mirroring](http://wiki.nesdev.com/w/index.php/Mirroring).
+Again the NESDEV wiki provides excellent coverage of this topic: [Mirroring](https://www.nesdev.org/wiki/Mirroring).
 
 VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll.
