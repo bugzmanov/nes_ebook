@@ -198,7 +198,7 @@ PPU exposes 8 I/O Registers that are used by the CPU for communication. Those re
 <ul>
 <li>Status 0x2002</li>
 </ul>
-<p>The full spec of the registers can be found on <a href="http://wiki.nesdev.com/w/index.php/PPU_registers">NES Dev wiki</a>.</p>
+<p>The full spec of the registers can be found on <a href="https://www.nesdev.org/wiki/PPU_registers">NES Dev wiki</a>.</p>
  <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 <p>Two communication channels exist between CPU and PPU:</p>
 <ul>
@@ -482,7 +482,7 @@ impl NesPPU {
 <p>Writing to PPU memory can be implemented in a similar way, just don't forget that writes to 0x2007 also increments Address Register.</p>
 <h2 id="mirroring"><a class="header" href="#mirroring">Mirroring</a></h2>
 <p>One thing that isn't covered is how <code>mirror_vram_addr</code> is implemented.</p>
-<p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="http://wiki.nesdev.com/w/index.php/Mirroring">Mirroring</a>.</p>
+<p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="https://www.nesdev.org/wiki/Mirroring">Mirroring</a>.</p>
 <p>VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll.
 For now, we can just code the mirroring behavior.</p>

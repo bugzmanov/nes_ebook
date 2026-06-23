@@ -178,10 +178,10 @@
 <p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished.
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress:</p>
 <ul>
-<li><a href="https://wiki.nesdev.com/w/index.php?title=PPU_OAM&amp;redirect=no#Sprite_zero_hits">sprite zero hit flag</a></li>
-<li><a href="https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
+<li><a href="https://www.nesdev.org/wiki/PPU_OAM#Sprite_zero_hits">sprite zero hit flag</a></li>
+<li><a href="https://www.nesdev.org/wiki/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
 </ul>
-<p>Both are reported using <a href="https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read">PPU status register <strong>0x2002</strong></a></p>
+<p>Both are reported using <a href="https://www.nesdev.org/wiki/PPU_registers#PPUSTATUS_-_Rendering_events_($2002_read)">PPU status register <strong>0x2002</strong></a></p>
 <div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
 <p>Sprite overflow is rarely used because it had a bug that resulted in false positives and false negatives.
 Sprite 0 hit though is used by the majority of games that have scrolling. <br/>It's the way to get mid-frame progress status

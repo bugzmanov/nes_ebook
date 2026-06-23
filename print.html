@@ -200,8 +200,8 @@ By choosing rust, we hope to get some additional performance budget for our need
 <p>It's also assumed that the reader has a basic understanding of bit arithmetic, boolean logic, and how binary and hexadecimal numbering systems work. Again, NES is a relatively simple platform, and the NES CPU instructions set is small and straightforward, but some basic understanding of computer systems is required.</p>
 <h1 id="references"><a class="header" href="#references">References</a></h1>
 <ol>
-<li><a href="http://wiki.nesdev.com/w/index.php/Nesdev_Wiki">Nesdev Wiki</a> - nothing would be possible without it. The one-stop-shop.</li>
-<li><a href="http://nesdev.com/NESDoc.pdf">Nintendo Entertainment System Documentation</a> - a short tutorial that covers pretty much everything about NES</li>
+<li><a href="https://www.nesdev.org/wiki/Nesdev_Wiki">Nesdev Wiki</a> - nothing would be possible without it. The one-stop-shop.</li>
+<li><a href="https://www.nesdev.org/NESDoc.pdf">Nintendo Entertainment System Documentation</a> - a short tutorial that covers pretty much everything about NES</li>
 <li><a href="https://nerdy-nights.nes.science/">Nintendo Age Nerdy Nights</a> - a series to help people write games for the NES</li>
 <li><a href="https://www.goodreads.com/book/show/23461364-i-am-error">I.Am.Error</a> - a book full of histories of the Nintendo Entertainment System platform</li>
 <li><a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">The Elements of Computing Systems</a> - everything you need to know about computer systems, how to build Tetris starting from logic gates.</li>
@@ -294,7 +294,7 @@ We are going to play the Snake game. The source code with comments can be found 
 <p>Stack Pointer - Memory space [0x0100 .. 0x1FF] is used for stack. The stack pointer holds the address of the top of that space. NES Stack (as all stacks) grows from top to bottom: when a byte gets pushed to the stack, SP register decrements. When a byte is retrieved from the stack, SP register increments.</p>
 </li>
 <li>
-<p>Accumulator (<em>A</em>) - stores the results of arithmetic, logic, and memory access operations. It used as an input parameter for some operations.</p>
+<p>Accumulator (<em>A</em>) - stores the results of arithmetic, logic, and memory access operations. It is used as an input parameter for some operations.</p>
 </li>
 <li>
 <p>Index Register X (<em>X</em>) - used as an offset in specific memory addressing modes (more on this later). Can be used for auxiliary storage needs (holding temp values, being used as a counter, etc.)</p>
@@ -907,7 +907,7 @@ First, the requirement to increment program_counter by 1 (or 2) after some of th
 And <code>-B = !B + 1</code></p>
 </li>
 <li>
-<p><strong>PHP</strong>, <strong>PLP</strong> and <strong>RTI</strong> have to deal with <a href="http://wiki.nesdev.com/w/index.php/Status_flags#The_B_flag">2 bit B-flag</a>. Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) the 5th bit of <strong>Status register P</strong></p>
+<p><strong>PHP</strong>, <strong>PLP</strong> and <strong>RTI</strong> have to deal with <a href="https://www.nesdev.org/wiki/Status_flags#The_B_flag">2 bit B-flag</a>. Except for interrupts execution, those are the only commands that directly influence (or being directly influenced by) the 5th bit of <strong>Status register P</strong></p>
 </li>
 <li>
 <p>The majority of the branching and jumping operations can be implemented by simply modifying the <strong>program_counter</strong> register. However, be careful not to increment the register within the same instruction interpret cycle.</p>
@@ -1526,7 +1526,7 @@ impl Bus {
 <p>The full source code for this chapter: <a href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch5" target="_blank">GitHub</a></p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="running-our-first-test-rom"><a class="header" href="#running-our-first-test-rom">Running our first test ROM</a></h1>
-<p>The NES dev community has created <a href="https://wiki.nesdev.com/w/index.php/Emulator_tests">large suites of tests</a> that can be used to check our emulator.</p>
+<p>The NES dev community has created <a href="https://www.nesdev.org/wiki/Emulator_tests">large suites of tests</a> that can be used to check our emulator.</p>
 <p>They cover pretty much every aspect of the console, including quirks and notable bugs that were embedded in the platform.</p>
  <div style="text-align:center"><img src="./images/ch5.1/image_1_i_am_error.png" width="40%"/></div>
 <p>We will start with the most basic test covering main CPU features: instruction set, memory access, and CPU cycles.</p>
@@ -1666,9 +1666,9 @@ C6BC  28        PLP                             A:AA X:97 Y:4   C6BC  28        
 <p>Here is the bad news: there are about 110 unofficial CPU instructions. Most of the real NES games use them a lot. For us to move on, we will need to implement all of them.</p>
 <p>The specs can be found here:</p>
 <ul>
-<li><a href="http://nesdev.com/undocumented_opcodes.txt">nesdev.com/undocumented_opcodes.txt</a></li>
-<li><a href="https://wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes">wiki.nesdev.com/w/index.php/Programming_with_unofficial_opcodes</a></li>
-<li><a href="https://wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes">wiki.nesdev.com/w/index.php/CPU_unofficial_opcodes</a></li>
+<li><a href="https://www.nesdev.org/undocumented_opcodes.txt">nesdev.org/undocumented_opcodes.txt</a></li>
+<li><a href="https://www.nesdev.org/wiki/Programming_with_unofficial_opcodes">nesdev.org/wiki/Programming_with_unofficial_opcodes</a></li>
+<li><a href="https://www.nesdev.org/wiki/CPU_unofficial_opcodes">nesdev.org/wiki/CPU_unofficial_opcodes</a></li>
 <li><a href="http://www.oxyron.de/html/opcodes02.html">www.oxyron.de/html/opcodes02.html</a></li>
 </ul>
 <p>Remember how to draw an owl?</p>
@@ -1732,7 +1732,7 @@ PPU exposes 8 I/O Registers that are used by the CPU for communication. Those re
 <ul>
 <li>Status 0x2002</li>
 </ul>
-<p>The full spec of the registers can be found on <a href="http://wiki.nesdev.com/w/index.php/PPU_registers">NES Dev wiki</a>.</p>
+<p>The full spec of the registers can be found on <a href="https://www.nesdev.org/wiki/PPU_registers">NES Dev wiki</a>.</p>
  <div style="text-align:center"><img src="./images/ch6.1/image_2_cpu_ppu_communication.png" width="70%"/></div>
 <p>Two communication channels exist between CPU and PPU:</p>
 <ul>
@@ -2016,7 +2016,7 @@ impl NesPPU {
 <p>Writing to PPU memory can be implemented in a similar way, just don't forget that writes to 0x2007 also increments Address Register.</p>
 <h2 id="mirroring"><a class="header" href="#mirroring">Mirroring</a></h2>
 <p>One thing that isn't covered is how <code>mirror_vram_addr</code> is implemented.</p>
-<p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="http://wiki.nesdev.com/w/index.php/Mirroring">Mirroring</a>.</p>
+<p>Again the NESDEV wiki provides excellent coverage of this topic: <a href="https://www.nesdev.org/wiki/Mirroring">Mirroring</a>.</p>
 <p>VRAM mirroring is tightly coupled with the way NES implements scrolling of the viewport.
 We would spend enough time discussing this in the chapter about Scroll.
 For now, we can just code the mirroring behavior.</p>
@@ -2171,7 +2171,7 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <li>upon entering scanline 241, PPU triggers NMI interrupt</li>
 <li>PPU clock cycles are 3 times faster than CPU clock cycles</li>
 </ul>
-<p>Nothing beats NESDev wiki in providing <a href="http://wiki.nesdev.com/w/index.php/PPU_rendering#Line-by-line_timing">details on line-by-line timing</a></p>
+<p>Nothing beats NESDev wiki in providing <a href="https://www.nesdev.org/wiki/PPU_rendering#Line-by-line_timing">details on line-by-line timing</a></p>
 <p>But to simplify,</p>
 <ul>
 <li>each PPU frame takes <code>341*262=89342 PPU clocks cycles</code></li>
@@ -2190,7 +2190,7 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime.</p>
 </li>
 <li>
-<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">"catch-up"</a> <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
+<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="https://www.nesdev.org/wiki/Catch-up">"catch-up"</a> <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
 </li>
 </ol>
 <p>Because we already have CPU loop mostly spec'd out, the third approach is the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>
@@ -2360,7 +2360,7 @@ Upon receiving an interrupt signal the CPU:</p>
 <span class="boring">}</span></code></pre></pre>
 <h1 id="other-cpu-interrupts"><a class="header" href="#other-cpu-interrupts">Other CPU interrupts</a></h1>
 <p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.</p>
-<p>NESDEV Wiki provides all necessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>.</p>
+<p>NESDEV Wiki provides all necessary details about <a href="https://www.nesdev.org/wiki/CPU_interrupts">CPU interrupts</a>.</p>
 <br/>
 <hr />
 <blockquote>
@@ -2390,7 +2390,7 @@ To figure out the color index of the top-left pixel, we need to read the 7th bit
 <h2 id="palette"><a class="header" href="#palette">Palette</a></h2>
 <p>Before rendering CHR ROM content, we need to briefly discuss the colors available to the NES.
 Different versions of the PPU chip had slightly different system-level palettes of 52 hardwired colors.</p>
-<p>All necessary details can be found on corresponding <a href="http://wiki.nesdev.com/w/index.php/PPU_palettes#Palettes">NesDev wiki page</a>.</p>
+<p>All necessary details can be found on corresponding <a href="https://www.nesdev.org/wiki/PPU_palettes#Palettes">NesDev wiki page</a>.</p>
 <div style="text-align:center"><img src="./images/ch6.3/image_6_system_palette.png" width="50%"/></div>
 <p>There are multiple variations used in emulators. Some make the picture more visually appealing, while others keep it closer to the original picture NES generated on a TV.</p>
 <p>It doesn't matter much which one we would choose, most of them get us good enough results.</p>
@@ -2553,7 +2553,7 @@ Control register decides which of two banks should be used for background (and w
 </blockquote>
 <p>In addition to 960 bytes for tiles, a nametable holds 64 bytes that specify color palette, we will discuss later. In total, a single frame is defined as 1024 bytes (960 + 64). PPU VRAM can simultaneously hold two nametables - the states of two frames.</p>
 <p>Two additional nametables that exist in the address space of the PPU must be either mapped to existing tables or to extra RAM space on a cartridge.
-<a href="http://wiki.nesdev.com/w/index.php/Mirroring">More details</a>.</p>
+<a href="https://www.nesdev.org/wiki/Mirroring">More details</a>.</p>
 <p>Nametables are populated by CPU during program execution (using Addr and Data registers that we've implemented). It's entirely determined by game code. All we need to do is to read the correct part of the VRAM.</p>
 <p>The algorithm to draw current background:</p>
 <ol>
@@ -2608,7 +2608,7 @@ pub fn render(ppu: &amp;NesPPU, frame: &amp;mut Frame) {
 On the real console the PPU is drawing one pixel each PPU clock cycle. However, we can take a shortcut. Instead of reading part of the screen state on each PPU clock tick, we can wait until the full screen is ready and read in one go.</p>
 <blockquote>
 <p><strong>WARNING</strong> This is quite a drastic simplification that limits the types of games it will be possible to play on the emulator. </br><br/>More advanced games used a lot of tricks to enrich the gaming experience.
-For example, changing scroll in the middle of the frame (<a href="https://wiki.nesdev.com/w/index.php/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
+For example, changing scroll in the middle of the frame (<a href="https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll">split scroll</a>) or changing palette colors. <br/><br/>
 This simplification wouldn't affect first-gen NES games much. The majority of NES games would require more accuracy in PPU emulation, however.</p>
 </blockquote>
 <p>On the real console, PPU is actively drawing screen state on a TV screen during 0 - 240 scanlines; during scanlines 241 - 262, the CPU is updating the state of PPU for the next frame, then the cycle repeats.</p>
@@ -2780,7 +2780,7 @@ NES had an internal RAM for storing states of all sprites in the frame, so-calle
 <li>bulk updating the whole table by transferring 256 bytes from CPU RAM using OAM DMA</li>
 </ul>
 <p>In comparison to background tiles, a sprite tile can be shown anywhere in a 256x240 screen. Each OAM record has 2 bytes reserved for X and Y coordinates, one byte is used to select a tile pattern from the pattern table. And the remaining byte specifies how the object should be drawn (for example, PPU can flip same tile horizontally or vertically)</p>
-<p>NES Dev Wiki provides a pretty solid specification of <a href="http://wiki.nesdev.com/w/index.php/PPU_OAM">each byte in the OAM record</a></p>
+<p>NES Dev Wiki provides a pretty solid specification of <a href="https://www.nesdev.org/wiki/PPU_OAM">each byte in the OAM record</a></p>
 <p>To render all visible sprites, we just need to scan through oam_data space and parse out every 4 bytes into a sprite:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span>
@@ -2892,7 +2892,7 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>bitflags! {
-       // https://wiki.nesdev.com/w/index.php/Controller_reading_code
+       // https://www.nesdev.org/wiki/Controller_reading_code
        pub struct JoypadButton: u8 {
            const RIGHT             = 0b10000000;
            const LEFT              = 0b01000000;
@@ -3023,10 +3023,10 @@ impl Joypad {
 <p>Before we start discussing scrolling, we need to clarify one detail. We've discussed that PPU notifies the state of the frame by triggering NMI interrupt, which tells CPU that rendering of the current frame is finished.
 That's not the whole story. PPU has 2 additional mechanisms to tell its progress:</p>
 <ul>
-<li><a href="https://wiki.nesdev.com/w/index.php?title=PPU_OAM&amp;redirect=no#Sprite_zero_hits">sprite zero hit flag</a></li>
-<li><a href="https://wiki.nesdev.com/w/index.php/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
+<li><a href="https://www.nesdev.org/wiki/PPU_OAM#Sprite_zero_hits">sprite zero hit flag</a></li>
+<li><a href="https://www.nesdev.org/wiki/PPU_sprite_evaluation#Sprite_overflow_bug">sprite overflow flag</a></li>
 </ul>
-<p>Both are reported using <a href="https://wiki.nesdev.com/w/index.php/PPU_registers#Status_.28.242002.29_.3C_read">PPU status register <strong>0x2002</strong></a></p>
+<p>Both are reported using <a href="https://www.nesdev.org/wiki/PPU_registers#PPUSTATUS_-_Rendering_events_($2002_read)">PPU status register <strong>0x2002</strong></a></p>
 <div style="text-align:center;"><img src="./images/ch8/image_7_sprite_0_hit.png" width="60%"/></div>
 <p>Sprite overflow is rarely used because it had a bug that resulted in false positives and false negatives.
 Sprite 0 hit though is used by the majority of games that have scrolling. <br/>It's the way to get mid-frame progress status

@@ -197,7 +197,7 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <li>upon entering scanline 241, PPU triggers NMI interrupt</li>
 <li>PPU clock cycles are 3 times faster than CPU clock cycles</li>
 </ul>
-<p>Nothing beats NESDev wiki in providing <a href="http://wiki.nesdev.com/w/index.php/PPU_rendering#Line-by-line_timing">details on line-by-line timing</a></p>
+<p>Nothing beats NESDev wiki in providing <a href="https://www.nesdev.org/wiki/PPU_rendering#Line-by-line_timing">details on line-by-line timing</a></p>
 <p>But to simplify,</p>
 <ul>
 <li>each PPU frame takes <code>341*262=89342 PPU clocks cycles</code></li>
@@ -216,7 +216,7 @@ The CPU however, might instruct PPU to not trigger NMI by resetting the 7th bit 
 <p>Execute all components sequentially in one thread, by advancing one clock cycle at a time in each component. This is similar to creating a green-thread runtime and using one dedicated OS thread to run this runtime. It would require substantial investment in creating green-threads runtime.</p>
 </li>
 <li>
-<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="http://wiki.nesdev.com/w/index.php/Catch-up">"catch-up"</a> <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
+<p>Execute all components sequentially in one thread, but by letting CPU to execute one full instruction, compute the clock cycles budget for other components and let them run within the budget. This technique is called <a href="https://www.nesdev.org/wiki/Catch-up">"catch-up"</a> <br/> <br/>For example, CPU takes 2 cycles to execute "LDA #$01" (opcode 0xA9), which means that PPU can run for 6 PPU cycles now (PPU clock is ticking three times faster than CPU clock) and APU can run for 1 cycle (APU clock is two times slower)</p>
 </li>
 </ol>
 <p>Because we already have CPU loop mostly spec'd out, the third approach is the easiest to implement. Granted, it would be the least accurate one. But it's good enough to have something playable as soon as possible.</p>
@@ -386,7 +386,7 @@ Upon receiving an interrupt signal the CPU:</p>
 <span class="boring">}</span></code></pre></pre>
 <h1 id="other-cpu-interrupts"><a class="header" href="#other-cpu-interrupts">Other CPU interrupts</a></h1>
 <p>In our CPU implementation, we've implemented opcode <strong>0x00</strong> as a return from CPU fetch-decode-execute cycle, but in reality it should trigger BRK interrupt. This is so-called "software interrupt" that a game code can trigger programmatically in response to events.</p>
-<p>NESDEV Wiki provides all necessary details about <a href="https://wiki.nesdev.com/w/index.php/CPU_interrupts">CPU interrupts</a>.</p>
+<p>NESDEV Wiki provides all necessary details about <a href="https://www.nesdev.org/wiki/CPU_interrupts">CPU interrupts</a>.</p>
 <br/>
 <hr />
 <blockquote>

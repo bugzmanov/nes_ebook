@@ -210,7 +210,7 @@ Reading from a controller reports the state of a button (1 - pressed, 0 - releas
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>bitflags! {
-       // https://wiki.nesdev.com/w/index.php/Controller_reading_code
+       // https://www.nesdev.org/wiki/Controller_reading_code
        pub struct JoypadButton: u8 {
            const RIGHT             = 0b10000000;
            const LEFT              = 0b01000000;
