@@ -491,7 +491,7 @@ impl<'a> CPU<'a> {
             data = data | 1;
         }
         self.mem_write(addr, data);
-        self.update_negative_flags(data);
+        self.update_zero_and_negative_flags(data);
         data
     }
 
@@ -526,7 +526,7 @@ impl<'a> CPU<'a> {
             data = data | 0b10000000;
         }
         self.mem_write(addr, data);
-        self.update_negative_flags(data);
+        self.update_zero_and_negative_flags(data);
         data
     }
 
